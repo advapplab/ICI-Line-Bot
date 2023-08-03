@@ -64,22 +64,25 @@ Import the ChatGPT bot to Line and start interacting with it by simply typing te
         5. Line Channel Access Token:
             - key: `LINE_CHANNEL_ACCESS_TOKEN`
             - value: `[obtained from step one]`
-        6. MongnDB link
-            - key: `MONGODB_LINK`
+        6. MongnDB Username
+            - key: `MONGODB_USERNAME`
             - value: `[Please contact the project manager]`
-        7. MongnDB database
+        7. MongnDB Password
+            - key: `MONGODB_PASSWORD`
+            - value: `[Please contact the project manager]`
+        8. MongnDB Host
+            - key: `MONGODB_HOST`
+            - value: `[Please contact the project manager]`
+        9. MongnDB Database
             - key: `MONGODB_DATABASE`
             - value: `[Please contact the project manager]`
-        8. MongnDB collection
-            - key: `MONGODB_COLLECTION`
-            - value: `[Please contact the project manager]`
-        9. HuggingFace Token
+        10. HuggingFace Token
             - key: `HUGGINGFACE_TOKEN`
             - value: `[Please contact the project manager]`
-        10. HuggingFace SBERTmodel
+        11. HuggingFace SBERTmodel
             - key: `HUGGINGFACE_SBERT_MODEL`
             - value: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
-        11. BOT_SBERT_TH
+        12. BOT_SBERT_TH
             - key: `BOT_SBERT_TH`
             - value: `default suggestion 0.5`
 2. Start running:

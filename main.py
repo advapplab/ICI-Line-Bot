@@ -16,6 +16,7 @@ from src.service.youtube import Youtube, YoutubeTranscriptReader
 from src.service.website import Website, WebsiteReader
 from src.mongodb import mongodb
 
+
 load_dotenv('.env')
 
 app = Flask(__name__)
@@ -49,7 +50,7 @@ def callback():
   return 'OK'
 
 
-###
+## fix message format problem
 def extract_message_info(message):
   if isinstance(message, TextSendMessage):
     return {'type': 'text', 'text': message.text}
@@ -63,18 +64,26 @@ def extract_message_info(message):
     return {'type': 'audio', 'duration': message.duration}
   else:
     return None
-
+#
+## connect to DB
 from pymongo import MongoClient
-mongo_client = MongoClient('mongodb+srv://ici_bot:Vc32gxFuYhqQm88p@cluster0.4ftijun.mongodb.net/')
-db = mongo_client['chatbot']
+mdb_user = os.getenv('MONGODB_USERNAME')
+mdb_pass = os.getenv('MONGODB_PASSWORD')
+mdb_host = os.getenv('MONGODB_HOST')
+mdb_dbs = os.getenv('MONGODB_DATABASE')
+client = MongoClient('mongodb+srv://'+mdb_user+':'+mdb_pass+'@'+mdb_host)
+db = client[mdb_dbs]
 collection = db['history']
-
+api_key = os.getenv('OPENAI_KEY')
+#
+## also for fixing message format problem
 def get_bot_reply_text(bot_reply):
   if hasattr(bot_reply, "text"):
     return bot_reply.text
   else:
     return ""
-
+#
+## timestamp, time difference, and insert message into DB
 import time
 import pytz
 from datetime import datetime
@@ -102,28 +111,36 @@ def store_history_message(user_id, display_name, text, user_timestamp, bot_reply
     print(result.inserted_id)
   except Exception as e:
     print(f"Error inserting document: {e}")
-###
+#
 
-# auto resister
-HARDCODED_API_KEY = "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"
+## auto resister
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
   user_id = event.source.user_id
   user_timestamp = int(time.time() * 1000)
   text = event.message.text.strip()
   logger.info(f'{user_id}: {text}')
+  ## get line user's display name
   profile = line_bot_api.get_profile(user_id)
   display_name = profile.display_name
+  #
   
   try:
+    model = OpenAIModel(api_key=api_key)
+    is_successful, _, _ = model.check_token_valid()
+    if not is_successful:
+      raise ValueError('Invalid API token')
+    model_management[user_id] = model
+    storage.save({user_id: api_key})
+
     if text.startswith('/Register'):
-       api_key = HARDCODED_API_KEY
-       model = OpenAIModel(api_key=api_key)
-       is_successful, _, _ = model.check_token_valid()
-       if not is_successful:
-         raise ValueError('Invalid API token')
-       model_management[user_id] = model
-       storage.save({user_id: api_key})
+       #api_key = text[3:].strip()
+       #model = OpenAIModel(api_key=api_key)
+       #is_successful, _, _ = model.check_token_valid()
+       #if not is_successful:
+          #raise ValueError('Invalid API token')
+       #model_management[user_id] = model
+       #storage.save({user_id: api_key})
        msg = TextSendMessage(text='Token valid, registration successful')
 #
     elif text.startswith('/Instruction explanation'):
