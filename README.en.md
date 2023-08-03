@@ -61,6 +61,30 @@ Import the ChatGPT bot to Line and start interacting with it by simply typing te
         4. Line Channel Access Token:
             - key: `LINE_CHANNEL_ACCESS_TOKEN`
             - value: `[obtained from step one]`
+        5. OpenAI的Token：
+            - key: `OPENAI_KEY`
+            - value: `[Please contact the project manager]`
+        6. MongnDB帳號
+            - key: `MONGODB_USERNAME`
+            - value: `[Please contact the project manager]`
+        7. MongnDB密碼
+            - key: `MONGODB_PASSWORD`
+            - value: `[Please contact the project manager]`
+        8. MongnDB主機
+            - key: `MONGODB_HOST`
+            - value: `[Please contact the project manager]`
+        9. MongnDB資料庫
+            - key: `MONGODB_DATABASE`
+            - value: `[Please contact the project manager]`
+        10. HuggingFace Token
+            - key: `HUGGINGFACE_TOKEN`
+            - value: `[Please contact the project manager]`
+        11. HuggingFace相似度模型
+            - key: `HUGGINGFACE_SBERT_MODEL`
+            - value: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
+        12. 語意相似度閥值
+            - key: `BOT_SBERT_TH`
+            - value: `default suggestion 0.5`
 2. Start running:
     1. Click on `Run` on the top.
     2. After successful, the right-side screen will display `Hello World`, and the **URL** on the top of the screen should be copied down.
