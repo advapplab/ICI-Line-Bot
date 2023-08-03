@@ -64,25 +64,22 @@
         5. Line Channel Access Token:
             - key: `LINE_CHANNEL_ACCESS_TOKEN`
             - value: `[由步驟一取得]`
-        6. MongnDB帳號
-            - key: `MONGODB_USERNAME`
+        6. MongnDB 連結
+            - key: `MONGODB_LINK`
             - value: `[請洽專案管理員]`
-        7. MongnDB密碼
-            - key: `MONGODB_PASSWORD`
-            - value: `[請洽專案管理員]`
-        8. MongnDB主機
-            - key: `MONGODB_HOST`
-            - value: `[請洽專案管理員]`
-        9. MongnDB資料庫
+        7. MongnDB資料庫
             - key: `MONGODB_DATABASE`
             - value: `[請洽專案管理員]`
-        10. HuggingFace Token
+        8. MongnDB collection
+            - key: `MONGODB_COLLECTION`
+            - value: `[請洽專案管理員]`
+        9. HuggingFace Token
             - key: `HUGGINGFACE_TOKEN`
             - value: `[請洽專案管理員]`
-        11. HuggingFace相似度模型
+        10. HuggingFace相似度模型
             - key: `HUGGINGFACE_SBERT_MODEL`
             - value: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
-        12. 語意相似度閥值
+        11. 語意相似度閥值
             - key: `BOT_SBERT_TH`
             - value: `預設建議0.5`
 2. 開始執行

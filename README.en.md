@@ -52,37 +52,34 @@ Import the ChatGPT bot to Line and start interacting with it by simply typing te
         1. Desired model:
             - key: `OPENAI_MODEL_ENGINE`
             - value: `gpt-3.5-turbo`
-        2. ChatGPT wants the assistant to play the role of a keyword (currently, no further usage instructions have been officially released, and players can test it themselves).
-            - key: `SYSTEM_MESSAGE`
-            - value: `You are a helpful assistant.`
-        3. Line Channel Secret:
-            - key: `LINE_CHANNEL_SECRET`
-            - value: `[obtained from step one]`
-        4. Line Channel Access Token:
-            - key: `LINE_CHANNEL_ACCESS_TOKEN`
-            - value: `[obtained from step one]`
-        5. OpenAI Token：
+        2. OpenAI Token：
             - key: `OPENAI_KEY`
             - value: `[Please contact the project manager]`
-        6. MongnDB username
-            - key: `MONGODB_USERNAME`
+        3. ChatGPT wants the assistant to play the role of a keyword (currently, no further usage instructions have been officially released, and players can test it themselves).
+            - key: `SYSTEM_MESSAGE`
+            - value: `You are a helpful assistant.`
+        4. Line Channel Secret:
+            - key: `LINE_CHANNEL_SECRET`
+            - value: `[obtained from step one]`
+        5. Line Channel Access Token:
+            - key: `LINE_CHANNEL_ACCESS_TOKEN`
+            - value: `[obtained from step one]`
+        6. MongnDB link
+            - key: `MONGODB_LINK`
             - value: `[Please contact the project manager]`
-        7. MongnDB password
-            - key: `MONGODB_PASSWORD`
-            - value: `[Please contact the project manager]`
-        8. MongnDB host
-            - key: `MONGODB_HOST`
-            - value: `[Please contact the project manager]`
-        9. MongnDB database
+        7. MongnDB database
             - key: `MONGODB_DATABASE`
             - value: `[Please contact the project manager]`
-        10. HuggingFace Token
+        8. MongnDB collection
+            - key: `MONGODB_COLLECTION`
+            - value: `[Please contact the project manager]`
+        9. HuggingFace Token
             - key: `HUGGINGFACE_TOKEN`
             - value: `[Please contact the project manager]`
-        11. HuggingFace SBERTmodel
+        10. HuggingFace SBERTmodel
             - key: `HUGGINGFACE_SBERT_MODEL`
             - value: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
-        12. BOT_SBERT_TH
+        11. BOT_SBERT_TH
             - key: `BOT_SBERT_TH`
             - value: `default suggestion 0.5`
 2. Start running:
