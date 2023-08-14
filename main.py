@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
-from linebot.exceptions import (InvalidSignatureError)
+from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage,
                             ImageSendMessage, AudioMessage)
 import os
@@ -33,7 +33,45 @@ model_management = {}
 api_keys = {}
 
 my_secret = os.environ['OPENAI_MODEL_ENGINE']
-    
+
+## google classroom api
+
+#?# link to my classroom, class number
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
+
+GOOGLE_CLIENT_ID = 'GOOGLE_CLIENT_ID'
+GOOGLE_CLIENT_SECRET = 'GOOGLE_CLIENT_SECRET'
+GOOGLE_REDIRECT_URI = 'GOOGLE_REDIRECT_URI'
+SCOPES = ['https://www.googleapis.com/auth/classroom.announcements']
+
+# Google OAuth 2.0 Flow
+flow = Flow.from_client_config(
+    client_config={'client_id': 'GOOGLE_CLIENT_ID', 'client_secret': 'GOOGLE_CLIENT_SECRET'},
+    scopes=SCOPES,
+    redirect_uri=GOOGLE_REDIRECT_URI,
+    client_type='web'
+)
+
+def get_google_credentials(user_id):
+    # Implement your own logic here to retrieve the saved user's access token based on the user_id.
+    # This will depend on how you are storing user tokens (e.g., database, file, etc.).
+    user_access_token = 'USER_ACCESS_TOKEN'  # Replace this with your retrieval logic.
+    if user_access_token:
+        return Credentials.from_authorized_user(access_token=user_access_token, scopes=SCOPES)
+
+def get_authorization_url(user_id):
+    # Create the authorization URL for the user to visit and grant access to their Google account.
+    # Save the user_id to the state parameter to identify the user when they return to the callback.
+    authorization_url, _ = flow.authorization_url(state=user_id)
+    return authorization_url
+
+def get_announcements(user_id, course_id):
+    credentials = get_google_credentials(user_id)
+    if not credentials:
+        return 'Please authorize your Google account by visiting ' + get_authorization_url(user_id)
+
 ## connect to DB
 from pymongo import MongoClient
 mdb_user = os.getenv('MONGODB_USERNAME')
@@ -211,7 +249,17 @@ def handle_text_message(event):
       url = response['data'][0]['url']
       msg = ImageSendMessage(original_content_url=url, preview_image_url=url)
       memory.append(user_id, 'assistant', url)
-
+      
+    # google classroom api 
+    elif event.message.text.startswith('announcements '):
+        course_id = event.message.text.split(' ')[1]
+        announcements = get_announcements(user_id, course_id)
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=announcements)
+        )
+      
+    # faq 
     elif relevant_answer:
       if relevant_answer == get_relevant_answer_from_faq(text, 'faq'):
          relevant_answer = '(form FAQ Database)\n' + relevant_answer
@@ -339,7 +387,7 @@ def close_mongo_client():
 
 @app.route("/", methods=['GET'])
 def home():
-  return 'Happi Happi Happi'
+  return 'Hello World'
   
 if __name__ == "__main__":
   if os.getenv('USE_MONGO'):
