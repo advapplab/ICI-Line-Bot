@@ -339,7 +339,7 @@ def close_mongo_client():
 
 @app.route("/", methods=['GET'])
 def home():
-  return 'Hello World'
+  return 'Happi Happi Happi'
   
 if __name__ == "__main__":
   if os.getenv('USE_MONGO'):
