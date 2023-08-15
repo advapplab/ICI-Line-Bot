@@ -36,7 +36,6 @@ api_keys = {}
 my_secret = os.environ['OPENAI_MODEL_ENGINE']
 
 ## google classroom api
-
 #?# link to my classroom, class number
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -45,7 +44,23 @@ from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+def exchange_code_for_tokens(authorization_code):
+    token_url = 'https://oauth2.googleapis.com/token'
+    client_id = 'CLIENT_ID'
+    client_secret = 'CLIENT_SECRET'
+    authorization_code = "Authorization_Code"
+    data = {
+        'code': authorization_code,
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'grant_type': 'authorization_code'
+    }
+    response = requests.post(token_url, data=data)
+    tokens = response.json()
+    return tokens
+    print(tokens)
 SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
+flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES, redirect_uri='http://localhost:58211/')
 
 def main():
     #Shows basic usage of the Classroom API.
@@ -85,7 +100,6 @@ def main():
 
     except HttpError as error:
         print('An error occurred: %s' % error)
-
 
 if __name__ == '__main__':
     main()
@@ -420,5 +434,3 @@ if __name__ == "__main__":
   except FileNotFoundError:
     pass
   app.run(host='0.0.0.0', port=8080)
-
-
