@@ -5,6 +5,7 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage,
                             ImageSendMessage, AudioMessage)
 import os
+import os.path
 import uuid
 import requests
 import traceback
@@ -37,40 +38,57 @@ my_secret = os.environ['OPENAI_MODEL_ENGINE']
 ## google classroom api
 
 #?# link to my classroom, class number
+from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 
-GOOGLE_CLIENT_ID = 'GOOGLE_CLIENT_ID'
-GOOGLE_CLIENT_SECRET = 'GOOGLE_CLIENT_SECRET'
-GOOGLE_REDIRECT_URI = 'GOOGLE_REDIRECT_URI'
-SCOPES = ['https://www.googleapis.com/auth/classroom.announcements']
+SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
 
-# Google OAuth 2.0 Flow
-flow = Flow.from_client_config(
-    client_config={'client_id': 'GOOGLE_CLIENT_ID', 'client_secret': 'GOOGLE_CLIENT_SECRET'},
-    scopes=SCOPES,
-    redirect_uri=GOOGLE_REDIRECT_URI,
-    client_type='web'
-)
+def main():
+    #Shows basic usage of the Classroom API.
+    #Prints the names of the first 10 courses the user has access to
+    creds = None
+    # The file token.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
 
-def get_google_credentials(user_id):
-    # Implement your own logic here to retrieve the saved user's access token based on the user_id.
-    # This will depend on how you are storing user tokens (e.g., database, file, etc.).
-    user_access_token = 'USER_ACCESS_TOKEN'  # Replace this with your retrieval logic.
-    if user_access_token:
-        return Credentials.from_authorized_user(access_token=user_access_token, scopes=SCOPES)
+    try:
+        service = build('classroom', 'v1', credentials=creds)
 
-def get_authorization_url(user_id):
-    # Create the authorization URL for the user to visit and grant access to their Google account.
-    # Save the user_id to the state parameter to identify the user when they return to the callback.
-    authorization_url, _ = flow.authorization_url(state=user_id)
-    return authorization_url
+        # Call the Classroom API
+        results = service.courses().list(pageSize=10).execute()
+        courses = results.get('courses', [])
 
-def get_announcements(user_id, course_id):
-    credentials = get_google_credentials(user_id)
-    if not credentials:
-        return 'Please authorize your Google account by visiting ' + get_authorization_url(user_id)
+        if not courses:
+            print('No courses found.')
+            return
+        # Prints the names of the first 10 courses.
+        print('Courses:')
+        for course in courses:
+            print(course['name'])
+
+    except HttpError as error:
+        print('An error occurred: %s' % error)
+
+
+if __name__ == '__main__':
+    main()
 
 ## connect to DB
 from pymongo import MongoClient
