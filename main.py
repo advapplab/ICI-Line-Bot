@@ -10,8 +10,8 @@ import uuid
 import requests
 import traceback
 
-from src.models import OpenAIModel
 from src.memory import Memory
+from src.models import OpenAIModel
 from src.logger import logger
 from src.storage import Storage, FileStorage, MongoStorage
 from src.utils import get_role_and_content
@@ -35,76 +35,7 @@ api_keys = {}
 
 my_secret = os.environ['OPENAI_MODEL_ENGINE']
 
-## google classroom api
-#?# link to my classroom, class number
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google_auth_oauthlib.flow import Flow
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-
-def exchange_code_for_tokens(authorization_code):
-    token_url = 'https://oauth2.googleapis.com/token'
-    client_id = 'CLIENT_ID'
-    client_secret = 'CLIENT_SECRET'
-    authorization_code = "Authorization_Code"
-    data = {
-        'code': authorization_code,
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'grant_type': 'authorization_code'
-    }
-    response = requests.post(token_url, data=data)
-    tokens = response.json()
-    return tokens
-    print(tokens)
-SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
-flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES, redirect_uri='http://localhost:58211/')
-
-def main():
-    #Shows basic usage of the Classroom API.
-    #Prints the names of the first 10 courses the user has access to
-    creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-
-    try:
-        service = build('classroom', 'v1', credentials=creds)
-
-        # Call the Classroom API
-        results = service.courses().list(pageSize=10).execute()
-        courses = results.get('courses', [])
-
-        if not courses:
-            print('No courses found.')
-            return
-        # Prints the names of the first 10 courses.
-        print('Courses:')
-        for course in courses:
-            print(course['name'])
-
-    except HttpError as error:
-        print('An error occurred: %s' % error)
-
-if __name__ == '__main__':
-    main()
-
-## connect to DB
+### connect to DB
 from pymongo import MongoClient
 mdb_user = os.getenv('MONGODB_USERNAME')
 mdb_pass = os.getenv('MONGODB_PASSWORD')
@@ -227,6 +158,33 @@ def callback():
     abort(400)
   return 'OK'    
 
+
+### function to save incorrect responses to MongoDB
+def save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response):
+  try:
+    client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' +
+                             mdb_host)
+    db = client[mdb_dbs]
+    collection = db['incorrect_responses']
+    # Create a document to store the incorrect response data
+    incorrect_data = {
+        'user_id': user_id,
+        'user_message': user_message,
+        'incorrect_response' : incorrect_response,
+    }
+    # Insert the document into the collection
+    collection.insert_one(incorrect_data)
+    client.close()
+  except Exception as e:
+    print(f"Error while saving incorrect response data: {str(e)}")
+class Memory:
+    def get_latest_user_message(self, user_id):
+        # Implement this method to get the latest user message from memory
+        pass
+    def get_latest_assistant_message(self, user_id):
+        # Implement this method to get the latest assistant message from memory
+        pass
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
   user_id = event.source.user_id
@@ -282,14 +240,17 @@ def handle_text_message(event):
       msg = ImageSendMessage(original_content_url=url, preview_image_url=url)
       memory.append(user_id, 'assistant', url)
       
-    # google classroom api 
-    elif event.message.text.startswith('announcements '):
-        course_id = event.message.text.split(' ')[1]
-        announcements = get_announcements(user_id, course_id)
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=announcements)
-        )
+      ### save incorrect responses
+    elif text.startswith('/Incorrect'):
+      # Extract the latest user and assistant messages from the memory
+      latest_user_message = memory.get_latest_user_message(user_id)
+      latest_assistant_message = memory.get_latest_assistant_message(user_id)
+      # Construct the incorrect response data
+      user_message = latest_user_message
+      incorrect_response = latest_assistant_message
+      # Save the incorrect response data to MongoDB
+      save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
+      msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
       
     # faq 
     elif relevant_answer:
@@ -360,14 +321,12 @@ def handle_text_message(event):
     elif str(e).startswith(
         'That model is currently overloaded with other requests.'):
       msg = TextSendMessage(text='The model is currently overloaded, please try again later')
-      
     else:
-      msg = TextSendMessage(text=str(e))
+     msg = TextSendMessage(text=str(e))  
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
   
-
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio_message(event):
   user_id = event.source.user_id

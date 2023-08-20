@@ -48,3 +48,17 @@ class Memory(MemoryInterface):
 
     def remove(self, user_id: str) -> None:
         self.storage[user_id] = []
+    def get_latest_user_message(self, user_id):
+        user_memory = self.get(user_id)
+        if user_memory:
+            user_messages = [message['content'] for message in user_memory if message['role'] == 'user']
+            if user_messages:
+                return user_messages[-1]
+        return None
+    def get_latest_assistant_message(self, user_id):
+        user_memory = self.get(user_id)
+        if user_memory:
+            assistant_messages = [message['content'] for message in user_memory if message['role'] == 'assistant']
+            if assistant_messages:
+                return assistant_messages[-1]
+        return None
