@@ -34,6 +34,73 @@ model_management = {}
 api_keys = {}
 
 my_secret = os.environ['OPENAI_MODEL_ENGINE']
+## google classroom api
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+def exchange_code_for_tokens(authorization_code):
+    token_url = 'https://oauth2.googleapis.com/token'
+    client_id = 'CLIENT_ID'
+    client_secret = 'CLIENT_SECRET'
+    authorization_code = "Authorization_Code"
+    data = {
+        'code': authorization_code,
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'grant_type': 'authorization_code'
+    }
+    response = requests.post(token_url, data=data)
+    tokens = response.json()
+    return tokens
+    print(tokens)
+SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
+flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES, redirect_uri='http://localhost:58211/')
+
+def main():
+    #Shows basic usage of the Classroom API.
+    #Prints the names of the first 10 courses the user has access to
+    creds = None
+    # The file token.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
+
+    try:
+        service = build('classroom', 'v1', credentials=creds)
+
+        # Call the Classroom API
+        results = service.courses().list(pageSize=10).execute()
+        courses = results.get('courses', [])
+
+        if not courses:
+            print('No courses found.')
+            return
+        # Prints the names of the first 10 courses.
+        print('Courses:')
+        for course in courses:
+            print(course['name'])
+
+    except HttpError as error:
+        print('An error occurred: %s' % error)
+
+if __name__ == '__main__':
+    main()
 
 ### connect to DB
 from pymongo import MongoClient
@@ -239,7 +306,15 @@ def handle_text_message(event):
       url = response['data'][0]['url']
       msg = ImageSendMessage(original_content_url=url, preview_image_url=url)
       memory.append(user_id, 'assistant', url)
-      
+    ### google classroom api 
+    #elif event.message.text.startswith('announcements '):
+    #    course_id = event.message.text.split(' ')[1]
+    #    announcements = get_announcements(user_id, course_id)
+    #    line_bot_api.reply_message(
+    #        event.reply_token,
+    #        TextSendMessage(text=announcements)
+    #    )
+  
       ### save incorrect responses
     elif text.startswith('/Incorrect'):
       # Extract the latest user and assistant messages from the memory
