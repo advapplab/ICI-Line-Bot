@@ -34,7 +34,11 @@ model_management = {}
 api_keys = {}
 
 my_secret = os.environ['OPENAI_MODEL_ENGINE']
-## google classroom api
+
+
+
+### google classroom api ###
+
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -42,6 +46,71 @@ from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+# include the index.html file in Python code 
+# so that it's displayed when you run your Replit project
+from http.server import HTTPServer, SimpleHTTPRequestHandler
+import threading
+# Start a simple HTTP server to serve the HTML file
+def run_server():
+    server_address = ('', 8000)
+    httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
+    httpd.serve_forever()
+if __name__ == "__main__":
+    # Start the HTTP server in a separate thread
+    server_thread = threading.Thread(target=run_server)
+    server_thread.start()
+
+
+# initialize the GoogleAuth object
+from flask import Flask, render_template_string
+import threading
+app = Flask(__name__)
+@app.route('/')
+def index():
+    return render_template_string(open("index.html").read())
+def run_flask():
+    app.run(host="0.0.0.0", port=8080)
+if __name__ == "__main__":
+    server_thread = threading.Thread(target=run_flask)
+    server_thread.start()
+
+
+# user sign in
+from flask import request, jsonify
+@app.route('/storeauthcode', methods=['POST'])
+def store_auth_code():
+    auth_code = request.data.decode('utf-8')
+    if auth_code:
+        # Store the code or perform any other necessary action
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False)
+
+
+#exchange the authorization code for access tokens
+from oauth2client import client
+import httplib2
+CLIENT_SECRET_FILE = 'client_secret.json'  # load the .json file in advance
+@app.route('/storeauthcode', methods=['POST'])
+def store_auth_code():
+    auth_code = request.data.decode('utf-8')
+
+    if auth_code:
+        credentials = client.credentials_from_clientsecrets_and_code(
+            CLIENT_SECRET_FILE,
+            ['https://www.googleapis.com/auth/classroom.courses.readonly'],
+            auth_code
+        )
+        
+        # Now you have the credentials with access token and refresh token
+        # You can use this credentials object to make API calls using Google Classroom API
+
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False)
+
+
+'''
 def exchange_code_for_tokens(authorization_code):
     token_url = 'https://oauth2.googleapis.com/token'
     client_id = 'CLIENT_ID'
@@ -59,6 +128,7 @@ def exchange_code_for_tokens(authorization_code):
     print(tokens)
 SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES, redirect_uri='http://localhost:58211/')
+'''
 
 def main():
     #Shows basic usage of the Classroom API.

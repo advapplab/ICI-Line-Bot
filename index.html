@@ -1,0 +1,17 @@
+<!-- The top of file index.html -->
+<html itemscope itemtype="http://schema.org/Article">
+<head>
+  <!-- BEGIN Pre-requisites -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+  </script>
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+  </script>
+  <!-- END Pre-requisites -->
+
+  <button id="signinButton">Sign in with Google</button>
+  <script>
+    document.getElementById('signinButton').addEventListener('click', function() {
+      auth2.grantOfflineAccess().then(signInCallback);
+    });
+  </script>
+  
