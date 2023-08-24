@@ -46,6 +46,7 @@ from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+'''
 # include the index.html file in Python code 
 # so that it's displayed when you run your Replit project
 from http.server import HTTPServer, SimpleHTTPRequestHandler
@@ -109,7 +110,7 @@ def store_auth_code():
         return jsonify(success=True)
     else:
         return jsonify(success=False)
-
+'''
 
 '''
 def exchange_code_for_tokens(authorization_code):
@@ -130,7 +131,7 @@ def exchange_code_for_tokens(authorization_code):
 SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES, redirect_uri='http://localhost:58211/')
 '''
-
+SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
 def main():
     #Shows basic usage of the Classroom API.
     #Prints the names of the first 10 courses the user has access to
