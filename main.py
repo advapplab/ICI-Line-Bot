@@ -130,8 +130,7 @@ def exchange_code_for_tokens(authorization_code):
     print(tokens)
 SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES, redirect_uri='http://localhost:58211/')
-'''
-SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
+
 def main():
     #Shows basic usage of the Classroom API.
     #Prints the names of the first 10 courses the user has access to
@@ -173,6 +172,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+''' 
 
 ### connect to DB
 from pymongo import MongoClient
@@ -368,6 +368,7 @@ def handle_text_message(event):
       memory.remove(user_id)
       msg = TextSendMessage(text='Successfully cleared history messages')
 
+'''
     elif text.startswith('/Image'):
       prompt = text[3:].strip()
       memory.append(user_id, 'user', prompt)
@@ -378,6 +379,7 @@ def handle_text_message(event):
       url = response['data'][0]['url']
       msg = ImageSendMessage(original_content_url=url, preview_image_url=url)
       memory.append(user_id, 'assistant', url)
+
     ### google classroom api 
     #elif event.message.text.startswith('announcements '):
     #    course_id = event.message.text.split(' ')[1]
@@ -386,7 +388,8 @@ def handle_text_message(event):
     #        event.reply_token,
     #        TextSendMessage(text=announcements)
     #    )
-  
+'''
+
       ### save incorrect responses
     elif text.startswith('/Incorrect'):
       # Extract the latest user and assistant messages from the memory
@@ -528,6 +531,7 @@ def home():
   return 'Hello World'
   
 if __name__ == "__main__":
+  '''
   if os.getenv('USE_MONGO'):
     mongodb.connect_to_database()
     storage = Storage(MongoStorage(mongodb.db))
@@ -539,4 +543,5 @@ if __name__ == "__main__":
       model_management[user_id] = OpenAIModel(api_key=data[user_id])
   except FileNotFoundError:
     pass
+  '''
   app.run(host='0.0.0.0', port=8080)
