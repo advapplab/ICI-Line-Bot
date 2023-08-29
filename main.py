@@ -368,17 +368,16 @@ def handle_text_message(event):
       memory.remove(user_id)
       msg = TextSendMessage(text='Successfully cleared history messages')
 
-'''
-    elif text.startswith('/Image'):
-      prompt = text[3:].strip()
-      memory.append(user_id, 'user', prompt)
-      is_successful, response, error_message = model_management[
-        user_id].image_generations(prompt)
-      if not is_successful:
-        raise Exception(error_message)
-      url = response['data'][0]['url']
-      msg = ImageSendMessage(original_content_url=url, preview_image_url=url)
-      memory.append(user_id, 'assistant', url)
+    #elif text.startswith('/Image'):
+    #  prompt = text[3:].strip()
+    #  memory.append(user_id, 'user', prompt)
+    #  is_successful, response, error_message = model_management[
+    #    user_id].image_generations(prompt)
+    #  if not is_successful:
+    #    raise Exception(error_message)
+    #  url = response['data'][0]['url']
+    #  msg = ImageSendMessage(original_content_url=url, preview_image_url=url)
+    #  memory.append(user_id, 'assistant', url)
 
     ### google classroom api 
     #elif event.message.text.startswith('announcements '):
@@ -388,7 +387,6 @@ def handle_text_message(event):
     #        event.reply_token,
     #        TextSendMessage(text=announcements)
     #    )
-'''
 
       ### save incorrect responses
     elif text.startswith('/Incorrect'):
