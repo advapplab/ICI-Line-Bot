@@ -494,7 +494,7 @@ def handle_image_message(event):
 
     line_bot_api.reply_message(
         event.reply_token,
-        TextMessage(text="Image has been saved!")
+        msg = TextMessage(text="Image has been saved!")
     )
 
 
