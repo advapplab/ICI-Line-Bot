@@ -477,6 +477,7 @@ def handle_text_message(event):
 
 
 ### store images
+# but currently unsuccessful :(
 from gridfs import GridFS
 
 @handler.add(MessageEvent, message=ImageMessage)
