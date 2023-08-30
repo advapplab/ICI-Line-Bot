@@ -3,7 +3,7 @@ from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage,
-                            ImageSendMessage, AudioMessage)
+                            ImageSendMessage, AudioMessage, ImageMessage)
 import os
 import os.path
 import uuid
@@ -473,7 +473,32 @@ def handle_text_message(event):
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
-  
+
+
+
+### store images
+from gridfs import GridFS
+
+@handler.add(MessageEvent, message=ImageMessage)
+def handle_image_message(event):
+    client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
+    db = client[mdb_dbs]
+    fs = GridFS(db, collection="images")
+    message_id = event.message.id
+    message_content = line_bot_api.get_message_content(message_id)
+    
+    # Save image to MongoDB using GridFS
+    with fs.new_file(filename=f"{message_id}.jpg") as image_file:
+        for chunk in message_content.iter_content(chunk_size=1024):
+            image_file.write(chunk)
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextMessage(text="Image has been saved!")
+    )
+
+
+
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio_message(event):
   user_id = event.source.user_id
