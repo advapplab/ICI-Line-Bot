@@ -38,7 +38,7 @@ my_secret = os.environ['OPENAI_MODEL_ENGINE']
 
 
 ### google classroom api ###
-
+'''
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -46,7 +46,6 @@ from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-'''
 # include the index.html file in Python code 
 # so that it's displayed when you run your Replit project
 from http.server import HTTPServer, SimpleHTTPRequestHandler
@@ -199,7 +198,7 @@ def extract_message_info(message):
   else:
     return None
     
-## also for fixing message format problem
+## also for fixing message format
 def get_bot_reply_text(bot_reply):
   if hasattr(bot_reply, "text"):
     return bot_reply.text
@@ -388,7 +387,7 @@ def handle_text_message(event):
     #        TextSendMessage(text=announcements)
     #    )
 
-      ### save incorrect responses
+  ### save incorrect responses
     elif text.startswith('/Incorrect'):
       # Extract the latest user and assistant messages from the memory
       latest_user_message = memory.get_latest_user_message(user_id)
@@ -400,7 +399,7 @@ def handle_text_message(event):
       save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
       msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
       
-    # faq 
+  ### faq 
     elif relevant_answer:
       if relevant_answer == get_relevant_answer_from_faq(text, 'faq'):
          relevant_answer = '(form FAQ Database)\n' + relevant_answer
