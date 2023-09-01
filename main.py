@@ -342,7 +342,7 @@ def handle_text_message(event):
     if not is_successful:
       raise ValueError('Invalid API token')
     model_management[user_id] = model
-    storage.save({user_id: api_key})
+    #storage.save({user_id: api_key})
     
     if text.startswith('/Register'):
        #api_key = text[3:].strip()
