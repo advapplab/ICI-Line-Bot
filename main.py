@@ -342,6 +342,7 @@ def handle_text_message(event):
     if not is_successful:
       raise ValueError('Invalid API token')
     model_management[user_id] = model
+    ### make the below line a comment so that user id and their api key won't be save to the db.json file
     #storage.save({user_id: api_key})
     
     if text.startswith('/Register'):
