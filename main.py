@@ -402,6 +402,11 @@ def handle_text_message(event):
       
   ### faq 
     elif relevant_answer:
+        if relevant_answer != 'I am sorry, but we are currently unable to find the answer':
+        msg = TextSendMessage(text=relevant_answer)
+        memory.append(user_id, 'assistant', relevant_answer)
+        response = relevant_answer  
+      '''
       if relevant_answer == get_relevant_answer_from_faq(text, 'faq'):
          relevant_answer = '(form FAQ Database)\n' + relevant_answer
          msg = TextSendMessage(text = relevant_answer)
@@ -418,7 +423,7 @@ def handle_text_message(event):
           msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
           memory.append(user_id, 'assistant', relevant_answer)
           response = relevant_answer
-        
+        '''
     else:
       user_model = model_management[user_id]
       memory.append(user_id, 'user', text)
