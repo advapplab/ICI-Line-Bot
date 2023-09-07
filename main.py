@@ -402,11 +402,15 @@ def handle_text_message(event):
       
 ### faq   
     elif relevant_answer:  
-        if relevant_answer == '(from FAQ Database)\nI am sorry, but we are currently unable to find the answer':
-        # This means the user's question was not found in the FAQ database
-           msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
-           memory.append(user_id, 'assistant', msg)
-           response = msg
+        if relevant_answer == get_relevant_answer_from_faq(text, 'faq'):
+           relevant_answer = '(form FAQ Database)\n' + relevant_answer
+           msg = TextSendMessage(text = relevant_answer)
+           memory.append(user_id, 'assistant', relevant_answer)
+           response = relevant_answer
+        elif relevant_answer == '(from FAQ Database)\nI am sorry, but we are currently unable to find the answer':
+             msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
+             memory.append(user_id, 'assistant', msg)
+             response = msg
         else:
            msg = TextSendMessage(text=relevant_answer)
            memory.append(user_id, 'assistant', relevant_answer)
