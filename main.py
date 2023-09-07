@@ -400,18 +400,6 @@ def handle_text_message(event):
       save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
       msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
       
-  ### faq   
-    elif relevant_answer:
-      if relevant_answer == get_relevant_answer_from_faq(text, 'faq'):
-         relevant_answer = '(form FAQ Database)\n' + relevant_answer
-         msg = TextSendMessage(text = relevant_answer)
-         memory.append(user_id, 'assistant', relevant_answer)
-         response = relevant_answer
-      else:
-         msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
-         memory.append(user_id, 'assistant', relevant_answer)
-         response = msg
-
     else:
       user_model = model_management[user_id]
       memory.append(user_id, 'user', text)
@@ -457,6 +445,21 @@ def handle_text_message(event):
   except Exception as e:
     memory.remove(user_id)
     
+### faq   
+    if relevant_answer:
+       relevant_answer = '(from FAQ Database)\n' + relevant_answer
+       msg = TextSendMessage(text=relevant_answer)
+       memory.append(user_id, 'assistant', relevant_answer)
+       response = relevant_answer
+    else:
+    # Handle the case when no relevant answer was found
+       msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
+       memory.append(user_id, 'assistant', msg)
+       response = msg
+    except Exception as e:
+        # Handle exceptions as needed
+        pass
+
     if str(e).startswith('Incorrect API key provided'):
       msg = TextSendMessage(text='OpenAI API Token is invalid, please re-register')
     elif str(e).startswith(
