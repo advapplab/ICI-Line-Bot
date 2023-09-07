@@ -400,40 +400,17 @@ def handle_text_message(event):
       save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
       msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
       
-### faq   
-  ### faq   
-    elif relevant_answer:
-        #if relevant_answer == '(from FAQ Database)\nI am sorry, but we are currently unable to find the answer':
-        ## This means the user's question was not found in the FAQ database
-        #   msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
-        #   memory.append(user_id, 'assistant', msg)
-        #   response = msg
-        #elif:
-        #   msg = TextSendMessage(text=relevant_answer)
-        #   memory.append(user_id, 'assistant', relevant_answer)
-        #   response = msg
-        #else:
-        ## Handle the case when no relevant answer was found in the FAQ database
-        #  msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
-        #  memory.append(user_id, 'assistant', msg)
-        #  response = msg     
-
+### faq     
+    elif relevant_answer:  
         if relevant_answer == get_relevant_answer_from_faq(text, 'faq'):
            relevant_answer = '(form FAQ Database)\n' + relevant_answer
            msg = TextSendMessage(text = relevant_answer)
            memory.append(user_id, 'assistant', relevant_answer)
            response = relevant_answer
         else:
-           relevant_answer = get_relevant_answer_from_faq(text, 'manual')
-           if relevant_answer:
-              relevant_answer = '(from FAQ Database)\n' + relevant_answer
-              msg = TextSendMessage(text=relevant_answer)
-              memory.append(user_id, 'assistant', relevant_answer)
-              response = relevant_answer
-           else:
-              msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
-              memory.append(user_id, 'assistant', relevant_answer)
-              response = msg
+           msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
+           memory.append(user_id, 'assistant', relevant_answer)
+           response = msg
   
     else:
       user_model = model_management[user_id]
