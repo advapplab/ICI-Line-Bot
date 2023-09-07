@@ -406,7 +406,7 @@ def handle_text_message(event):
             msg = TextSendMessage(text=relevant_answer)
             memory.append(user_id, 'assistant', relevant_answer)
             response = relevant_answer
-        else:
+         else:
         # Handle the case when no relevant answer was found
             msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
             memory.append(user_id, 'assistant', msg)
