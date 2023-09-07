@@ -401,22 +401,17 @@ def handle_text_message(event):
       msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
       
   ### faq   
+    elif relevant_answer:
       if relevant_answer == get_relevant_answer_from_faq(text, 'faq'):
          relevant_answer = '(form FAQ Database)\n' + relevant_answer
          msg = TextSendMessage(text = relevant_answer)
          memory.append(user_id, 'assistant', relevant_answer)
          response = relevant_answer
       else:
-         relevant_answer = get_relevant_answer_from_faq(text, 'manual')
-        if relevant_answer:
-           relevant_answer = '(from FAQ Database)\n' + relevant_answer
-           msg = TextSendMessage(text=relevant_answer)
-           memory.append(user_id, 'assistant', relevant_answer)
-           response = relevant_answer
-        else:
-           msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
-           memory.append(user_id, 'assistant', relevant_answer)
-           response = msg
+         msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
+         memory.append(user_id, 'assistant', relevant_answer)
+         response = msg
+
     else:
       user_model = model_management[user_id]
       memory.append(user_id, 'user', text)
