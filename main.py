@@ -346,7 +346,7 @@ def handle_text_message(event):
     #storage.save({user_id: api_key})
 
     ## set the role
-    prompt = text[5:].strip()
+    prompt = text.strip()
     system_prompt = (
         "You are a teaching assistant for a beginner python programming language class.\n"
         "Do not answer questions that are unrelated to a python programming language class.\n"
