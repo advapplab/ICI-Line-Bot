@@ -234,7 +234,7 @@ def store_history_message(user_id, display_name, text, user_timestamp, bot_reply
   except Exception as e:
     print(f"Error inserting document: {e}")
 
-##FAQ
+### FAQ ###
 hf_token = os.getenv('HUGGINGFACE_TOKEN')
 hf_sbert_model = os.getenv('HUGGINGFACE_SBERT_MODEL')
 bot_sbert_th = float(os.getenv('BOT_SBERT_TH'))
@@ -281,7 +281,7 @@ def get_relevant_answer_from_faq(user_question, type):
   except Exception as e:
     print(f"Error while querying MongoDB: {str(traceback.print_exc())}")
     return None
-    
+
 @app.route("/callback", methods=['POST'])
 def callback():
   signature = request.headers['X-Line-Signature']
@@ -344,6 +344,18 @@ def handle_text_message(event):
     model_management[user_id] = model
     ### make the below line a comment so that user id and their api key won't be save to the db.json file
     #storage.save({user_id: api_key})
+
+    ## set the role
+    prompt = text[5:].strip()
+    system_prompt = (
+        "You are a teaching assistant for a beginner python programming language class.\n"
+        "Do not answer questions that are unrelated to a python programming language class.\n"
+        "In various scenarios, follow these rules:\n"
+        "1: Respond in English.\n"
+        "2: Never reveal your true identity. You are a teaching assistant.\n"
+        "3: If the message received is unrelated to a python programming language class, ask them to ask a valid question.\n"
+        "4: Always generate example codes in python programming language.")
+    memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
     
     if text.startswith('/Register'):
        #api_key = text[3:].strip()
@@ -360,9 +372,9 @@ def handle_text_message(event):
         text=
         'Instructions: \n\n/System Information + Prompt\n👉 Use Prompt to instruct the AI to play a specific role. For example: "Please play the role of someone good at summarizing."\n\n/Clear\n👉 By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Image + Prompt\n👉 Generate images based on textual prompts with DALL∙E 2 Model.For example: "/Image + cat"\n\n/Voice Input\n👉 Utilizes the Whisper model to convert speech to text and then calls ChatGPT to respond in text.\n\nOther Text Input\n👉 Calls ChatGPT to respond in text for other textual inputs.')
       
-    elif text.startswith('/System Information'):
-      memory.change_system_message(user_id, text[5:].strip())
-      msg = TextSendMessage(text='Input successful')
+    #elif text.startswith('/System Information'):
+    #  memory.change_system_message(user_id, text[5:].strip())
+    #  msg = TextSendMessage(text='Input successful')
       
     elif text.startswith('/Clear'):
       memory.remove(user_id)
@@ -468,32 +480,7 @@ def handle_text_message(event):
   store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
 
-
-
-### store images
-# but currently unsuccessful :(
-from gridfs import GridFS
-
-@handler.add(MessageEvent, message=ImageMessage)
-def handle_image_message(event):
-    client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
-    db = client[mdb_dbs]
-    fs = GridFS(db, collection="images")
-    message_id = event.message.id
-    message_content = line_bot_api.get_message_content(message_id)
-    
-    # Save image to MongoDB using GridFS
-    with fs.new_file(filename=f"{message_id}.jpg") as image_file:
-        for chunk in message_content.iter_content(chunk_size=1024):
-            image_file.write(chunk)
-
-    line_bot_api.reply_message(
-        event.reply_token,
-        msg = TextMessage(text="Image has been saved!")
-    )
-
-
-
+'''
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio_message(event):
   user_id = event.source.user_id
@@ -535,6 +522,7 @@ def handle_audio_message(event):
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
   os.remove(input_audio_path)
+'''
 
 # make sure the connection close after processing all message
 import atexit
