@@ -402,19 +402,15 @@ def handle_text_message(event):
       
 ### faq     
     elif relevant_answer:
-        if relevant_answer == answer['Answer']:
-           relevant_answer = '(form FAQ Database)\n' + relevant_answer
-           msg = TextSendMessage(text = relevant_answer)
-           memory.append(user_id, 'assistant', relevant_answer)
-           response = relevant_answer
-        elif relevant_answer is None:
-             msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
-             memory.append(user_id, 'assistant', msg)
-             response = msg
+        if relevant_answer is not None:
+            relevant_answer = '(from FAQ Database)\n' + relevant_answer
+            msg = TextSendMessage(text=relevant_answer)
+            memory.append(user_id, 'assistant', relevant_answer)
+            response = relevant_answer
         else:
-           msg = TextSendMessage(text=relevant_answer)
-           memory.append(user_id, 'assistant', relevant_answer)
-           response = relevant_answer
+            msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
+            memory.append(user_id, 'assistant', msg)
+            response = msg
 
     else:
       user_model = model_management[user_id]
