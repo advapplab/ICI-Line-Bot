@@ -359,15 +359,21 @@ def handle_text_message(event):
     if text.startswith('/Register'):
        # Extract the student ID from the message
        student_id = text[len('/Register'):].strip()
-       # Check if the student ID is valid
-       if not student_id:
-          msg = TextSendMessage(text='Please provide a valid student ID.')
-       elif storage.exists(student_id):
-        msg = TextSendMessage(text='Student ID already registered. Please re-register with a different ID.')
+       # Create a Storage wrapper
+       storage_wrapper = Storage(storage)
+       # Load existing data from the JSON file
+       existing_data = storage_wrapper.load()
+
+       if user_id in existing_data:
+          print('Student ID already registered.')
        else:
-        #storage_data = {'student_id': student_id}
-        storage.save({user_id: student_id})
-        msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+          # Save the student ID to the JSON file
+          existing_data[user_id] = student_id
+          storage_wrapper.save(existing_data)
+          print(f'Registration successful for student ID: {student_id}')
+          
+        ##storage.save({user_id: student_id})
+
 
     elif text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
@@ -543,7 +549,9 @@ if __name__ == "__main__":
   #  mongodb.connect_to_database()
   #  storage = Storage(MongoStorage(mongodb.db))
   #else:
-  storage = Storage(FileStorage('db.json'))
+  ## student id register ##
+  storage = Storage(FileStorage('student_id.json'))
+  
   try:
     data = storage.load()
     for user_id in data.keys():
