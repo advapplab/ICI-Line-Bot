@@ -365,8 +365,8 @@ def handle_text_message(event):
        elif storage.exists(student_id):
         msg = TextSendMessage(text='Student ID already registered. Please re-register with a different ID.')
        else:
-        storage_data = {'student_id': student_id}
-        storage.save({user_id: storage_data})
+        #storage_data = {'student_id': student_id}
+        storage.save({user_id: student_id})
         msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
 
     elif text.startswith('/Instruction explanation'):
