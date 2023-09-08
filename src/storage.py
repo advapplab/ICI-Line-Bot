@@ -76,10 +76,10 @@ class MongoStorage:
 ###
 
     def load(self):
-        data = list(self.db['api_key'].find())
+        data = list(self.db['student_id'].find())
         res = {}
         for i in range(len(data)):
-            res[data[i]['user_id']] = data[i]['api_key']
+            res[data[i]['user_id']] = data[i]['student_id']
         return res
 
 
