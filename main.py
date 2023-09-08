@@ -346,7 +346,7 @@ def handle_text_message(event):
 
   if user_id not in existing_data:
   # User is not registered, respond with a message asking them to register
-     print('You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
+     msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
   else:
      # User is already registered, continue with the conversation
      student_id = existing_data[user_id]
