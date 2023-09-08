@@ -377,13 +377,13 @@ def handle_text_message(event):
        # User is not registered, prompt them to register
        if text.startswith('/Register'):
           student_id = text[len('/Register'):].strip()
-           if user_id in existing_data:
-              msg = TextSendMessage(text='Student ID already registered.')
-           else:
-              # Save the registration message to the JSON file
-              existing_data[user_id] = student_id
-              storage_wrapper.save(existing_data)
-              msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+          if user_id in existing_data:
+             msg = TextSendMessage(text='Student ID already registered.')
+          else:
+             # Save the registration message to the JSON file
+             existing_data[user_id] = student_id
+             storage_wrapper.save(existing_data)
+             msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
        else:
           msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
 
