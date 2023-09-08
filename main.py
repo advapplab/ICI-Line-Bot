@@ -359,14 +359,6 @@ def handle_text_message(event):
     
     if text.startswith('/Register'):
        student_id = text[len('/Register'):].strip()
-
-       #model = OpenAIModel(api_key=api_key)
-       #is_successful, _, _ = model.check_token_valid()
-       #if not is_successful:
-          #raise ValueError('Invalid API token')
-       #model_management[user_id] = model
-       ##### storage.save({user_id: student_id})
-
        # Initialize the FileStorage with a JSON file name
        file_storage = FileStorage("student_id.json")
        # Create a Storage wrapper
