@@ -345,7 +345,8 @@ def handle_text_message(event):
   existing_data = storage_wrapper.load()
 
   try:
-    ## auto resister
+
+    ## auto resister ##
     api_key = os.getenv('OPENAI_KEY')
     model = OpenAIModel(api_key = api_key)
     is_successful, _, _ = model.check_token_valid()
@@ -355,7 +356,7 @@ def handle_text_message(event):
     ### make the below line a comment so that user id and their api key won't be save to the db.json file
     #storage.save({user_id: api_key})
 
-    ## set the role
+    ## set the role ##
     prompt = text.strip()
     system_prompt = (
         "You are a teaching assistant for a beginner python programming language class.\n"
@@ -365,7 +366,28 @@ def handle_text_message(event):
         "If the message received is unrelated to a python programming language class, ask them to ask a valid question that is related to the class.\n"
         "Always generate example codes in python programming language.")
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
-    
+
+    ## student id register ##
+    # Check if the user ID exists in the JSON data
+    if user_id in existing_data:
+       # User is already registered, continue with the conversation
+       student_id = existing_data[user_id]
+       # msg = TextSendMessage(text=f'Welcome back! Your student ID is: {student_id}')
+    else:
+       # User is not registered, prompt them to register
+       if text.startswith('/Register'):
+          student_id = text[len('/Register'):].strip()
+           if user_id in existing_data:
+              msg = TextSendMessage(text='Student ID already registered.')
+           else:
+              # Save the registration message to the JSON file
+              existing_data[user_id] = student_id
+              storage_wrapper.save(existing_data)
+              msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+       else:
+          msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
+
+'''
     if user_id not in existing_data:
     # User is not registered, respond with a message asking them to register
        msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
@@ -379,8 +401,8 @@ def handle_text_message(event):
           existing_data[user_id] = student_id
           storage_wrapper.save(existing_data)
           msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
-
-    elif text.startswith('/Instruction explanation'):
+'''
+    if text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
         text=
         'Instructions: \n\n/System Information + Prompt\n👉 Use Prompt to instruct the AI to play a specific role. For example: "Please play the role of someone good at summarizing."\n\n/Clear\n👉 By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Image + Prompt\n👉 Generate images based on textual prompts with DALL∙E 2 Model.For example: "/Image + cat"\n\n/Voice Input\n👉 Utilizes the Whisper model to convert speech to text and then calls ChatGPT to respond in text.\n\nOther Text Input\n👉 Calls ChatGPT to respond in text for other textual inputs.')
