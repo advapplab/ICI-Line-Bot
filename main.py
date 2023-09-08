@@ -364,7 +364,7 @@ def handle_text_message(event):
           #raise ValueError('Invalid API token')
        #model_management[user_id] = model
        storage.save({user_id: student_id})
-       msg = TextSendMessage(text=f'Registration successful for student ID: {student_id})
+       msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
 
     elif text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
