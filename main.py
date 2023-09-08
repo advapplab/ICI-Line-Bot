@@ -205,12 +205,14 @@ def get_bot_reply_text(bot_reply):
   else:
     return ""
 
-## timestamp, time difference, and insert message into DB
+## timestamp, time difference
+### and insert message into DB ###
 import time
 import pytz
 import datetime
 from datetime import datetime
 from pytz import timezone
+
 def store_history_message(user_id, display_name, text, user_timestamp, bot_reply, bot_timestamp):
   try:
     bot_reply_text = get_bot_reply_text(bot_reply)
@@ -330,7 +332,7 @@ def handle_text_message(event):
   user_timestamp = int(time.time() * 1000)
   text = event.message.text.strip()
   logger.info(f'{user_id}: {text}')
-  ## get line user's display name
+  ## get line user's display name ##
   profile = line_bot_api.get_profile(user_id)
   display_name = profile.display_name
   relevant_answer = get_relevant_answer_from_faq(text, 'faq')
