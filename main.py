@@ -208,6 +208,7 @@ def get_bot_reply_text(bot_reply):
 ## timestamp, time difference, and insert message into DB
 import time
 import pytz
+import datetime
 from datetime import datetime
 from pytz import timezone
 def store_history_message(user_id, display_name, text, user_timestamp, bot_reply, bot_timestamp):
@@ -358,13 +359,29 @@ def handle_text_message(event):
     
     if text.startswith('/Register'):
        student_id = text[len('/Register'):].strip()
+
        #model = OpenAIModel(api_key=api_key)
        #is_successful, _, _ = model.check_token_valid()
        #if not is_successful:
           #raise ValueError('Invalid API token')
        #model_management[user_id] = model
-       storage.save({user_id: student_id})
-       msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+       ##### storage.save({user_id: student_id})
+
+       # Initialize the FileStorage with a JSON file name
+       file_storage = FileStorage("db.json")
+       # Create a Storage wrapper
+       storage_wrapper = Storage(file_storage)  
+       # Load existing data from the JSON file
+       existing_data = storage_wrapper.load()
+
+       if user_id in existing_data:
+          print('Student ID already registered. Please re-register with a different ID.')
+       else:
+          # Save the registration message to the JSON file
+          existing_data[user_id] = student_id
+          storage_wrapper.save(existing_data)
+          print(f'Registration successful for student ID: {student_id}') 
+       ##### msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
 
     elif text.startswith('/Instruction explanation'):
       msg = TextSendMessage(

@@ -1,6 +1,4 @@
 import json
-import datetime
-
 
 class FileStorage:
     def __init__(self, file_name):
@@ -12,19 +10,36 @@ class FileStorage:
         with open(self.fine_name, 'w', newline='') as f:
             json.dump(self.history, f)
 
+    def load(self):
+        try:
+            with open(self.file_name, 'r', newline='') as f:
+                self.history = json.load(f)
+        except FileNotFoundError:
+            self.history = {}
+        return self.history
+        
     #def load(self):
     #    with open(self.fine_name, newline='') as jsonfile:
     #        data = json.load(jsonfile)
     #    self.history = data
     #    return self.history
 
-    def load(self):
-        data = list(self.db['student_id'].find())
-        res = {}
-        for i in range(len(data)):
-            res[data[i]['user_id']] = data[i]['student_id']
-        return res
+    #def load(self):
+    #    data = list(self.db['student_id'].find())
+    #    res = {}
+    #    for i in range(len(data)):
+    #        res[data[i]['user_id']] = data[i]['student_id']
+    #    return res
 
+class Storage:
+    def __init__(self, storage):
+        self.storage = storage
+
+    def save(self, data):
+        self.storage.save(data)
+
+    def load(self):
+        return self.storage.load()
 
 '''
 # solve duplicate user
@@ -83,13 +98,3 @@ class FileStorage:
             )
 ###
 '''
-
-class Storage:
-    def __init__(self, storage):
-        self.storage = storage
-
-    def save(self, data):
-        self.storage.save(data)
-
-    def load(self):
-        return self.storage.load()
