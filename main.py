@@ -205,14 +205,12 @@ def get_bot_reply_text(bot_reply):
   else:
     return ""
 
-## timestamp, time difference
-### and insert message into DB ###
+## timestamp, time difference, and insert message into DB
 import time
 import pytz
 import datetime
 from datetime import datetime
 from pytz import timezone
-
 def store_history_message(user_id, display_name, text, user_timestamp, bot_reply, bot_timestamp):
   try:
     bot_reply_text = get_bot_reply_text(bot_reply)
@@ -332,14 +330,13 @@ def handle_text_message(event):
   user_timestamp = int(time.time() * 1000)
   text = event.message.text.strip()
   logger.info(f'{user_id}: {text}')
-  ## get line user's display name ##
+  ## get line user's display name
   profile = line_bot_api.get_profile(user_id)
   display_name = profile.display_name
   relevant_answer = get_relevant_answer_from_faq(text, 'faq')
 
   try:
-
-    ## auto resister ##
+    ## auto resister
     api_key = os.getenv('OPENAI_KEY')
     model = OpenAIModel(api_key = api_key)
     is_successful, _, _ = model.check_token_valid()
@@ -349,7 +346,7 @@ def handle_text_message(event):
     ### make the below line a comment so that user id and their api key won't be save to the db.json file
     #storage.save({user_id: api_key})
 
-    ## set the role ##
+    ## set the role
     prompt = text.strip()
     system_prompt = (
         "You are a teaching assistant for a beginner python programming language class.\n"
@@ -359,48 +356,25 @@ def handle_text_message(event):
         "If the message received is unrelated to a python programming language class, ask them to ask a valid question that is related to the class.\n"
         "Always generate example codes in python programming language.")
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
+    
+    if text.startswith('/Register'):
+       student_id = text[len('/Register'):].strip()
+       # Initialize the FileStorage with a JSON file name
+       file_storage = FileStorage("student_id.json")
+       # Create a Storage wrapper
+       storage_wrapper = Storage(file_storage)  
+       # Load existing data from the JSON file
+       existing_data = storage_wrapper.load()
 
-    ## student id register ##
-    # Initialize the FileStorage with a JSON file name
-    file_storage = FileStorage("student_id.json")
-    # Create a Storage wrapper
-    storage_wrapper = Storage(file_storage)  
-    # Load existing data from the JSON file
-    existing_data = storage_wrapper.load()
-    # Check if the user ID exists in the JSON data
-    if user_id in existing_data:
-       # User is already registered, continue with the conversation
-       student_id = existing_data[user_id]
-       # msg = TextSendMessage(text=f'Welcome back! Your student ID is: {student_id}')
-    else:
-       # User is not registered, prompt them to register
-       if text.startswith('/Register'):
-          student_id = text[len('/Register'):].strip()
-          if user_id in existing_data:
-             msg = TextSendMessage(text='Student ID already registered.')
-          else:
-             # Save the registration message to the JSON file
-             existing_data[user_id] = student_id
-             storage_wrapper.save(existing_data)
-             msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+       if user_id in existing_data:
+          msg = TextSendMessage(text='Student ID already registered.')
        else:
-          msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
-
-    #if user_id not in existing_data:
-    # User is not registered, respond with a message asking them to register
-    #   msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
-
-    #elif text.startswith('/Register'):
-    #   student_id = text[len('/Register'):].strip()
-    #   if user_id in existing_data:
-    #      msg = TextSendMessage(text='Student ID already registered.')
-    #   else:
           # Save the registration message to the JSON file
-    #      existing_data[user_id] = student_id
-    #      storage_wrapper.save(existing_data)
-    #      msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+          existing_data[user_id] = student_id
+          storage_wrapper.save(existing_data)
+          msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
 
-    if text.startswith('/Instruction explanation'):
+    elif text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
         text=
         'Instructions: \n\n/System Information + Prompt\n👉 Use Prompt to instruct the AI to play a specific role. For example: "Please play the role of someone good at summarizing."\n\n/Clear\n👉 By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Image + Prompt\n👉 Generate images based on textual prompts with DALL∙E 2 Model.For example: "/Image + cat"\n\n/Voice Input\n👉 Utilizes the Whisper model to convert speech to text and then calls ChatGPT to respond in text.\n\nOther Text Input\n👉 Calls ChatGPT to respond in text for other textual inputs.')
