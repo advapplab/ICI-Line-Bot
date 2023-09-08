@@ -375,13 +375,12 @@ def handle_text_message(event):
        existing_data = storage_wrapper.load()
 
        if user_id in existing_data:
-          print('Student ID already registered. Please re-register with a different ID.')
+          msg = TextSendMessage(text='Student ID already registered.')
        else:
           # Save the registration message to the JSON file
           existing_data[user_id] = student_id
           storage_wrapper.save(existing_data)
-          print(f'Registration successful for student ID: {student_id}') 
-       ##### msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+          msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
 
     elif text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
