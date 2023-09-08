@@ -7,7 +7,7 @@ class FileStorage:
 
     def save(self, data):
         self.history.update(data)
-        with open(self.fine_name, 'w', newline='') as f:
+        with open(self.file_name, 'w', newline='') as f:
             json.dump(self.history, f)
 
     def load(self):
@@ -17,7 +17,7 @@ class FileStorage:
         except FileNotFoundError:
             self.history = {}
         return self.history
-        
+
     #def load(self):
     #    with open(self.fine_name, newline='') as jsonfile:
     #        data = json.load(jsonfile)
