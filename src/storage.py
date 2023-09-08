@@ -7,11 +7,36 @@ class FileStorage:
         self.fine_name = file_name
         self.history = {}
 
-#    def save(self, data):
-#        self.history.update(data)
-#        with open(self.fine_name, 'w', newline='') as f:
-#            json.dump(self.history, f)
+    def save(self, data):
+        self.history.update(data)
+        with open(self.fine_name, 'w', newline='') as f:
+            json.dump(self.history, f)
 
+    def load(self):
+        with open(self.fine_name, newline='') as jsonfile:
+            data = json.load(jsonfile)
+        self.history = data
+        return self.history
+
+    #def load(self):
+        # Simulate loading data from a JSON file.
+        # You can implement your own file loading logic here.
+    #    try:
+    #        with open(self.file_name, 'r') as file:
+    #            data = json.load(file)
+    #        return data
+    #    except FileNotFoundError:
+    #        return {}
+
+    #def load(self):
+    #    data = list(self.db['student_id'].find())
+    #    res = {}
+    #    for i in range(len(data)):
+    #        res[data[i]['user_id']] = data[i]['student_id']
+    #    return res
+
+
+'''
 # solve duplicate user
     def save(self, data):
         # Load existing data
@@ -23,18 +48,11 @@ class FileStorage:
         # Save the updated data to the file
         with open(self.fine_name, 'w', newline='') as f:
             json.dump(existing_data, f)
-###
-
-    def load(self):
-        with open(self.fine_name, newline='') as jsonfile:
-            data = json.load(jsonfile)
-        self.history = data
-        return self.history
 
 
-class MongoStorage:
-    def __init__(self, db):
-        self.db = db
+#class MongoStorage:
+#    def __init__(self, db):
+#        self.db = db
 
 #    def save(self, data):
 #        user_id, api_key = list(data.items())[0]
@@ -74,14 +92,7 @@ class MongoStorage:
                 }
             )
 ###
-
-    def load(self):
-        data = list(self.db['student_id'].find())
-        res = {}
-        for i in range(len(data)):
-            res[data[i]['user_id']] = data[i]['student_id']
-        return res
-
+'''
 
 class Storage:
     def __init__(self, storage):
