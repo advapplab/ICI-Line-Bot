@@ -344,13 +344,6 @@ def handle_text_message(event):
   # Load existing data from the JSON file
   existing_data = storage_wrapper.load()
 
-  if user_id not in existing_data:
-  # User is not registered, respond with a message asking them to register
-     msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
-  else:
-     # User is already registered, continue with the conversation
-     student_id = existing_data[user_id]
-
   try:
     ## auto resister
     api_key = os.getenv('OPENAI_KEY')
@@ -373,7 +366,11 @@ def handle_text_message(event):
         "Always generate example codes in python programming language.")
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
     
-    if text.startswith('/Register'):
+    if user_id not in existing_data:
+    # User is not registered, respond with a message asking them to register
+       msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
+
+    elif text.startswith('/Register'):
        student_id = text[len('/Register'):].strip()
        if user_id in existing_data:
           msg = TextSendMessage(text='Student ID already registered.')
