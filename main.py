@@ -13,7 +13,7 @@ import traceback
 from src.memory import Memory
 from src.models import OpenAIModel
 from src.logger import logger
-from src.storage import Storage, FileStorage #, MongoStorage
+from src.storage import Storage, FileStorage, MongoStorage
 from src.utils import get_role_and_content
 from src.service.youtube import Youtube, YoutubeTranscriptReader
 from src.service.website import Website, WebsiteReader
@@ -335,7 +335,7 @@ def handle_text_message(event):
   relevant_answer = get_relevant_answer_from_faq(text, 'faq')
 
   try:
-    ## auto resister ##
+    ## auto resister
     api_key = os.getenv('OPENAI_KEY')
     model = OpenAIModel(api_key = api_key)
     is_successful, _, _ = model.check_token_valid()
@@ -345,7 +345,7 @@ def handle_text_message(event):
     ### make the below line a comment so that user id and their api key won't be save to the db.json file
     #storage.save({user_id: api_key})
 
-    ## set the role ##
+    ## set the role
     prompt = text.strip()
     system_prompt = (
         "You are a teaching assistant for a beginner python programming language class.\n"
@@ -357,23 +357,14 @@ def handle_text_message(event):
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
     
     if text.startswith('/Register'):
-       # Extract the student ID from the message
        student_id = text[len('/Register'):].strip()
-       # Create a Storage wrapper
-       storage_wrapper = Storage(storage)
-       # Load existing data from the JSON file
-       existing_data = storage_wrapper.load()
-
-       if user_id in existing_data:
-          print('Student ID already registered.')
-       else:
-          # Save the student ID to the JSON file
-          existing_data[user_id] = student_id
-          storage_wrapper.save(existing_data)
-          print(f'Registration successful for student ID: {student_id}')
-          
-        ##storage.save({user_id: student_id})
-
+       #model = OpenAIModel(api_key=api_key)
+       #is_successful, _, _ = model.check_token_valid()
+       #if not is_successful:
+          #raise ValueError('Invalid API token')
+       #model_management[user_id] = model
+       storage.save({user_id: student_id})
+       msg = TextSendMessage(text=f'Registration successful for student ID: {student_id})
 
     elif text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
@@ -549,9 +540,7 @@ if __name__ == "__main__":
   #  mongodb.connect_to_database()
   #  storage = Storage(MongoStorage(mongodb.db))
   #else:
-  ## student id register ##
-  storage = Storage(FileStorage('student_id.json'))
-  
+  storage = Storage(FileStorage('db.json'))
   try:
     data = storage.load()
     for user_id in data.keys():
