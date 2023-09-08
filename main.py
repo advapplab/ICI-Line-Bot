@@ -337,6 +337,20 @@ def handle_text_message(event):
   display_name = profile.display_name
   relevant_answer = get_relevant_answer_from_faq(text, 'faq')
 
+  # Initialize the FileStorage with a JSON file name
+  file_storage = FileStorage("student_id.json")
+  # Create a Storage wrapper
+  storage_wrapper = Storage(file_storage)  
+  # Load existing data from the JSON file
+  existing_data = storage_wrapper.load()
+
+  if user_id not in existing_data:
+  # User is not registered, respond with a message asking them to register
+     print('You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
+  else:
+     # User is already registered, continue with the conversation
+     student_id = existing_data[user_id]
+
   try:
     ## auto resister
     api_key = os.getenv('OPENAI_KEY')
@@ -361,13 +375,6 @@ def handle_text_message(event):
     
     if text.startswith('/Register'):
        student_id = text[len('/Register'):].strip()
-       # Initialize the FileStorage with a JSON file name
-       file_storage = FileStorage("student_id.json")
-       # Create a Storage wrapper
-       storage_wrapper = Storage(file_storage)  
-       # Load existing data from the JSON file
-       existing_data = storage_wrapper.load()
-
        if user_id in existing_data:
           msg = TextSendMessage(text='Student ID already registered.')
        else:
