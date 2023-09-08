@@ -335,7 +335,7 @@ def handle_text_message(event):
   relevant_answer = get_relevant_answer_from_faq(text, 'faq')
 
   try:
-    ## auto resister
+    ## auto resister ##
     api_key = os.getenv('OPENAI_KEY')
     model = OpenAIModel(api_key = api_key)
     is_successful, _, _ = model.check_token_valid()
@@ -345,7 +345,7 @@ def handle_text_message(event):
     ### make the below line a comment so that user id and their api key won't be save to the db.json file
     #storage.save({user_id: api_key})
 
-    ## set the role
+    ## set the role ##
     prompt = text.strip()
     system_prompt = (
         "You are a teaching assistant for a beginner python programming language class.\n"
@@ -357,14 +357,17 @@ def handle_text_message(event):
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
     
     if text.startswith('/Register'):
-       #api_key = text[3:].strip()
-       #model = OpenAIModel(api_key=api_key)
-       #is_successful, _, _ = model.check_token_valid()
-       #if not is_successful:
-          #raise ValueError('Invalid API token')
-       #model_management[user_id] = model
-       #storage.save({user_id: api_key})
-       msg = TextSendMessage(text='Token valid, registration successful')
+       # Extract the student ID from the message
+       student_id = text[len('/Register'):].strip()
+       # Check if the student ID is valid
+       if not student_id:
+          msg = TextSendMessage(text='Please provide a valid student ID.')
+       elif storage.exists(student_id):
+        msg = TextSendMessage(text='Student ID already registered. Please re-register with a different ID.')
+       else:
+        storage_data = {'student_id': student_id}
+        storage.save({user_id: storage_data})
+        msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
 
     elif text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
