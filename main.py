@@ -368,7 +368,7 @@ def handle_text_message(event):
        ##### storage.save({user_id: student_id})
 
        # Initialize the FileStorage with a JSON file name
-       file_storage = FileStorage("db.json")
+       file_storage = FileStorage("student_id.json")
        # Create a Storage wrapper
        storage_wrapper = Storage(file_storage)  
        # Load existing data from the JSON file
