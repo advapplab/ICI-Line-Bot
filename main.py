@@ -387,21 +387,20 @@ def handle_text_message(event):
        else:
           msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
 
-'''
-    if user_id not in existing_data:
+    #if user_id not in existing_data:
     # User is not registered, respond with a message asking them to register
-       msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
+    #   msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
 
-    elif text.startswith('/Register'):
-       student_id = text[len('/Register'):].strip()
-       if user_id in existing_data:
-          msg = TextSendMessage(text='Student ID already registered.')
-       else:
+    #elif text.startswith('/Register'):
+    #   student_id = text[len('/Register'):].strip()
+    #   if user_id in existing_data:
+    #      msg = TextSendMessage(text='Student ID already registered.')
+    #   else:
           # Save the registration message to the JSON file
-          existing_data[user_id] = student_id
-          storage_wrapper.save(existing_data)
-          msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
-'''
+    #      existing_data[user_id] = student_id
+    #      storage_wrapper.save(existing_data)
+    #      msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+
     if text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
         text=
