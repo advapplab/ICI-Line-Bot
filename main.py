@@ -337,13 +337,6 @@ def handle_text_message(event):
   display_name = profile.display_name
   relevant_answer = get_relevant_answer_from_faq(text, 'faq')
 
-  # Initialize the FileStorage with a JSON file name
-  file_storage = FileStorage("student_id.json")
-  # Create a Storage wrapper
-  storage_wrapper = Storage(file_storage)  
-  # Load existing data from the JSON file
-  existing_data = storage_wrapper.load()
-
   try:
 
     ## auto resister ##
@@ -368,6 +361,12 @@ def handle_text_message(event):
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
 
     ## student id register ##
+    # Initialize the FileStorage with a JSON file name
+    file_storage = FileStorage("student_id.json")
+    # Create a Storage wrapper
+    storage_wrapper = Storage(file_storage)  
+    # Load existing data from the JSON file
+    existing_data = storage_wrapper.load()
     # Check if the user ID exists in the JSON data
     if user_id in existing_data:
        # User is already registered, continue with the conversation
