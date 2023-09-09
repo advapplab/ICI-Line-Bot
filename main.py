@@ -298,7 +298,7 @@ def callback():
   return 'OK'    
 
 
-### function to save incorrect responses to MongoDB
+### function to save incorrect responses to MongoDB ###
 def save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' +
@@ -323,6 +323,16 @@ class Memory:
     def get_latest_assistant_message(self, user_id):
         # Implement this method to get the latest assistant message from memory
         pass
+
+### Function to validate the student ID ###
+def is_valid_student_id(student_id):
+    # Check if the student ID has exactly 9 characters
+    if len(student_id) != 9:
+        return False
+    # Check if the student ID consists of alphanumeric characters only
+    if not student_id.isalnum():
+        return False
+    return True
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -357,6 +367,27 @@ def handle_text_message(event):
         "Always generate example codes in python programming language.")
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
     
+    if user_id in existing_data:
+       # User is already registered, continue with the conversation
+       student_id = existing_data[user_id]
+       msg = TextSendMessage(text=f'Welcome back! Your student ID is: {student_id}')
+    else:
+        # User is not registered, prompt them to register
+        if text.startswith('/Register'):
+            student_id = text[len('/Register'):].strip()
+            if user_id in existing_data:
+                msg = TextSendMessage(text='Student ID already registered.')
+            elif is_valid_student_id(student_id):
+                # Save the registration message to the JSON file
+                existing_data[user_id] = student_id
+                storage_wrapper.save(existing_data)
+                msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+            else:
+                msg = TextSendMessage(text='Invalid student ID format. Please use "/Register <student_id>" ')
+        else:
+            msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
+
+    '''
     if text.startswith('/Register'):
        student_id = text[len('/Register'):].strip()
        # Initialize the FileStorage with a JSON file name
@@ -373,8 +404,9 @@ def handle_text_message(event):
           existing_data[user_id] = student_id
           storage_wrapper.save(existing_data)
           msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+    '''
 
-    elif text.startswith('/Instruction explanation'):
+    if text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
         text=
         'Instructions: \n\n/System Information + Prompt\n👉 Use Prompt to instruct the AI to play a specific role. For example: "Please play the role of someone good at summarizing."\n\n/Clear\n👉 By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Image + Prompt\n👉 Generate images based on textual prompts with DALL∙E 2 Model.For example: "/Image + cat"\n\n/Voice Input\n👉 Utilizes the Whisper model to convert speech to text and then calls ChatGPT to respond in text.\n\nOther Text Input\n👉 Calls ChatGPT to respond in text for other textual inputs.')
