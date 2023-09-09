@@ -367,6 +367,7 @@ def handle_text_message(event):
         "Always generate example codes in python programming language.")
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
     
+
     if user_id in existing_data:
        # User is already registered, continue with the conversation
        student_id = existing_data[user_id]
@@ -386,6 +387,7 @@ def handle_text_message(event):
                 msg = TextSendMessage(text='Invalid student ID format. Please use "/Register <student_id>" ')
         else:
             msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
+
 
     '''
     if text.startswith('/Register'):
