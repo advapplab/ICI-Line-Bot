@@ -595,7 +595,7 @@ def handle_image_message(event):
 
 
   
-''' 
+ '''
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio_message(event):
   user_id = event.source.user_id
@@ -637,7 +637,7 @@ def handle_audio_message(event):
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
   os.remove(input_audio_path)
-''' 
+ '''
 
 # make sure the connection close after processing all message
 import atexit
