@@ -595,6 +595,7 @@ def handle_image_message(event):
   #store
   store_image(user_id, display_name, user_timestamp, img_base64)
   msg = TextSendMessage(text='Image store to database.')
+  line_bot_api.reply_message(event.reply_token, msg)
 
 
 
