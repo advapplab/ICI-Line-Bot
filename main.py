@@ -258,7 +258,7 @@ def hf_sbert_query(payload):
   # connect to mongodb FAQ
 def get_relevant_answer_from_faq(user_question, type):
   try:
-    client = MongoClient('mongodb+srv://'+mdb_user+':'+mdb_pass+'@'+mdb_host)
+    client = MongoClient('mongodb+srv://'+mdb_user+':'+mdb_pass+'@'+ mdb_host)
     db = client[mdb_dbs]
     collection = db['faq']
     # Get all questions from the MongoDB collection
@@ -301,8 +301,7 @@ def callback():
 ### function to save incorrect responses to MongoDB ###
 def save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response):
   try:
-    client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' +
-                             mdb_host)
+    client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
     collection = db['incorrect_responses']
     # Create a document to store the incorrect response data
@@ -546,6 +545,56 @@ def handle_text_message(event):
   store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
 
+### store images ###
+import io
+import base64
+from PIL import Image
+
+def image_to_base64(img: Image.Image, format: str = "PNG") -> str:
+  buffered = io.BytesIO()
+  img.save(buffered, format=format)
+  img_str = base64.b64encode(buffered.getvalue()).decode()
+  return img_str
+  
+def store_in_database(user_id, user_name, user_timestamp, image_base64):
+  try:
+    client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
+    db = client[mdb_dbs]
+    collection = db['images']
+    # Create a document to store the incorrect response data
+    image_data = {
+        'user_id': user_id,
+        'user_name': display_name,
+        'user_timestamp': user_datetime.isoformat(),
+        'image_base64': image_base64,
+    }
+    # Insert the document into the collection
+    collection.insert_one(image_data)
+    client.close()
+  except Exception as e:
+    print(f"Error while saving incorrect response data: {str(e)}")
+
+@handler.add(MessageEvent, message=ImageMessage)
+def handle_image_message(event):
+  user_id = event.source.user_id
+  user_timestamp = int(time.time() * 1000)
+  image_content = line_bot_api.get_message_content(event.message.id)
+  image_data = io.BytesIO(image_content.content)
+  logger.info(f'{user_id}: Received image and converted to base64')
+  ## get line user's display name
+  profile = line_bot_api.get_profile(user_id)
+  display_name = profile.display_name
+  try:
+    # Convert the image to base64
+    img = Image.open(image_data)
+    img_base64 = image_to_base64(img)
+    #store
+    store_in_database(user_id, user_name, user_timestamp, image_base64)
+    msg = TextSendMessage(text='Image store to database.')
+
+
+
+  
 '''
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio_message(event):
