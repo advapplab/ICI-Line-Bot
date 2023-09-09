@@ -410,7 +410,7 @@ def handle_text_message(event):
             existing_data[user_id] = student_id
             storage_wrapper.save(existing_data)
             msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
-        else:
+       else:
             msg = TextSendMessage(text='Invalid student ID format. Please use "/Register <student_id>" with a valid 9-character alphanumeric ID.')
     else:
         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
