@@ -557,6 +557,8 @@ def image_to_base64(img: Image.Image, format: str = "PNG") -> str:
   return img_str
   
 def store_image(user_id, display_name, user_timestamp, img_base64):
+  utc_tz = timezone('UTC')
+  cst_tz = timezone('Asia/Shanghai')
   user_datetime = datetime.utcfromtimestamp(user_timestamp / 1000)
   user_datetime = user_datetime.replace(tzinfo=utc_tz).astimezone(cst_tz)
   try:
