@@ -392,9 +392,7 @@ def handle_text_message(event):
                 msg = TextSendMessage(text='Invalid student ID format. Please use "/Register <student_id>" ')
         else:
             msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
-    '''
-
-    
+  
     if text.startswith('/Register'):
        student_id = text[len('/Register'):].strip()
        # Initialize the FileStorage with a JSON file name
@@ -414,8 +412,28 @@ def handle_text_message(event):
             msg = TextSendMessage(text='Invalid student ID format. Please use "/Register <student_id>" with a valid 9-character alphanumeric ID.')
     else:
         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
+    '''
 
-    if text.startswith('/Instruction explanation'):
+    if text.startswith('/Register'):
+       student_id = text[len('/Register'):].strip()
+       # Initialize the FileStorage with a JSON file name
+       file_storage = FileStorage("student_id.json")
+       # Create a Storage wrapper
+       storage_wrapper = Storage(file_storage)  
+       # Load existing data from the JSON file
+       existing_data = storage_wrapper.load()
+
+       if user_id in existing_data:
+          msg = TextSendMessage(text='Student ID already registered.')
+       elif is_valid_student_id(student_id)return False:
+            msg = TextSendMessage(text='Invalid student ID format. Please use "/Register <student_id>"')
+       else:
+          # Save the registration message to the JSON file
+          existing_data[user_id] = student_id
+          storage_wrapper.save(existing_data)
+          msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+
+    elif text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
         text=
         'Instructions: \n\n/System Information + Prompt\n👉 Use Prompt to instruct the AI to play a specific role. For example: "Please play the role of someone good at summarizing."\n\n/Clear\n👉 By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Image + Prompt\n👉 Generate images based on textual prompts with DALL∙E 2 Model.For example: "/Image + cat"\n\n/Voice Input\n👉 Utilizes the Whisper model to convert speech to text and then calls ChatGPT to respond in text.\n\nOther Text Input\n👉 Calls ChatGPT to respond in text for other textual inputs.')
