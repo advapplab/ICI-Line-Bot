@@ -425,7 +425,7 @@ def handle_text_message(event):
 
        if user_id in existing_data:
           msg = TextSendMessage(text='Student ID already registered.')
-       elif is_valid_student_id(student_id)return False:
+       elif not is_valid_student_id(student_id):
             msg = TextSendMessage(text='Invalid student ID format. Please use "/Register <student_id>"')
        else:
           # Save the registration message to the JSON file
