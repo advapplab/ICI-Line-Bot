@@ -367,7 +367,12 @@ def handle_text_message(event):
         "Always generate example codes in python programming language.")
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
     
-
+    # Initialize the FileStorage with a JSON file name
+    file_storage = FileStorage("student_id.json")
+    # Create a Storage wrapper
+    storage_wrapper = Storage(file_storage)  
+    # Load existing data from the JSON file
+    existing_data = storage_wrapper.load()
     if user_id in existing_data:
        # User is already registered, continue with the conversation
        student_id = existing_data[user_id]
