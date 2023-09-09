@@ -367,6 +367,7 @@ def handle_text_message(event):
         "Always generate example codes in python programming language.")
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
     
+    '''
     # Initialize the FileStorage with a JSON file name
     file_storage = FileStorage("student_id.json")
     # Create a Storage wrapper
@@ -391,7 +392,7 @@ def handle_text_message(event):
                 msg = TextSendMessage(text='Invalid student ID format. Please use "/Register <student_id>" ')
         else:
             msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
-
+    '''
 
     
     if text.startswith('/Register'):
