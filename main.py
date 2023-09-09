@@ -376,7 +376,6 @@ def handle_text_message(event):
     if user_id in existing_data:
        # User is already registered, continue with the conversation
        student_id = existing_data[user_id]
-       msg = TextSendMessage(text=f'Welcome back! Your student ID is: {student_id}')
     else:
         # User is not registered, prompt them to register
         if text.startswith('/Register'):
@@ -394,7 +393,7 @@ def handle_text_message(event):
             msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
 
 
-    '''
+    
     if text.startswith('/Register'):
        student_id = text[len('/Register'):].strip()
        # Initialize the FileStorage with a JSON file name
@@ -406,12 +405,15 @@ def handle_text_message(event):
 
        if user_id in existing_data:
           msg = TextSendMessage(text='Student ID already registered.')
-       else:
-          # Save the registration message to the JSON file
-          existing_data[user_id] = student_id
-          storage_wrapper.save(existing_data)
-          msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
-    '''
+       elif is_valid_student_id(student_id):
+            # Save the registration message to the JSON file
+            existing_data[user_id] = student_id
+            storage_wrapper.save(existing_data)
+            msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+        else:
+            msg = TextSendMessage(text='Invalid student ID format. Please use "/Register <student_id>" with a valid 9-character alphanumeric ID.')
+    else:
+        msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
 
     if text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
