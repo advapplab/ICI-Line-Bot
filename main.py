@@ -366,7 +366,7 @@ def handle_text_message(event):
         "If the message received is unrelated to a python programming language class, ask them to ask a valid question that is related to the class.\n"
         "Always generate example codes in python programming language.")
     memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
-    
+
     '''
     # Initialize the FileStorage with a JSON file name
     file_storage = FileStorage("student_id.json")
@@ -403,7 +403,6 @@ def handle_text_message(event):
        storage_wrapper = Storage(file_storage)  
        # Load existing data from the JSON file
        existing_data = storage_wrapper.load()
-
        if user_id in existing_data:
           msg = TextSendMessage(text='Student ID already registered.')
        elif is_valid_student_id(student_id):
