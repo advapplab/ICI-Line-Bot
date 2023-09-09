@@ -594,7 +594,7 @@ def handle_image_message(event):
   img_base64 = image_to_base64(img)
   #store
   store_image(user_id, display_name, user_timestamp, img_base64)
-  msg = TextSendMessage(text='Image store to database.')
+  msg = TextSendMessage(text='Image stored in the database.')
   line_bot_api.reply_message(event.reply_token, msg)
 
 
