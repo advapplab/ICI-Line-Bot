@@ -556,7 +556,7 @@ def image_to_base64(img: Image.Image, format: str = "PNG") -> str:
   img_str = base64.b64encode(buffered.getvalue()).decode()
   return img_str
   
-def store_in_database(user_id, user_name, user_timestamp, image_base64):
+def store_in_database(user_id, display_name, user_timestamp, image_base64):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
