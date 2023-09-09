@@ -556,7 +556,7 @@ def image_to_base64(img: Image.Image, format: str = "PNG") -> str:
   img_str = base64.b64encode(buffered.getvalue()).decode()
   return img_str
   
-def store_in_database(user_id, display_name, user_timestamp, image_base64):
+def store_in_database(user_id, display_name, user_timestamp, img_str):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
@@ -566,7 +566,7 @@ def store_in_database(user_id, display_name, user_timestamp, image_base64):
         'user_id': user_id,
         'user_name': display_name,
         'user_timestamp': user_datetime.isoformat(),
-        'image_base64': image_base64,
+        'image_base64': img_str,
     }
     # Insert the document into the collection
     collection.insert_one(image_data)
@@ -589,7 +589,7 @@ def handle_image_message(event):
   img = Image.open(image_data)
   img_base64 = image_to_base64(img)
   #store
-  store_in_database(user_id, display_name, user_timestamp, image_base64)
+  store_in_database(user_id, display_name, user_timestamp, img_str)
   msg = TextSendMessage(text='Image store to database.')
 
 
