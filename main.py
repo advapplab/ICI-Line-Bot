@@ -323,6 +323,25 @@ class Memory:
         # Implement this method to get the latest assistant message from memory
         pass
 
+
+### save leave message to MongoDB ###
+def save_leave_message_to_mongodb(user_id, student_id):
+  try:
+    client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
+    db = client[mdb_dbs]
+    collection = db['leave']
+    # Create a document to store the incorrect response data
+    leave_message = {
+        'user_id': user_id,
+        'student_id': student_id,
+    }
+    # Insert the document into the collection
+    collection.insert_one(leave_message)
+    client.close()
+  except Exception as e:
+    print(f"Error while saving incorrect response data: {str(e)}")
+
+
 ### Function to validate the student ID ###
 def is_valid_student_id(student_id):
     # Check if the student ID has exactly 9 characters
@@ -432,6 +451,7 @@ def handle_text_message(event):
           storage_wrapper.save(existing_data)
           msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
 
+### need to be fix later !!!
     elif text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
         text=
@@ -465,7 +485,7 @@ def handle_text_message(event):
     #        TextSendMessage(text=announcements)
     #    )
 
-  ### save incorrect responses
+### save incorrect responses
     elif text.startswith('/Incorrect'):
       # Extract the latest user and assistant messages from the memory
       latest_user_message = memory.get_latest_user_message(user_id)
@@ -476,7 +496,18 @@ def handle_text_message(event):
       # Save the incorrect response data to MongoDB
       save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
       msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
-      
+
+### save incorrect responses
+    elif text.startswith('/Leave'):
+         student_id = text[len('/Leave'):].strip()
+         if not is_valid_student_id(student_id):
+            msg = TextSendMessage(text='Format invalid. Please use "/Leave your_student_id"')
+         else:   
+             # Save the ask for leave message to MongoDB
+             save_leave_message_to_mongodb(user_id, student_id)
+             msg = TextSendMessage(text='Ask for leave message received.')
+
+             
 ### faq     
     elif relevant_answer:
         if relevant_answer is not None:
@@ -545,6 +576,8 @@ def handle_text_message(event):
   store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
 
+
+
 ### store images ###
 import io
 import base64
@@ -599,7 +632,6 @@ def handle_image_message(event):
 
 
 
-  
 '''
 @handler.add(MessageEvent, message=AudioMessage)
 def handle_audio_message(event):
