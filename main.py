@@ -340,6 +340,7 @@ def is_valid_student_id(student_id):
 
 
 ### Define a function to load data from the JSON file ###
+import json
 def load_student_data(file_name):
     try:
         with open(file_name, 'r') as file:
