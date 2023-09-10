@@ -501,13 +501,13 @@ def handle_text_message(event):
     elif text.startswith('/Leave'):
          student_id = text[len('/Leave'):].strip()
          if not is_valid_student_id(student_id):
-            msg = TextSendMessage(text='Format invalid. Please use "/Leave your_student_id"')
+            msg = TextSendMessage(text='Please use "/Leave your_student_id"')
          else:   
              # Save the ask for leave message to MongoDB
              save_leave_message_to_mongodb(user_id, student_id)
              msg = TextSendMessage(text='Ask for leave message received.')
 
-             
+
 ### faq     
     elif relevant_answer:
         if relevant_answer is not None:
