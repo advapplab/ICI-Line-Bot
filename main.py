@@ -497,7 +497,7 @@ def handle_text_message(event):
       save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
       msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
 
-### save incorrect responses
+### save ask for leave messgae responses
     elif text.startswith('/Leave'):
          student_id = text[len('/Leave'):].strip()
          if not is_valid_student_id(student_id):
