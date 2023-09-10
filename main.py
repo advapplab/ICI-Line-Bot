@@ -444,7 +444,7 @@ def handle_text_message(event):
        if user_id in existing_data:
           msg = TextSendMessage(text='Student ID already registered.')
        elif not is_valid_student_id(student_id):
-            msg = TextSendMessage(text='Invalid student ID format. Please use "/Register your_student_id"')
+            msg = TextSendMessage(text='Invalid registration format. Please use "/Register + your_student_id"\nEx: /Register 123456789')
        else:
           # Save the registration message to the JSON file
           existing_data[user_id] = student_id
@@ -501,7 +501,7 @@ def handle_text_message(event):
     elif text.startswith('/Leave'):
          student_id = text[len('/Leave'):].strip()
          if not is_valid_student_id(student_id):
-            msg = TextSendMessage(text='Please use "/Leave your_student_id"')
+            msg = TextSendMessage(text='Please use "/Leave + your_student_id"\nEx: /Leave 123456789')
          else:   
              # Save the ask for leave message to MongoDB
              save_leave_message_to_mongodb(user_id, student_id)
