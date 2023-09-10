@@ -469,7 +469,7 @@ def handle_text_message(event):
     elif text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
         text=
-        'Instructions: \n\n/System Information + Prompt\n👉 Use Prompt to instruct the AI to play a specific role. For example: "Please play the role of someone good at summarizing."\n\n/Clear\n👉 By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Image + Prompt\n👉 Generate images based on textual prompts with DALL∙E 2 Model.For example: "/Image + cat"\n\n/Voice Input\n👉 Utilizes the Whisper model to convert speech to text and then calls ChatGPT to respond in text.\n\nOther Text Input\n👉 Calls ChatGPT to respond in text for other textual inputs.')
+        'Instructions: \n\n/Register\n➡️ Please use "/Register + your_student_id" to register. For example: /Register 123456789 \n\n/Clear\n➡️ By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Incorrect\n➡️ Please promptly report any incorrect responses to the development team by clicking this button as it captures only the most recent conversation.\n\n/Leave\n➡️ A function for you to ask for leave.')
       
     #elif text.startswith('/System Information'):
     #  memory.change_system_message(user_id, text[5:].strip())
