@@ -283,20 +283,6 @@ def get_relevant_answer_from_faq(user_question, type):
     print(f"Error while querying MongoDB: {str(traceback.print_exc())}")
     return None
 
-@app.route("/callback", methods=['POST'])
-def callback():
-  signature = request.headers['X-Line-Signature']
-  body = request.get_data(as_text=True)
-  app.logger.info("Request body: " + body)
-  try:
-    handler.handle(body, signature)
-  except InvalidSignatureError:
-    print(
-      "Invalid signature. Please check your channel access token/channel secret."
-    )
-    abort(400)
-  return 'OK'    
-
 
 ### function to save incorrect responses to MongoDB ###
 def save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response):
@@ -351,6 +337,32 @@ def is_valid_student_id(student_id):
     if not student_id.isalnum():
         return False
     return True
+
+
+### Define a function to load data from the JSON file ###
+def load_student_data(file_name):
+    try:
+        with open(file_name, 'r') as file:
+            data = json.load(file)
+        return data
+    except FileNotFoundError:
+        return {}    
+
+
+@app.route("/callback", methods=['POST'])
+def callback():
+  signature = request.headers['X-Line-Signature']
+  body = request.get_data(as_text=True)
+  app.logger.info("Request body: " + body)
+  try:
+    handler.handle(body, signature)
+  except InvalidSignatureError:
+    print(
+      "Invalid signature. Please check your channel access token/channel secret."
+    )
+    abort(400)
+  return 'OK'  
+
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -499,14 +511,14 @@ def handle_text_message(event):
 
 ### save ask for leave messgae responses
     elif text.startswith('/Leave'):
-         student_id = text[len('/Leave'):].strip()
-         if not is_valid_student_id(student_id):
-            msg = TextSendMessage(text='Please use "/Leave + your_student_id"\nEx: /Leave 123456789')
-         else:   
-             # Save the ask for leave message to MongoDB
-             save_leave_message_to_mongodb(user_id, student_id)
-             msg = TextSendMessage(text='Ask for leave message received.')
-
+         user_id = event.source.user_id  
+         student_data = load_student_data("student_id.json")
+         if user_id not in student_data:
+            msg = TextSendMessage(text='It seems like you did not register. Please register first using /Register')
+         else:
+             student_id = student_data[user_id]
+             save_leave_message_to_database(user_id, student_id)
+             msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
 
 ### faq     
     elif relevant_answer:
