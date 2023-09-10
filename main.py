@@ -188,7 +188,7 @@ def callback():
     abort(400)
   return 'OK'  
 
-  
+
 ### connect to DB
 from pymongo import MongoClient
 mdb_user = os.getenv('MONGODB_USERNAME')
@@ -519,7 +519,7 @@ def handle_text_message(event):
             msg = TextSendMessage(text='It seems like you did not register. Please register first using /Register')
          else:
              student_id = student_data[user_id]
-             save_leave_message_to_database(user_id, student_id)
+             save_leave_message_to_mongodb(user_id, student_id)
              msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
 
 ### faq     
