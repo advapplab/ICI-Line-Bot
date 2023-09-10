@@ -173,6 +173,22 @@ if __name__ == '__main__':
     main()
 ''' 
 
+
+@app.route("/callback", methods=['POST'])
+def callback():
+  signature = request.headers['X-Line-Signature']
+  body = request.get_data(as_text=True)
+  app.logger.info("Request body: " + body)
+  try:
+    handler.handle(body, signature)
+  except InvalidSignatureError:
+    print(
+      "Invalid signature. Please check your channel access token/channel secret."
+    )
+    abort(400)
+  return 'OK'  
+
+  
 ### connect to DB
 from pymongo import MongoClient
 mdb_user = os.getenv('MONGODB_USERNAME')
@@ -348,21 +364,6 @@ def load_student_data(file_name):
         return data
     except FileNotFoundError:
         return {}    
-
-
-@app.route("/callback", methods=['POST'])
-def callback():
-  signature = request.headers['X-Line-Signature']
-  body = request.get_data(as_text=True)
-  app.logger.info("Request body: " + body)
-  try:
-    handler.handle(body, signature)
-  except InvalidSignatureError:
-    print(
-      "Invalid signature. Please check your channel access token/channel secret."
-    )
-    abort(400)
-  return 'OK'  
 
 
 @handler.add(MessageEvent, message=TextMessage)
