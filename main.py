@@ -334,6 +334,7 @@ def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
     collection = db['leave']
     utc_tz = timezone('UTC')
     cst_tz = timezone('Asia/Shanghai')
+    user_datetime = datetime.utcfromtimestamp(user_timestamp / 1000)
     user_datetime = user_datetime.replace(tzinfo=utc_tz).astimezone(cst_tz)
     # Create a document to store the incorrect response data
     leave_message = {
