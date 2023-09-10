@@ -327,7 +327,7 @@ class Memory:
 
 
 ### save leave message to MongoDB ###
-def save_leave_message_to_mongodb(user_id, student_id):
+def save_leave_message_to_mongodb(user_id,, user_timestamp, student_id):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
@@ -335,6 +335,7 @@ def save_leave_message_to_mongodb(user_id, student_id):
     # Create a document to store the incorrect response data
     leave_message = {
         'user_id': user_id,
+        'user_timestamp': user_datetime.isoformat(),
         'student_id': student_id,
     }
     # Insert the document into the collection
@@ -519,7 +520,7 @@ def handle_text_message(event):
             msg = TextSendMessage(text='It seems like you did not register. Please register first using /Register')
          else:
              student_id = student_data[user_id]
-             save_leave_message_to_mongodb(user_id, student_id)
+             save_leave_message_to_mongodb(user_id,, user_timestamp, student_id):
              msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
 
 ### faq     
