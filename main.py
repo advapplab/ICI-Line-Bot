@@ -411,30 +411,6 @@ def handle_text_message(event):
         users_dict[user_id] = student_id
         storage_wrapper.save(users_dict)
         msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
-
-
-    ### check if the user have register ##
-    # Initialize the FileStorage with a JSON file name
-    file_storage = FileStorage("student_id.json")
-    # Create a Storage wrapper
-    storage_wrapper = Storage(file_storage)  
-    # Load existing data from the JSON file
-    users_dict = storage_wrapper.load()
-    if user_id not in users_dict:
-      msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
-
-
-    ## set the role
-    prompt = text.strip()
-    system_prompt = (
-        "You are a teaching assistant for a beginner python programming language class.\n"
-        "Do not answer questions that are unrelated to a python programming language class.\n"
-        "The only language you can understand and speak is English.\n"
-        "Always respond in English, even the message received is in another language.\n"
-        "If the message received is unrelated to a python programming language class, ask them to ask a valid question that is related to the class.\n"
-        "Always generate example codes in python programming language.")
-    memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
-
     '''
     # Initialize the FileStorage with a JSON file name
     file_storage = FileStorage("student_id.json")
@@ -482,12 +458,8 @@ def handle_text_message(event):
         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
     '''
 
-
-### need to be fix later !!!
-    if text.startswith('/Instruction explanation'):
-      msg = TextSendMessage(
-        text=
-        'Instructions: \n\n/Register\n➡️ Please use "/Register + your_student_id" to register. For example: /Register 123456789 \n\n/Clear\n➡️ By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Incorrect\n➡️ Please promptly report any incorrect responses to the development team by clicking this button as it captures only the most recent conversation.\n\n/Leave\n➡️ A function for you to ask for leave.')
+    elif text.startswith('/Instruction explanation'):
+      msg = TextSendMessage(text='Instructions: \n\n/Register\n➡️ Please use "/Register + your_student_id" to register. For example: /Register 123456789 \n\n/Clear\n➡️ By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Incorrect\n➡️ Please promptly report any incorrect responses to the development team by clicking this button as it captures only the most recent conversation.\n\n/Leave\n➡️ A function for you to ask for leave.')
       
     #elif text.startswith('/System Information'):
     #  memory.change_system_message(user_id, text[5:].strip())
@@ -556,32 +528,28 @@ def handle_text_message(event):
       user_model = model_management[user_id]
       memory.append(user_id, 'user', text)
       url = website.get_url_from_text(text)
-      if url:
-        if youtube.retrieve_video_id(text):
-          is_successful, chunks, error_message = youtube.get_transcript_chunks(
-            youtube.retrieve_video_id(text))
-          if not is_successful:
-            raise Exception(error_message)
-          youtube_transcript_reader = YoutubeTranscriptReader(
-            user_model, os.getenv('OPENAI_MODEL_ENGINE'))
-          is_successful, response, error_message = youtube_transcript_reader.summarize(
-            chunks)
-          if not is_successful:
-            raise Exception(error_message)
-          role, response = get_role_and_content(response)
-          msg = TextSendMessage(text=response)
-        else:
-          chunks = website.get_content_from_url(url)
-          if len(chunks) == 0:
-            raise Exception('Unable to fetch the text from this website')
-          website_reader = WebsiteReader(user_model,
-          os.getenv('OPENAI_MODEL_ENGINE'))
-          is_successful, response, error_message = website_reader.summarize(
-            chunks)
-          if not is_successful:
-            raise Exception(error_message)
-          role, response = get_role_and_content(response)
-          msg = TextSendMessage(text=response)
+
+      ## set the role
+      prompt = text.strip()
+      system_prompt = (
+          "You are a teaching assistant for a beginner python programming language class.\n"
+          "Do not answer questions that are unrelated to a python programming language class.\n"
+          "The only language you can understand and speak is English.\n"
+          "Always respond in English, even the message received is in another language.\n"
+          "If the message received is unrelated to a python programming language class, ask them to ask a valid question that is related to the class.\n"
+          "Always generate example codes in python programming language.")
+      memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
+
+
+      ### check if the user have register ##
+      # Initialize the FileStorage with a JSON file name
+      file_storage = FileStorage("student_id.json")
+      # Create a Storage wrapper
+      storage_wrapper = Storage(file_storage)  
+      # Load existing data from the JSON file
+      users_dict = storage_wrapper.load()
+      if user_id not in users_dict:
+      msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
       else:
         is_successful, response, error_message = user_model.chat_completions(
           memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
@@ -603,7 +571,9 @@ def handle_text_message(event):
         'That model is currently overloaded with other requests.'):
       msg = TextSendMessage(text='The model is currently overloaded, please try again later')
     else:
-     msg = TextSendMessage(text=str(e))  
+     msg = TextSendMessage(text=str(e)) 
+
+  # send out the message
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
