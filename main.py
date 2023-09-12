@@ -503,7 +503,7 @@ def handle_text_message(event):
       # Load existing data from the JSON file
       users_dict = storage_wrapper.load()
       if user_id not in users_dict:
-      msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
+        msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
       else:
         is_successful, response, error_message = user_model.chat_completions(
           memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
