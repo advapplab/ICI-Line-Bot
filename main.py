@@ -370,6 +370,18 @@ def load_student_data(file_name):
     except FileNotFoundError:
         return {}    
 
+### define a function to check if the user have register or not
+def check_user(user_id):
+    # Initialize the FileStorage with a JSON file name
+    file_storage = FileStorage("student_id.json")
+    # Create a Storage wrapper
+    storage_wrapper = Storage(file_storage)
+    # Load existing data from the JSON file
+    users_dict = storage_wrapper.load()
+    if user_id not in users_dict:
+        return False  # User is not registered
+    return True  # User is registered
+
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -420,8 +432,13 @@ def handle_text_message(event):
     #  msg = TextSendMessage(text='Input successful')
       
     elif text.startswith('/Clear'):
-      memory.remove(user_id)
-      msg = TextSendMessage(text='Successfully cleared history messages')
+      if check_user(user_id):
+         # The user is registered, so you can proceed with the "/Clear" logic
+         memory.remove(user_id)
+         msg = TextSendMessage(text='Successfully cleared history messages')
+      else:
+         # The user is not registered, send a message indicating they should register first
+         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before clearing history messages.')
 
     #elif text.startswith('/Image'):
     #  prompt = text[3:].strip()
