@@ -484,7 +484,7 @@ def handle_text_message(event):
 
 
 ### need to be fix later !!!
-    elif text.startswith('/Instruction explanation'):
+    if text.startswith('/Instruction explanation'):
       msg = TextSendMessage(
         text=
         'Instructions: \n\n/Register\n➡️ Please use "/Register + your_student_id" to register. For example: /Register 123456789 \n\n/Clear\n➡️ By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Incorrect\n➡️ Please promptly report any incorrect responses to the development team by clicking this button as it captures only the most recent conversation.\n\n/Leave\n➡️ A function for you to ask for leave.')
