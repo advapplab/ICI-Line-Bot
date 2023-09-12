@@ -297,18 +297,23 @@ def handle_text_message(event):
 
 ### save incorrect responses
     elif text.startswith('/Incorrect'):
-      # Extract the latest user and assistant messages from the memory
-      latest_user_message = memory.get_latest_user_message(user_id)
-      latest_assistant_message = memory.get_latest_assistant_message(user_id)
-      # Construct the incorrect response data
-      user_message = latest_user_message
-      incorrect_response = latest_assistant_message
-      # Save the incorrect response data to MongoDB
-      save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
-      msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
+      if check_user(user_id)==True:
+         # Extract the latest user and assistant messages from the memory
+         latest_user_message = memory.get_latest_user_message(user_id)
+         latest_assistant_message = memory.get_latest_assistant_message(user_id)
+         # Construct the incorrect response data
+         user_message = latest_user_message
+         incorrect_response = latest_assistant_message
+         # Save the incorrect response data to MongoDB
+         save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
+         msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
+      else:
+         # The user is not registered, send a message indicating they should register first
+         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
 
 ### save ask for leave messgae responses
     elif text.startswith('/Leave'):
+      if check_user(user_id)==True:
          user_id = event.source.user_id  
          student_data = load_student_data("student_id.json")
          if user_id not in student_data:
@@ -317,6 +322,9 @@ def handle_text_message(event):
              student_id = student_data[user_id]
              save_leave_message_to_mongodb(user_id, user_timestamp, student_id)
              msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
+      else:
+         # The user is not registered, send a message indicating they should register first
+         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
 
 ### faq     
     elif relevant_answer:
