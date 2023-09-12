@@ -393,6 +393,37 @@ def handle_text_message(event):
     ### make the below line a comment so that user id and their api key won't be save to the db.json file
     #storage.save({user_id: api_key})
 
+    if text.startswith('/Register'):
+      student_id = text[len('/Register'):].strip()
+      # Initialize the FileStorage with a JSON file name
+      file_storage = FileStorage("student_id.json")
+      # Create a Storage wrapper
+      storage_wrapper = Storage(file_storage)  
+      # Load existing data from the JSON file
+      users_dict = storage_wrapper.load()
+
+      if user_id in users_dict:
+        msg = TextSendMessage(text='Student ID already registered.')
+      elif not is_valid_student_id(student_id):
+        msg = TextSendMessage(text='Invalid registration format. Please use "/Register + your_student_id"\nEx: /Register 123456789')
+      else:
+        # Save the registration message to the JSON file
+        users_dict[user_id] = student_id
+        storage_wrapper.save(users_dict)
+        msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
+
+
+    ### check if the user have register ##
+    # Initialize the FileStorage with a JSON file name
+    file_storage = FileStorage("student_id.json")
+    # Create a Storage wrapper
+    storage_wrapper = Storage(file_storage)  
+    # Load existing data from the JSON file
+    users_dict = storage_wrapper.load()
+    if user_id not in users_dict:
+      msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
+
+
     ## set the role
     prompt = text.strip()
     system_prompt = (
@@ -451,24 +482,6 @@ def handle_text_message(event):
         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
     '''
 
-    if text.startswith('/Register'):
-       student_id = text[len('/Register'):].strip()
-       # Initialize the FileStorage with a JSON file name
-       file_storage = FileStorage("student_id.json")
-       # Create a Storage wrapper
-       storage_wrapper = Storage(file_storage)  
-       # Load existing data from the JSON file
-       existing_data = storage_wrapper.load()
-
-       if user_id in existing_data:
-          msg = TextSendMessage(text='Student ID already registered.')
-       elif not is_valid_student_id(student_id):
-            msg = TextSendMessage(text='Invalid registration format. Please use "/Register + your_student_id"\nEx: /Register 123456789')
-       else:
-          # Save the registration message to the JSON file
-          existing_data[user_id] = student_id
-          storage_wrapper.save(existing_data)
-          msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
 
 ### need to be fix later !!!
     elif text.startswith('/Instruction explanation'):
