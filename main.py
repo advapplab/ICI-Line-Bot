@@ -432,7 +432,7 @@ def handle_text_message(event):
     #  msg = TextSendMessage(text='Input successful')
       
     elif text.startswith('/Clear'):
-      if check_user(user_id):
+      if check_user(user_id)==True:
          # The user is registered, so you can proceed with the "/Clear" logic
          memory.remove(user_id)
          msg = TextSendMessage(text='Successfully cleared history messages')
