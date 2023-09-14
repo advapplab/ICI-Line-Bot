@@ -344,7 +344,6 @@ def handle_text_message(event):
       if relevant_answer:
         if check_user(user_id)==True:
           if relevant_answer is not None:
-             relevant_answer = '(from FAQ Database)\n' + relevant_answer
              msg = TextSendMessage(text=relevant_answer)
              memory.append(user_id, 'assistant', relevant_answer)
              response = msg
@@ -439,7 +438,7 @@ def handle_image_message(event):
   img_base64 = image_to_base64(img)
   #store
   store_image(user_id, display_name, user_timestamp, img_base64)
-  msg = TextSendMessage(text='Image stored in the database.')
+  msg = TextSendMessage(text='Image stored to the database.')
   line_bot_api.reply_message(event.reply_token, msg)
 
 
