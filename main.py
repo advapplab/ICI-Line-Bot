@@ -357,7 +357,7 @@ def handle_text_message(event):
       else:
            # The user is not registered, send a message indicating they should register first
            msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
-'''
+      '''
       ### faq ###  
       if relevant_answer:
         if check_user(user_id)==True:
@@ -383,7 +383,7 @@ def handle_text_message(event):
          role, response = get_role_and_content(response)
          msg = TextSendMessage(text=response)
          memory.append(user_id, role, response)
-'''
+      '''
   except ValueError:
     msg = TextSendMessage(text='Token invalid, please re-register, the format should be: /Register sk-xxxxx')
   except KeyError:
