@@ -340,6 +340,24 @@ def handle_text_message(event):
           "Always generate example codes in python programming language.")
       memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
 
+      if check_user(user_id)==True:
+        ### faq ###
+        if relevant_answer:
+          if relevant_answer is not None:
+             msg = TextSendMessage(text=relevant_answer)
+             memory.append(user_id, 'assistant', relevant_answer)
+             response = msg
+          else:
+            is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
+            if not is_successful:
+              raise Exception(error_message)
+            role, response = get_role_and_content(response)
+            msg = TextSendMessage(text=response)
+            memory.append(user_id, role, response)
+      else:
+           # The user is not registered, send a message indicating they should register first
+           msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
+'''
       ### faq ###  
       if relevant_answer:
         if check_user(user_id)==True:
@@ -358,16 +376,14 @@ def handle_text_message(event):
       ### check if the user have register ###
       if not check_user(user_id)==True:
          msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>" before starting a conversation.')
-         print("1")
       else:
          is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
          if not is_successful:
            raise Exception(error_message)
-           print("2")
          role, response = get_role_and_content(response)
          msg = TextSendMessage(text=response)
          memory.append(user_id, role, response)
-         print("3")
+'''
   except ValueError:
     msg = TextSendMessage(text='Token invalid, please re-register, the format should be: /Register sk-xxxxx')
   except KeyError:
