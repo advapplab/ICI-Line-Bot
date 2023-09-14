@@ -37,6 +37,143 @@ my_secret = os.environ['OPENAI_MODEL_ENGINE']
 
 
 
+### google classroom api ###
+'''
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+# include the index.html file in Python code 
+# so that it's displayed when you run your Replit project
+from http.server import HTTPServer, SimpleHTTPRequestHandler
+import threading
+# Start a simple HTTP server to serve the HTML file
+def run_server():
+    server_address = ('', 8000)
+    httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
+    httpd.serve_forever()
+if __name__ == "__main__":
+    # Start the HTTP server in a separate thread
+    server_thread = threading.Thread(target=run_server)
+    server_thread.start()
+
+
+# initialize the GoogleAuth object
+from flask import Flask, render_template_string
+import threading
+app = Flask(__name__)
+@app.route('/')
+def index():
+    return render_template_string(open("index.html").read())
+def run_flask():
+    app.run(host="0.0.0.0", port=8080)
+if __name__ == "__main__":
+    server_thread = threading.Thread(target=run_flask)
+    server_thread.start()
+
+
+# user sign in
+from flask import request, jsonify
+@app.route('/storeauthcode', methods=['POST'])
+def store_auth_code():
+    auth_code = request.data.decode('utf-8')
+    if auth_code:
+        # Store the code or perform any other necessary action
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
+
+#exchange the authorization code for access tokens
+from oauth2client import client
+import httplib2
+CLIENT_SECRET_FILE = 'client_secret.json'  # load the .json file in advance
+@app.route('/storeauthcode', methods=['POST'])
+def store_auth_code():
+    auth_code = request.data.decode('utf-8')
+
+    if auth_code:
+        credentials = client.credentials_from_clientsecrets_and_code(
+            CLIENT_SECRET_FILE,
+            ['https://www.googleapis.com/auth/classroom.courses.readonly'],
+            auth_code
+        )
+        
+        # Now you have the credentials with access token and refresh token
+        # You can use this credentials object to make API calls using Google Classroom API
+
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False)
+'''
+
+'''
+def exchange_code_for_tokens(authorization_code):
+    token_url = 'https://oauth2.googleapis.com/token'
+    client_id = 'CLIENT_ID'
+    client_secret = 'CLIENT_SECRET'
+    authorization_code = "Authorization_Code"
+    data = {
+        'code': authorization_code,
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'grant_type': 'authorization_code'
+    }
+    response = requests.post(token_url, data=data)
+    tokens = response.json()
+    return tokens
+    print(tokens)
+SCOPES = ['https://www.googleapis.com/auth/classroom.courses.readonly']
+flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES, redirect_uri='http://localhost:58211/')
+
+def main():
+    #Shows basic usage of the Classroom API.
+    #Prints the names of the first 10 courses the user has access to
+    creds = None
+    # The file token.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'credentials.json', SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open('token.json', 'w') as token:
+            token.write(creds.to_json())
+
+    try:
+        service = build('classroom', 'v1', credentials=creds)
+
+        # Call the Classroom API
+        results = service.courses().list(pageSize=10).execute()
+        courses = results.get('courses', [])
+
+        if not courses:
+            print('No courses found.')
+            return
+        # Prints the names of the first 10 courses.
+        print('Courses:')
+        for course in courses:
+            print(course['name'])
+
+    except HttpError as error:
+        print('An error occurred: %s' % error)
+
+if __name__ == '__main__':
+    main()
+''' 
+
+
 @app.route("/callback", methods=['POST'])
 def callback():
   signature = request.headers['X-Line-Signature']
@@ -233,18 +370,6 @@ def load_student_data(file_name):
     except FileNotFoundError:
         return {}    
 
-### define a function to check if the user have register or not
-def check_user(user_id):
-    # Initialize the FileStorage with a JSON file name
-    file_storage = FileStorage("student_id.json")
-    # Create a Storage wrapper
-    storage_wrapper = Storage(file_storage)
-    # Load existing data from the JSON file
-    users_dict = storage_wrapper.load()
-    if user_id not in users_dict:
-        return False  # User is not registered
-    return True  # User is registered
-
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -255,7 +380,6 @@ def handle_text_message(event):
   ## get line user's display name
   profile = line_bot_api.get_profile(user_id)
   display_name = profile.display_name
-  relevant_answer = get_relevant_answer_from_faq(text, 'faq')
 
   try:
     ## auto resister
@@ -288,57 +412,64 @@ def handle_text_message(event):
         msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
     
     elif text.startswith('/Instruction explanation'):
-         if check_user(user_id)==True:
-            # The user is registered, so you can proceed with the "/Instruction explanation" logic
-            msg = TextSendMessage(text='Instructions: \n\n/Register\n➡️ Please use "/Register + your_student_id" to register. For example: /Register 123456789\n\n/Incorrect\n➡️ Please promptly report any incorrect responses to the development team by clicking this button as it captures only the most recent conversation.\n\n/Leave\n➡️ A function for you to ask for leave.')
-         else:
-            # The user is not registered, send a message indicating they should register first
-            msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
+      msg = TextSendMessage(text='Instructions: \n\n/Register\n➡️ Please use "/Register + your_student_id" to register. For example: /Register 123456789 \n\n/Clear\n➡️ By default, the system keeps a record of the last two interactions. This command clears the history.\n\n/Incorrect\n➡️ Please promptly report any incorrect responses to the development team by clicking this button as it captures only the most recent conversation.\n\n/Leave\n➡️ A function for you to ask for leave.')
+      
+    #elif text.startswith('/System Information'):
+    #  memory.change_system_message(user_id, text[5:].strip())
+    #  msg = TextSendMessage(text='Input successful')
+      
+    elif text.startswith('/Clear'):
+      memory.remove(user_id)
+      msg = TextSendMessage(text='Successfully cleared history messages')
+
+    #elif text.startswith('/Image'):
+    #  prompt = text[3:].strip()
+    #  memory.append(user_id, 'user', prompt)
+    #  is_successful, response, error_message = model_management[
+    #    user_id].image_generations(prompt)
+    #  if not is_successful:
+    #    raise Exception(error_message)
+    #  url = response['data'][0]['url']
+    #  msg = ImageSendMessage(original_content_url=url, preview_image_url=url)
+    #  memory.append(user_id, 'assistant', url)
+
+    ### google classroom api 
+    #elif event.message.text.startswith('announcements '):
+    #    course_id = event.message.text.split(' ')[1]
+    #    announcements = get_announcements(user_id, course_id)
+    #    line_bot_api.reply_message(
+    #        event.reply_token,
+    #        TextSendMessage(text=announcements)
+    #    )
 
 ### save incorrect responses
     elif text.startswith('/Incorrect'):
-         if check_user(user_id)==True:
-            # Extract the latest user and assistant messages from the memory
-            latest_user_message = memory.get_latest_user_message(user_id)
-            latest_assistant_message = memory.get_latest_assistant_message(user_id)
-            # Construct the incorrect response data
-            user_message = latest_user_message
-            incorrect_response = latest_assistant_message
-            # Save the incorrect response data to MongoDB
-            save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
-            msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
-         else:
-            # The user is not registered, send a message indicating they should register first
-            msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
+      # Extract the latest user and assistant messages from the memory
+      latest_user_message = memory.get_latest_user_message(user_id)
+      latest_assistant_message = memory.get_latest_assistant_message(user_id)
+      # Construct the incorrect response data
+      user_message = latest_user_message
+      incorrect_response = latest_assistant_message
+      # Save the incorrect response data to MongoDB
+      save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
+      msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
 
 ### save ask for leave messgae responses
     elif text.startswith('/Leave'):
-      if check_user(user_id)==True:
          user_id = event.source.user_id  
          student_data = load_student_data("student_id.json")
-         student_id = student_data[user_id]
-         save_leave_message_to_mongodb(user_id, user_timestamp, student_id)
-         msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
-      else:
-         # The user is not registered, send a message indicating they should register first
-         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
-
-### faq     
-    elif relevant_answer:
-        if relevant_answer is not None:
-            relevant_answer = '(from FAQ Database)\n' + relevant_answer
-            msg = TextSendMessage(text=relevant_answer)
-            memory.append(user_id, 'assistant', relevant_answer)
-            response = msg
-        else:
-            msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
-            memory.append(user_id, 'assistant', msg)
-            response = msg
+         if user_id not in student_data:
+            msg = TextSendMessage(text='It seems like you did not register. Please register first using /Register')
+         else:
+             student_id = student_data[user_id]
+             save_leave_message_to_mongodb(user_id, user_timestamp, student_id)
+             msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
 
     else:
       user_model = model_management[user_id]
       memory.append(user_id, 'user', text)
-      url = website.get_url_from_text(text)
+      relevant_answer = get_relevant_answer_from_faq(text, 'faq')
+
 
       ## set the role
       prompt = text.strip()
@@ -369,6 +500,19 @@ def handle_text_message(event):
         role, response = get_role_and_content(response)
         msg = TextSendMessage(text=response)
       memory.append(user_id, role, response)
+
+      ### faq     
+      if relevant_answer:
+          if relevant_answer is not None:
+              relevant_answer = '(from FAQ Database)\n' + relevant_answer
+              msg = TextSendMessage(text=relevant_answer)
+              memory.append(user_id, 'assistant', relevant_answer)
+              response = msg
+          else:
+              msg = TextSendMessage(text='I am sorry, but we are currently unable to find the answer')
+              memory.append(user_id, 'assistant', msg)
+              response = msg
+
   except ValueError:
     msg = TextSendMessage(text='Token invalid, please re-register, the format should be: /Register sk-xxxxx')
   except KeyError:
