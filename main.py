@@ -364,9 +364,9 @@ def handle_text_message(event):
          memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
          if not is_successful:
            raise Exception(error_message)
-        role, response = get_role_and_content(response)
-        msg = TextSendMessage(text=response)
-      memory.append(user_id, role, response)
+         role, response = get_role_and_content(response)
+         msg = TextSendMessage(text=response)
+         memory.append(user_id, role, response)
   except ValueError:
     msg = TextSendMessage(text='Token invalid, please re-register, the format should be: /Register sk-xxxxx')
   except KeyError:
