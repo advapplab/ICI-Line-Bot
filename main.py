@@ -365,6 +365,7 @@ def handle_text_message(event):
          role, response = get_role_and_content(response)
          msg = TextSendMessage(text=response)
          memory.append(user_id, role, response)
+         print("123")
   except ValueError:
     msg = TextSendMessage(text='Token invalid, please re-register, the format should be: /Register sk-xxxxx')
   except KeyError:
