@@ -362,8 +362,8 @@ def handle_text_message(event):
       else:
          is_successful, response, error_message = user_model.chat_completions(
          memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
-        if not is_successful:
-          raise Exception(error_message)
+         if not is_successful:
+           raise Exception(error_message)
         role, response = get_role_and_content(response)
         msg = TextSendMessage(text=response)
       memory.append(user_id, role, response)
