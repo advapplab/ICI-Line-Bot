@@ -235,6 +235,7 @@ def load_student_data(file_name):
 
 ### define a function to check if the user have register or not
 def check_user(user_id):
+    user_id = event.source.user_id
     # Initialize the FileStorage with a JSON file name
     file_storage = FileStorage("student_id.json")
     # Create a Storage wrapper
