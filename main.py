@@ -340,6 +340,7 @@ def handle_text_message(event):
           "Always generate example codes in python programming language.")
       memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
 
+      ### check if the user have register ###
       if check_user(user_id)==True:
         ### faq ###
         if relevant_answer:
@@ -355,8 +356,8 @@ def handle_text_message(event):
             msg = TextSendMessage(text=response)
             memory.append(user_id, role, response)
       else:
-           # The user is not registered, send a message indicating they should register first
-           msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
+        # The user is not registered, send a message indicating they should register first
+        msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
       '''
       ### faq ###  
       if relevant_answer:
