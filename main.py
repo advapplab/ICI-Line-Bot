@@ -305,7 +305,7 @@ def handle_text_message(event):
             incorrect_response = latest_assistant_message
             # Save the incorrect response data to MongoDB
             save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
-            msg = TextSendMessage(text='Thank you for informing us. The incorrect message has been placed into the database and will be addressed by the development team.')  
+            msg = TextSendMessage(text='Thank you for informing us. We will address the incorrect message later.')  
          else:
             # The user is not registered, send a message indicating they should register first
             msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
