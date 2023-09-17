@@ -245,6 +245,13 @@ def check_user(user_id):
         return False  # User is not registered
     return True  # User is registered
 
+### think time ###
+def bot_think_time():
+    # Generate a random think time between 1 and 30 seconds
+    think_time = random.randint(1, 30)
+    print(f"Bot is thinking for {think_time} seconds...")
+    time.sleep(think_time)
+    print("Bot has finished thinking and is responding.")
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
@@ -312,6 +319,7 @@ def handle_text_message(event):
 
 ### save ask for leave messgae responses
     elif text.startswith('/Leave'):
+      #bot_think_time()
       if check_user(user_id)==True:
          user_id = event.source.user_id  
          student_data = load_student_data("student_id.json")
@@ -344,6 +352,7 @@ def handle_text_message(event):
       if check_user(user_id)==True:
         ### faq ###
         if relevant_answer is not None:
+          bot_think_time()
           msg = TextSendMessage(text=relevant_answer)
           memory.append(user_id, 'assistant', relevant_answer)
           response = msg
@@ -355,6 +364,7 @@ def handle_text_message(event):
           if not is_successful:
             raise Exception(error_message)
             print("3")
+          bot_think_time()
           role, response = get_role_and_content(response)
           msg = TextSendMessage(text=response)
           memory.append(user_id, role, response)
