@@ -246,6 +246,7 @@ def check_user(user_id):
     return True  # User is registered
 
 ### think time ###
+import random
 def bot_think_time():
     # Generate a random think time between 1 and 30 seconds
     think_time = random.randint(1, 30)
