@@ -339,7 +339,7 @@ def handle_text_message(event):
           "If the message received is unrelated to a python programming language class, ask them to ask a valid question that is related to the class.\n"
           "Always generate example codes in python programming language.")
       memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
-
+'''
       ### check if the user have register ###
       if check_user(user_id)==True:
         ### faq ###
@@ -363,6 +363,39 @@ def handle_text_message(event):
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
+'''
+
+      # Check if the user is registered
+      if check_user(user_id):
+          # FAQ response
+          if relevant_answer:
+              if relevant_answer is not None:
+                  msg = TextSendMessage(text=relevant_answer)
+                  memory.append(user_id, 'assistant', relevant_answer)
+                  response = msg
+                  messages.append(msg)  # Append the message to the list
+                  print("1")
+          else:
+              # Chat GPT response
+              try:
+                  is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
+                  print("2")
+                  if not is_successful:
+                      raise Exception(error_message)
+                      print("3")
+                  role, response = get_role_and_content(response)
+                  msg = TextSendMessage(text=response)
+                  memory.append(user_id, role, response)
+                  messages.append(msg)  # Append the message to the list
+                  print("4")
+              except Exception as chat_gpt_exception:
+                  # Handle Chat GPT exception
+                  msg = TextSendMessage(text=f'Error: {str(chat_gpt_exception)}')
+                  messages.append(msg)  # Append the error message to the list
+      else:
+          # The user is not registered, send a message indicating they should register first
+          msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
+          messages.append(msg)  # Append the message to the list
 
   except ValueError:
     msg = TextSendMessage(text='Token invalid, please re-register, the format should be: /Register sk-xxxxx')
