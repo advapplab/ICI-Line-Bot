@@ -343,12 +343,11 @@ def handle_text_message(event):
       ### check if the user have register ###
       if check_user(user_id)==True:
         ### faq ###
-        if relevant_answer:
-          if relevant_answer is not None:
-             msg = TextSendMessage(text=relevant_answer)
-             memory.append(user_id, 'assistant', relevant_answer)
-             response = msg
-             print("1")
+        if relevant_answer is not None:
+          msg = TextSendMessage(text=relevant_answer)
+          memory.append(user_id, 'assistant', relevant_answer)
+          response = msg
+          print("1")
         # chat gpt     
         else:
           is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
