@@ -339,7 +339,7 @@ def handle_text_message(event):
           "If the message received is unrelated to a python programming language class, ask them to ask a valid question that is related to the class.\n"
           "Always generate example codes in python programming language.")
       memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
-'''
+      '''
       ### check if the user have register ###
       if check_user(user_id)==True:
         ### faq ###
@@ -363,7 +363,7 @@ def handle_text_message(event):
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
-'''
+      '''
 
       # Check if the user is registered
       if check_user(user_id):
