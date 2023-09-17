@@ -351,13 +351,13 @@ def handle_text_message(event):
         # chat gpt     
         else:
           is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
-          role, response = get_role_and_content(response)
-          msg = TextSendMessage(text=response)
-          memory.append(user_id, role, response)
           print("2")
           if not is_successful:
             raise Exception(error_message)
             print("3")
+          role, response = get_role_and_content(response)
+          msg = TextSendMessage(text=response)
+          memory.append(user_id, role, response)
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
