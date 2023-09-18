@@ -379,7 +379,9 @@ def handle_text_message(event):
                   'max_tokens': 300
               }
           )
-          print(response.text)
+          json = response.json()
+          print(json['choices'][0]['message']['content'])
+          msg = TextSendMessage(text=json['choices'][0]['message']['content'])
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
           # memory.append(user_id, role, response)
