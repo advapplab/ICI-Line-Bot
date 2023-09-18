@@ -382,7 +382,6 @@ def handle_text_message(event):
           json = response.json()
           response = json['choices'][0]['message']['content']
           msg = TextSendMessage(text=response)
-          memory.append(user_id, role, response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
           # memory.append(user_id, role, response)
