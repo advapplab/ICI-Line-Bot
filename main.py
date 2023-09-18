@@ -287,7 +287,7 @@ def handle_text_message(event):
       if user_id in users_dict:
         msg = TextSendMessage(text='Student ID already registered.')
       elif not is_valid_student_id(student_id):
-        msg = TextSendMessage(text='Invalid registration format. Please use "/register  your_student_id"\nEx: /Register 123456789')
+        msg = TextSendMessage(text='Invalid registration format. Please use "/register  your_student_id"\nEx: /register 123456789')
       else:
         # Save the registration message to the JSON file
         users_dict[user_id] = student_id
@@ -297,10 +297,10 @@ def handle_text_message(event):
     elif text.startswith('/help'):
          if check_user(user_id)==True:
             # The user is registered, so you can proceed with the "/Instruction explanation" logic
-            msg = TextSendMessage(text='Instructions: \n\n/Register\n➡️ Please use "/Register + your_student_id" to register. For example: /Register 123456789\n\n/Incorrect\n➡️ Please promptly report any incorrect responses to the development team by clicking this button as it captures only the most recent conversation.\n\n/Leave\n➡️ A function for you to ask for leave.')
+            msg = TextSendMessage(text='Instructions: \n\n/register\n➡️ Please use "/register + your_student_id" to register. For example: /register 123456789\n\n/incorrect\n➡️ Please promptly report any incorrect responses to the development team by clicking this button as it captures only the most recent conversation.\n\n/leave\n➡️ A function for you to ask for leave.')
          else:
             # The user is not registered, send a message indicating they should register first
-            msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
+            msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
 ### save incorrect responses
     elif text.startswith('/incorrect'):
@@ -316,7 +316,7 @@ def handle_text_message(event):
             msg = TextSendMessage(text='Thank you for informing us. We will address the incorrect message later.')  
          else:
             # The user is not registered, send a message indicating they should register first
-            msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
+            msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
 ### save ask for leave messgae responses
     elif text.startswith('/leave'):
@@ -329,7 +329,7 @@ def handle_text_message(event):
          msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
       else:
          # The user is not registered, send a message indicating they should register first
-         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
+         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
     else:
       user_id = event.source.user_id
@@ -387,7 +387,7 @@ def handle_text_message(event):
           # memory.append(user_id, role, response)
       else:
         # The user is not registered, send a message indicating they should register first
-        msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
+        msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
   except ValueError:
     msg = TextSendMessage(text='Token invalid, please re-register, the format should be: /Register sk-xxxxx')
