@@ -374,7 +374,7 @@ def handle_text_message(event):
               },
               json = {
                   'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                  "messages": [{"role": "user", "content": text}],
+                  "messages": [{"role": "user", "content": f"{system_prompt}\n\n{text}"}],
                   'temperature': 0.4,
                   'max_tokens': 300
               }
