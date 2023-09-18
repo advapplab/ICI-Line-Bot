@@ -509,7 +509,8 @@ if __name__ == "__main__":
   #  mongodb.connect_to_database()
   #  storage = Storage(MongoStorage(mongodb.db))
   #else:
-  storage = Storage(FileStorage('db.json'))
+  ## storage = Storage(FileStorage('db.json'))
+  storage = Storage(FileStorage('student_id.json'))
   try:
     data = storage.load()
     for user_id in data.keys():
