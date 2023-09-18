@@ -360,14 +360,29 @@ def handle_text_message(event):
           print("1")
         # chat gpt     
         else:
-          is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
-          print("2",is_successful, response, error_message,memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'),user_id)
-          if not is_successful:
-            raise Exception(error_message)
+          #is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
+          #print("2",is_successful, response, error_message,memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'),user_id)
+          #if not is_successful:
+          #  raise Exception(error_message)
           #bot_think_time()
-          role, response = get_role_and_content(response)
-          msg = TextSendMessage(text=response)
-          memory.append(user_id, role, response)
+
+          response = requests.post(
+              'https://api.openai.com/v1/completions',
+              headers = {
+                  'Content-Type': 'application/json',
+                  'Authorization': f'Bearer {api_key}'
+              },
+              json = {
+                  'model': os.getenv('OPENAI_MODEL_ENGINE'),
+                  'prompt': '你好',
+                  'temperature': 0.4,
+                  'max_tokens': 300
+              }
+          )
+          print(response.text)
+          # role, response = get_role_and_content(response)
+          # msg = TextSendMessage(text=response)
+          # memory.append(user_id, role, response)
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/Register <student_id>"')
