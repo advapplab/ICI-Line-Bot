@@ -357,7 +357,6 @@ def handle_text_message(event):
           msg = TextSendMessage(text=relevant_answer)
           memory.append(user_id, 'assistant', relevant_answer)
           response = msg
-          print("1")
         # chat gpt     
         else:
           #is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
