@@ -374,14 +374,15 @@ def handle_text_message(event):
               },
               json = {
                   'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                  "messages": [{"role": "user", "content": "Hello!"}],
+                  "messages": [{"role": "user", "content": text}],
                   'temperature': 0.4,
                   'max_tokens': 300
               }
           )
           json = response.json()
-          print(json['choices'][0]['message']['content'])
-          msg = TextSendMessage(text=json['choices'][0]['message']['content'])
+          response = json['choices'][0]['message']['content']
+          msg = TextSendMessage(text=response)
+          memory.append(user_id, role, response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
           # memory.append(user_id, role, response)
