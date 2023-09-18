@@ -353,7 +353,7 @@ def handle_text_message(event):
       if check_user(user_id)==True:
         ### faq ###
         if relevant_answer is not None:
-          bot_think_time()
+          #bot_think_time()
           msg = TextSendMessage(text=relevant_answer)
           memory.append(user_id, 'assistant', relevant_answer)
           response = msg
@@ -365,7 +365,7 @@ def handle_text_message(event):
           if not is_successful:
             raise Exception(error_message)
             print("3")
-          bot_think_time()
+          #bot_think_time()
           role, response = get_role_and_content(response)
           msg = TextSendMessage(text=response)
           memory.append(user_id, role, response)
