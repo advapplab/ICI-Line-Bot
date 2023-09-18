@@ -361,7 +361,7 @@ def handle_text_message(event):
         # chat gpt     
         else:
           is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
-          print("2",is_successful, response, error_message,memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
+          print("2",is_successful, response, error_message,memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'),user_id)
           if not is_successful:
             raise Exception(error_message)
           #bot_think_time()
