@@ -367,7 +367,7 @@ def handle_text_message(event):
           #bot_think_time()
 
           response = requests.post(
-              'https://api.openai.com/v1/completions',
+              'https://api.openai.com/v1/chat/completions',
               headers = {
                   'Content-Type': 'application/json',
                   'Authorization': f'Bearer {api_key}'
