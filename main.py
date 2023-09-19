@@ -294,7 +294,7 @@ def handle_text_message(event):
         storage_wrapper.save(users_dict)
         msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
     
-    elif text.startswith('/help'):
+    elif text.lower.startswith('/help'):
          if check_user(user_id)==True:
             # The user is registered, so you can proceed with the "/Instruction explanation" logic
             msg = TextSendMessage(text='Instructions: \n\n/register\n➡️ Please use "/register + your_student_id" to register. For example: /register 123456789\n\n/incorrect\n➡️ Please promptly report any incorrect responses to the development team by clicking this button as it captures only the most recent conversation.\n\n/leave\n➡️ A function for you to ask for leave.')
@@ -303,7 +303,7 @@ def handle_text_message(event):
             msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
 ### save incorrect responses
-    elif text.startswith('/incorrect'):
+    elif text.lower.startswith('/incorrect'):
          if check_user(user_id)==True:
             # Extract the latest user and assistant messages from the memory
             latest_user_message = memory.get_latest_user_message(user_id)
@@ -319,7 +319,7 @@ def handle_text_message(event):
             msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
 ### save ask for leave messgae responses
-    elif text.startswith('/leave'):
+    elif text.lower.startswith('/leave'):
       #bot_think_time()
       if check_user(user_id)==True:
          user_id = event.source.user_id  
