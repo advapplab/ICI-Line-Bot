@@ -294,6 +294,9 @@ def handle_text_message(event):
         storage_wrapper.save(users_dict)
         msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
     
+    elif text.startswith('/Register'):
+      msg = TextSendMessage(text='Invalid registration format. Please use "/register  your_student_id"\nEx: /register 123456789')
+    
     elif text.startswith('/help'):
          if check_user(user_id)==True:
             # The user is registered, so you can proceed with the "/Instruction explanation" logic
