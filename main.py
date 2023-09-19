@@ -248,8 +248,8 @@ def check_user(user_id):
 ### think time ###
 import random
 def bot_think_time():
-    # Generate a random think time between 1 and 30 seconds
-    think_time = random.randint(1, 30)
+    # Generate a random think time between 30 and 60 seconds
+    think_time = random.randint(30, 60)
     print(f"Bot is thinking for {think_time} seconds...")
     time.sleep(think_time)
     print("Bot has finished thinking and is responding.")
@@ -354,7 +354,7 @@ def handle_text_message(event):
       if check_user(user_id)==True:
         ### faq ###
         if relevant_answer is not None:
-          #bot_think_time()
+          bot_think_time()
           msg = TextSendMessage(text=relevant_answer)
           memory.append(user_id, 'assistant', relevant_answer)
           response = msg
@@ -364,8 +364,7 @@ def handle_text_message(event):
           #print("2",is_successful, response, error_message,memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'),user_id)
           #if not is_successful:
           #  raise Exception(error_message)
-          #bot_think_time()
-
+          bot_think_time()
           response = requests.post(
               'https://api.openai.com/v1/chat/completions',
               headers = {
