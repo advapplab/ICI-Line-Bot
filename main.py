@@ -275,7 +275,7 @@ def handle_text_message(event):
     ### make the below line a comment so that user id and their api key won't be save to the db.json file
     #storage.save({user_id: api_key})
 
-    if text.startswith('/register'):
+    if text.lower.startswith('/register'):
       student_id = text[len('/register'):].strip()
       # Initialize the FileStorage with a JSON file name
       file_storage = FileStorage("student_id.json")
@@ -293,9 +293,6 @@ def handle_text_message(event):
         users_dict[user_id] = student_id
         storage_wrapper.save(users_dict)
         msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
-    
-    elif text.startswith('/Register'):
-      msg = TextSendMessage(text='Invalid registration format. Please use "/register  your_student_id"\nEx: /register 123456789')
     
     elif text.startswith('/help'):
          if check_user(user_id)==True:
