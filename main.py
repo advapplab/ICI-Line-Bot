@@ -180,13 +180,13 @@ def save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response
     client.close()
   except Exception as e:
     print(f"Error while saving incorrect response data: {str(e)}")
-class Memory:
-    def get_latest_user_message(self, user_id):
+#class Memory:
+    # def get_latest_user_message(self, user_id):
         # Implement this method to get the latest user message from memory
-        pass
-    def get_latest_assistant_message(self, user_id):
+        # pass
+    # def get_latest_assistant_message(self, user_id):
         # Implement this method to get the latest assistant message from memory
-        pass
+        # pass
 
 
 ### save leave message to MongoDB ###
@@ -313,6 +313,8 @@ def handle_text_message(event):
             incorrect_response = latest_assistant_message
             # Save the incorrect response data to MongoDB
             save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
+            print(latest_user_message)
+            print(latest_assistant_message)
             msg = TextSendMessage(text='Thank you for informing us. We will address the incorrect message later.')  
          else:
             # The user is not registered, send a message indicating they should register first
