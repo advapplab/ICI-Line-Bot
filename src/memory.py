@@ -48,20 +48,34 @@ class Memory(MemoryInterface):
 
     def remove(self, user_id: str) -> None:
         self.storage[user_id] = []
+    # ### for incorrect messages
+    # def get_latest_user_message(self, user_id):
+    #     user_memory = self.get(user_id)
+    #     if user_memory:
+    #         user_messages = [message['content'] for message in user_memory if message['role'] == 'user']
+    #         if user_messages:
+    #             return user_messages[-1]
+    #     return None
 
-class Memory:
-    def get_latest_user_message(self, user_id):
-        user_memory = self.get(user_id)
-        if user_memory:
-            user_messages = [message['content'] for message in user_memory if message['role'] == 'user']
-            if user_messages:
-                return user_messages[-1]
-        return None
+    # def get_latest_assistant_message(self, user_id):
+    #     user_memory = self.get(user_id)
+    #     if user_memory:
+    #         assistant_messages = [message['content'] for message in user_memory if message['role'] == 'assistant']
+    #         if assistant_messages:
+    #             return assistant_messages[-1]
+    #     return None
 
-    def get_latest_assistant_message(self, user_id):
-        user_memory = self.get(user_id)
-        if user_memory:
-            assistant_messages = [message['content'] for message in user_memory if message['role'] == 'assistant']
-            if assistant_messages:
-                return assistant_messages[-1]
-        return None
+    def get_last_user_bot_conversation(self, user_id):
+    user_memory = self.get(user_id)
+    if user_memory:
+        conversation = []
+        for message in reversed(user_memory):
+            if message['role'] == 'user':
+                if conversation:
+                    # If the conversation already contains user messages, break to consider it a complete conversation.
+                    break
+            elif message['role'] == 'assistant':
+                conversation.append(message['content'])
+        if conversation:
+            return conversation
+    return None
