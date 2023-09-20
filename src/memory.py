@@ -49,7 +49,7 @@ class Memory(MemoryInterface):
     def remove(self, user_id: str) -> None:
         self.storage[user_id] = []
 
-
+class Memory:
     def get_latest_user_message(self, user_id):
         user_memory = self.get(user_id)
         if user_memory:
