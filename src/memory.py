@@ -57,13 +57,13 @@ class Memory(MemoryInterface):
     #             return user_messages[-1]
     #     return None
 
-    # def get_latest_assistant_message(self, user_id):
-    #     user_memory = self.get(user_id)
-    #     if user_memory:
-    #         assistant_messages = [message['content'] for message in user_memory if message['role'] == 'assistant']
-    #         if assistant_messages:
-    #             return assistant_messages[-1]
-    #     return None
+    def get_latest_assistant_message(self, user_id):
+        user_memory = self.get(user_id)
+        if user_memory:
+            assistant_messages = [message['content'] for message in user_memory if message['role'] == 'assistant']
+            if assistant_messages:
+                return assistant_messages[-1]
+        return None
 
     def get_last_user_bot_conversation(self, user_id):
         user_memory = self.get(user_id)
