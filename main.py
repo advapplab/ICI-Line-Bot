@@ -306,7 +306,8 @@ def handle_text_message(event):
     elif text.lower().startswith('/incorrect'):
          if check_user(user_id)==True:
             # Extract the latest user and assistant messages from the memory
-            latest_user_message = memory.get_latest_user_message(user_id)
+            #latest_user_message = memory.get_latest_user_message(user_id)
+            latest_user_message = memory.get_last_user_bot_conversation(user_id)
             latest_assistant_message = memory.get_latest_assistant_message(user_id)
             # Construct the incorrect response data
             user_message = latest_user_message
