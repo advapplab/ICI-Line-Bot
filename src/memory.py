@@ -66,16 +66,16 @@ class Memory(MemoryInterface):
     #     return None
 
     def get_last_user_bot_conversation(self, user_id):
-    user_memory = self.get(user_id)
-    if user_memory:
-        conversation = []
-        for message in reversed(user_memory):
-            if message['role'] == 'user':
-                if conversation:
-                    # If the conversation already contains user messages, break to consider it a complete conversation.
-                    break
-            elif message['role'] == 'assistant':
-                conversation.append(message['content'])
-        if conversation:
-            return conversation
-    return None
+        user_memory = self.get(user_id)
+        if user_memory:
+            conversation = []
+            for message in reversed(user_memory):
+                if message['role'] == 'user':
+                    if conversation:
+                        # If the conversation already contains user messages, break to consider it a complete conversation.
+                        break
+                elif message['role'] == 'assistant':
+                    conversation.append(message['content'])
+            if conversation:
+                return conversation
+        return None
