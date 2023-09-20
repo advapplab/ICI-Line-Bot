@@ -322,7 +322,7 @@ def handle_text_message(event):
 
 ### save ask for leave messgae responses
     elif text.lower().startswith('/leave'):
-      #bot_think_time()
+      bot_think_time()
       if check_user(user_id)==True:
          user_id = event.source.user_id  
          student_data = load_student_data("student_id.json")
@@ -356,7 +356,7 @@ def handle_text_message(event):
       if check_user(user_id)==True:
         ### faq ###
         if relevant_answer is not None:
-          bot_think_time()
+          #bot_think_time()
           msg = TextSendMessage(text=relevant_answer)
           memory.append(user_id, 'assistant', relevant_answer)
           response = msg
@@ -366,7 +366,7 @@ def handle_text_message(event):
           #print("2",is_successful, response, error_message,memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'),user_id)
           #if not is_successful:
           #  raise Exception(error_message)
-          bot_think_time()
+          #bot_think_time()
           response = requests.post(
               'https://api.openai.com/v1/chat/completions',
               headers = {
