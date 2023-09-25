@@ -473,7 +473,7 @@ def handle_image_message(event):
     # Handle any exceptions that may occur
     logger.error(f'An error occurred: {str(e)}')
 
-
+#
 # @handler.add(MessageEvent, message=AudioMessage)
 # def handle_audio_message(event):
 #   user_id = event.source.user_id
