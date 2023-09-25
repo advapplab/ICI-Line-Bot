@@ -454,10 +454,10 @@ def handle_image_message(event):
   display_name = profile.display_name
   image_content = line_bot_api.get_message_content(event.message.id)
   image_data = io.BytesIO(image_content.content)
+  logger.info(f'{user_id}: Received image and converted to base64')
 
   try:
-    if check_user(user_id)==True:
-      logger.info(f'{user_id}: Received image and converted to base64')
+    if check_user(user_id)==True: 
       # Convert the image to base64
       img = Image.open(image_data)
       img_base64 = image_to_base64(img)
