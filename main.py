@@ -466,7 +466,7 @@ def handle_image_message(event):
     line_bot_api.reply_message(event.reply_token, msg)
   else:
   # The user is not registered, send a message indicating they should register first
-  msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+    msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
 '''
 @handler.add(MessageEvent, message=AudioMessage)
