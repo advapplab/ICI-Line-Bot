@@ -212,6 +212,30 @@ def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
     print(f"Error while saving incorrect response data: {str(e)}")
 
 
+### save question submission to MongoDB ###
+def save_question_submission_to_mongodb(user_id, user_timestamp, submmision):
+  try:
+    client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
+    db = client[mdb_dbs]
+    collection = db['question_submission']
+    utc_tz = timezone('UTC')
+    cst_tz = timezone('Asia/Shanghai')
+    user_datetime = datetime.utcfromtimestamp(user_timestamp / 1000)
+    user_datetime = user_datetime.replace(tzinfo=utc_tz).astimezone(cst_tz)
+    # Create a document to store the incorrect response data
+    leave_message = {
+        'user_id': user_id,
+        'user_timestamp': user_datetime.isoformat(),
+        'submmision': submmision,
+    }
+    # Insert the document into the collection
+    collection.insert_one(leave_message)
+    client.close()
+  except Exception as e:
+    print(f"Error while saving incorrect response data: {str(e)}")
+
+
+
 ### Function to validate the student ID ###
 def is_valid_student_id(student_id):
     # Check if the student ID has exactly 9 characters
@@ -323,12 +347,21 @@ def handle_text_message(event):
 
 ### save ask for leave messgae responses
     elif text.lower().startswith('/leave'):
-      bot_think_time()
       if check_user(user_id)==True:
          user_id = event.source.user_id  
          student_data = load_student_data("student_id.json")
          student_id = student_data[user_id]
          save_leave_message_to_mongodb(user_id, user_timestamp, student_id)
+         msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
+      else:
+         # The user is not registered, send a message indicating they should register first
+         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+
+### save question submission
+    elif text.lower().startswith('/submit'):
+      if check_user(user_id)==True:
+         submmision = text[len('/submit'):].strip()
+         save_question_submission_to_mongodb(user_id, user_timestamp, submmision)
          msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
       else:
          # The user is not registered, send a message indicating they should register first
@@ -473,7 +506,7 @@ def handle_image_message(event):
     # Handle any exceptions that may occur
     logger.error(f'An error occurred: {str(e)}')
 
-#
+
 # @handler.add(MessageEvent, message=AudioMessage)
 # def handle_audio_message(event):
 #   user_id = event.source.user_id
