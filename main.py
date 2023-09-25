@@ -285,7 +285,7 @@ def handle_text_message(event):
       users_dict = storage_wrapper.load()
 
       if user_id in users_dict:
-        msg = TextSendMessage(text='Student ID already registered.')
+        msg = TextSendMessage(text='You already registered.')
       elif not is_valid_student_id(student_id):
         msg = TextSendMessage(text='Invalid registration format. Please use "/register  your_student_id"\nEx: /register 123456789')
       else:
