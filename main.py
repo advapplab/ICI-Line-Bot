@@ -449,24 +449,25 @@ def store_image(user_id, display_name, user_timestamp, img_base64):
 def handle_image_message(event):
   user_id = event.source.user_id
   user_timestamp = int(time.time() * 1000)
-  image_content = line_bot_api.get_message_content(event.message.id)
-  image_data = io.BytesIO(image_content.content)
-  logger.info(f'{user_id}: Received image and converted to base64')
   ## get line user's display name
   profile = line_bot_api.get_profile(user_id)
   display_name = profile.display_name
+  image_content = line_bot_api.get_message_content(event.message.id)
+  image_data = io.BytesIO(image_content.content)
 
-  # Convert the image to base64
-  if check_user(user_id)==True:
-    img = Image.open(image_data)
-    img_base64 = image_to_base64(img)
-    #store
-    store_image(user_id, display_name, user_timestamp, img_base64)
-    msg = TextSendMessage(text='Image received.')
-    line_bot_api.reply_message(event.reply_token, msg)
-  else:
-  # The user is not registered, send a message indicating they should register first
-    msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+  try:
+    if check_user(user_id)==True:
+      logger.info(f'{user_id}: Received image and converted to base64')
+      # Convert the image to base64
+      img = Image.open(image_data)
+      img_base64 = image_to_base64(img)
+      #store
+      store_image(user_id, display_name, user_timestamp, img_base64)
+      msg = TextSendMessage(text='Image received.')
+      line_bot_api.reply_message(event.reply_token, msg)
+    else:
+      # The user is not registered, send a message indicating they should register first
+      msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
 '''
 @handler.add(MessageEvent, message=AudioMessage)
