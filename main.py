@@ -469,49 +469,49 @@ def handle_image_message(event):
       # The user is not registered, send a message indicating they should register first
       msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
-'''
-@handler.add(MessageEvent, message=AudioMessage)
-def handle_audio_message(event):
-  user_id = event.source.user_id
-  user_timestamp = int(time.time() * 1000)
-  profile = line_bot_api.get_profile(user_id)
-  display_name = profile.display_name
-  audio_content = line_bot_api.get_message_content(event.message.id)
-  input_audio_path = f'{str(uuid.uuid4())}.m4a'
-  with open(input_audio_path, 'wb') as fd:
-    for chunk in audio_content.iter_content():
-      fd.write(chunk)
 
-  try:
-    if not model_management.get(user_id):
-      raise ValueError('Invalid API token')
-    else:
-      is_successful, response, error_message = model_management[
-        user_id].audio_transcriptions(input_audio_path, 'whisper-1')
-      if not is_successful:
-        raise Exception(error_message)
-      memory.append(user_id, 'user', response['text'])
-      is_successful, response, error_message = model_management[
-        user_id].chat_completions(memory.get(user_id), 'gpt-3.5-turbo')
-      if not is_successful:
-        raise Exception(error_message)
-      role, response = get_role_and_content(response)
-      memory.append(user_id, role, response)
-      msg = TextSendMessage(text=response)
-  except ValueError:
-    msg = TextSendMessage(text='Please register your API Token first, the format is /Register [API TOKEN]')
-  except KeyError:
-    msg = TextSendMessage(text='Please register your API Token first, the format is /Register sk-xxxxx')
-  except Exception as e:
-    memory.remove(user_id)
-    if str(e).startswith('Incorrect API key provided'):
-      msg = TextSendMessage(text='OpenAI API Token is invalid, please re-register')
-    else:
-      msg = TextSendMessage(text=str(e))
-  bot_timestamp = int(time.time() * 1000)
-  store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
-  os.remove(input_audio_path)
-'''
+# @handler.add(MessageEvent, message=AudioMessage)
+# def handle_audio_message(event):
+#   user_id = event.source.user_id
+#   user_timestamp = int(time.time() * 1000)
+#   profile = line_bot_api.get_profile(user_id)
+#   display_name = profile.display_name
+#   audio_content = line_bot_api.get_message_content(event.message.id)
+#   input_audio_path = f'{str(uuid.uuid4())}.m4a'
+#   with open(input_audio_path, 'wb') as fd:
+#     for chunk in audio_content.iter_content():
+#       fd.write(chunk)
+
+#   try:
+#     if not model_management.get(user_id):
+#       raise ValueError('Invalid API token')
+#     else:
+#       is_successful, response, error_message = model_management[
+#         user_id].audio_transcriptions(input_audio_path, 'whisper-1')
+#       if not is_successful:
+#         raise Exception(error_message)
+#       memory.append(user_id, 'user', response['text'])
+#       is_successful, response, error_message = model_management[
+#         user_id].chat_completions(memory.get(user_id), 'gpt-3.5-turbo')
+#       if not is_successful:
+#         raise Exception(error_message)
+#       role, response = get_role_and_content(response)
+#       memory.append(user_id, role, response)
+#       msg = TextSendMessage(text=response)
+#   except ValueError:
+#     msg = TextSendMessage(text='Please register your API Token first, the format is /Register [API TOKEN]')
+#   except KeyError:
+#     msg = TextSendMessage(text='Please register your API Token first, the format is /Register sk-xxxxx')
+#   except Exception as e:
+#     memory.remove(user_id)
+#     if str(e).startswith('Incorrect API key provided'):
+#       msg = TextSendMessage(text='OpenAI API Token is invalid, please re-register')
+#     else:
+#       msg = TextSendMessage(text=str(e))
+#   bot_timestamp = int(time.time() * 1000)
+#   store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
+#   os.remove(input_audio_path)
+
 
 # make sure the connection close after processing all message
 import atexit
