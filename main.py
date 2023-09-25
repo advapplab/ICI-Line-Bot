@@ -457,14 +457,16 @@ def handle_image_message(event):
   display_name = profile.display_name
 
   # Convert the image to base64
-  img = Image.open(image_data)
-  img_base64 = image_to_base64(img)
-  #store
-  store_image(user_id, display_name, user_timestamp, img_base64)
-  msg = TextSendMessage(text='Image received.')
-  line_bot_api.reply_message(event.reply_token, msg)
-
-
+  if check_user(user_id)==True:
+    img = Image.open(image_data)
+    img_base64 = image_to_base64(img)
+    #store
+    store_image(user_id, display_name, user_timestamp, img_base64)
+    msg = TextSendMessage(text='Image received.')
+    line_bot_api.reply_message(event.reply_token, msg)
+  else:
+  # The user is not registered, send a message indicating they should register first
+  msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
 '''
 @handler.add(MessageEvent, message=AudioMessage)
