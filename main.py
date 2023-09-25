@@ -465,12 +465,15 @@ def handle_image_message(event):
       store_image(user_id, display_name, user_timestamp, img_base64)
       msg = TextSendMessage(text='Image received.')
       line_bot_api.reply_message(event.reply_token, msg)
+      print("1")
     else:
       # The user is not registered, send a message indicating they should register first
       msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+      print("2")
   except Exception as e:
     # Handle any exceptions that may occur
     logger.error(f'An error occurred: {str(e)}')
+    print("3")
 
 
 # @handler.add(MessageEvent, message=AudioMessage)
