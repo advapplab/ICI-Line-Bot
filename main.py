@@ -193,7 +193,6 @@ def get_last_10_documents(history):
     last_10_documents_list = list(last_10_documents)
 
     return last_10_documents_list
-    print(last_10_documents_list)
 
 ### save leave message to MongoDB ###
 def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
@@ -372,7 +371,8 @@ def handle_text_message(event):
       else:
          # The user is not registered, send a message indicating they should register first
          msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
-
+      elif text.lower().startswith('/hi'):
+        print(last_10_documents_list)
     else:
       user_id = event.source.user_id
       user_model = model_management[user_id]
