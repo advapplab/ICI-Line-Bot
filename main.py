@@ -163,31 +163,36 @@ def get_relevant_answer_from_faq(user_question, type):
     return None
 
 
-### function to save incorrect responses to MongoDB ###
-def save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response):
-  try:
+# ### function to save incorrect responses to MongoDB ###
+# def save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response):
+#   try:
+#     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
+#     db = client[mdb_dbs]
+#     collection = db['incorrect_responses']
+#     # Create a document to store the incorrect response data
+#     incorrect_data = {
+#         'user_id': user_id,
+#         'user_message': user_message,
+#         'incorrect_response' : incorrect_response,
+#     }
+#     # Insert the document into the collection
+#     collection.insert_one(incorrect_data)
+#     client.close()
+#   except Exception as e:
+#     print(f"Error while saving incorrect response data: {str(e)}")
+
+def get_last_10_documents(history):
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
-    collection = db['incorrect_responses']
-    # Create a document to store the incorrect response data
-    incorrect_data = {
-        'user_id': user_id,
-        'user_message': user_message,
-        'incorrect_response' : incorrect_response,
-    }
-    # Insert the document into the collection
-    collection.insert_one(incorrect_data)
-    client.close()
-  except Exception as e:
-    print(f"Error while saving incorrect response data: {str(e)}")
-#class Memory:
-    # def get_latest_user_message(self, user_id):
-        # Implement this method to get the latest user message from memory
-        # pass
-    # def get_latest_assistant_message(self, user_id):
-        # Implement this method to get the latest assistant message from memory
-        # pass
+    collection = db['history']
 
+    # Find the last 10 documents in the collection and sort them by time in descending order
+    last_10_documents = collection.find().sort([("user_timestamp", pymongo.DESCENDING)]).limit(10)
+
+    # Convert the cursor to a list of dictionaries
+    last_10_documents_list = list(last_10_documents)
+
+    return last_10_documents_list
 
 ### save leave message to MongoDB ###
 def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
