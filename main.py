@@ -193,6 +193,7 @@ def get_last_10_documents(history):
     last_10_documents_list = list(last_10_documents)
 
     return last_10_documents_list
+    print(last_10_documents_list)
 
 ### save leave message to MongoDB ###
 def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
