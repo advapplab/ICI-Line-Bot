@@ -53,6 +53,7 @@ def callback():
 
 
 ### connect to DB
+import pymongo
 from pymongo import MongoClient
 mdb_user = os.getenv('MONGODB_USERNAME')
 mdb_pass = os.getenv('MONGODB_PASSWORD')
