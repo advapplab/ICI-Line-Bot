@@ -362,7 +362,7 @@ def handle_text_message(event):
       if check_user(user_id)==True:
          submmision = text[len('/submit'):].strip()
          save_question_submission_to_mongodb(user_id, user_timestamp, submmision)
-         msg = TextSendMessage(text='Question submission received.')
+         msg = TextSendMessage(text='Submission received.')
       else:
          # The user is not registered, send a message indicating they should register first
          msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
