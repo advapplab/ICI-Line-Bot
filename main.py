@@ -371,16 +371,11 @@ def handle_text_message(event):
       else:
          # The user is not registered, send a message indicating they should register first
          msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+    
     elif text.lower().startswith('/hi'):
-      client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
-      db = client[mdb_dbs]
-      collection = db['history']
-      # Find the last 10 documents in the collection and sort them by time in descending order
-      last_10_documents = collection.find().sort([("user_timestamp", pymongo.DESCENDING)]).limit(10)
-      # Convert the cursor to a list of dictionaries
-      last_10_documents_list = list(last_10_documents)
-      return last_10_documents_list
-      print(last_10_documents_list)
+      last_10_documents_list = get_last_10_documents()
+      for document in last_10_documents_list:
+        print(document)
 
     else:
       user_id = event.source.user_id
