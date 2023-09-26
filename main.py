@@ -181,7 +181,7 @@ def get_relevant_answer_from_faq(user_question, type):
 #   except Exception as e:
 #     print(f"Error while saving incorrect response data: {str(e)}")
 
-def get_last_10_documents(history):
+def get_last_10_documents():
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
     collection = db['history']
