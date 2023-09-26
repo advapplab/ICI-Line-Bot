@@ -189,11 +189,15 @@ def get_last_10_documents():
 
     # Find the last 10 documents in the collection and sort them by time in descending order
     last_10_documents = collection.find().sort([("user_timestamp", pymongo.DESCENDING)]).limit(10)
-
     # Convert the cursor to a list of dictionaries
     last_10_documents_list = list(last_10_documents)
-
     return last_10_documents_list
+
+def find_last_message(user_id, last_10_documents_list):
+    for document in last_10_documents_list:
+        if document['user_id'] == user_id:
+            return document['message']
+    return None
 
 ### save leave message to MongoDB ###
 def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
@@ -375,8 +379,11 @@ def handle_text_message(event):
     
     elif text.lower().startswith('/hi'):
       last_10_documents_list = get_last_10_documents()
-      for document in last_10_documents_list:
-        print(document)
+      last_message = find_last_message(user_id, last_10_documents_list)
+      if last_message:
+        print(f"Last message sent by user {user_id}: {last_message}")
+      else:
+        print(f"No previous messages found for user {user_id}")
 
     else:
       user_id = event.source.user_id
