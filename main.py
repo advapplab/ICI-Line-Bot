@@ -165,23 +165,22 @@ def get_relevant_answer_from_faq(user_question, type):
     return None
 
 
-# ### function to save incorrect responses to MongoDB ###
-# def save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response):
-#   try:
-#     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
-#     db = client[mdb_dbs]
-#     collection = db['incorrect_responses']
-#     # Create a document to store the incorrect response data
-#     incorrect_data = {
-#         'user_id': user_id,
-#         'user_message': user_message,
-#         'incorrect_response' : incorrect_response,
-#     }
-#     # Insert the document into the collection
-#     collection.insert_one(incorrect_data)
-#     client.close()
-#   except Exception as e:
-#     print(f"Error while saving incorrect response data: {str(e)}")
+### function to save incorrect responses to MongoDB ###
+def save_incorrect_response_to_mongodb(user_id, incorrect_response):
+  try:
+    client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
+    db = client[mdb_dbs]
+    collection = db['incorrect_responses']
+    # Create a document to store the incorrect response data
+    incorrect_data = {
+        'user_id': user_id,
+        'incorrect_response' : incorrect_response,
+    }
+    # Insert the document into the collection
+    collection.insert_one(incorrect_data)
+    client.close()
+  except Exception as e:
+    print(f"Error while saving incorrect response data: {str(e)}")
 
 def get_last_10_documents():
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
@@ -337,24 +336,24 @@ def handle_text_message(event):
             # The user is not registered, send a message indicating they should register first
             msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
-### save incorrect responses
-    elif text.lower().startswith('/incorrect'):
-         if check_user(user_id)==True:
-            # Extract the latest user and assistant messages from the memory
-            #latest_user_message = memory.get_latest_user_message(user_id)
-            latest_user_message = memory.get_last_user_bot_conversation(user_id)
-            latest_assistant_message = memory.get_latest_assistant_message(user_id)
-            # Construct the incorrect response data
-            user_message = latest_user_message
-            incorrect_response = latest_assistant_message
-            # Save the incorrect response data to MongoDB
-            save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
-            print(latest_user_message)
-            print(latest_assistant_message)
-            msg = TextSendMessage(text='Thank you for informing us. We will address the incorrect message later.')  
-         else:
-            # The user is not registered, send a message indicating they should register first
-            msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+
+#     elif text.lower().startswith('/incorrect'):
+#          if check_user(user_id)==True:
+#             # Extract the latest user and assistant messages from the memory
+#             #latest_user_message = memory.get_latest_user_message(user_id)
+#             latest_user_message = memory.get_last_user_bot_conversation(user_id)
+#             latest_assistant_message = memory.get_latest_assistant_message(user_id)
+#             # Construct the incorrect response data
+#             user_message = latest_user_message
+#             incorrect_response = latest_assistant_message
+#             # Save the incorrect response data to MongoDB
+#             save_incorrect_response_to_mongodb(user_id, user_message, incorrect_response)
+#             print(latest_user_message)
+#             print(latest_assistant_message)
+#             msg = TextSendMessage(text='Thank you for informing us. We will address the incorrect message later.')  
+#          else:
+#             # The user is not registered, send a message indicating they should register first
+#             msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
 ### save ask for leave messgae responses
     elif text.lower().startswith('/leave'):
@@ -377,14 +376,19 @@ def handle_text_message(event):
       else:
          # The user is not registered, send a message indicating they should register first
          msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
-    
+
+### save incorrect responses   
     elif text.lower().startswith('/hi'):
       last_10_documents_list = get_last_10_documents()
+      # last_message = the _id of the last message user sent
       last_message = find_last_message(user_id, last_10_documents_list)
+      incorrect_response = (text=f"{user_id}: {last_message}")
       if find_last_message(user_id, last_10_documents_list) is not None:
-        msg = TextSendMessage(text=f"Last message sent by user {user_id}: {last_message}")
+        msg = TextSendMessage(text="Thank you for informing us. We will address the incorrect message later."_)
+        #msg = TextSendMessage(text=f"Last message sent by user {user_id}: {last_message}")
       else:
         msg = TextSendMessage(text=f"No previous messages found for user {user_id}")
+      save_incorrect_response_to_mongodb(user_id, incorrect_response)
 
     else:
       user_id = event.source.user_id
