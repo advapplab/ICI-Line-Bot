@@ -223,7 +223,7 @@ def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
 
 
 ### save question submission to MongoDB ###
-def save_question_submission_to_mongodb(user_id, user_timestamp, submision):
+def save_question_submission_to_mongodb(user_id, user_timestamp, submission):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
@@ -236,7 +236,7 @@ def save_question_submission_to_mongodb(user_id, user_timestamp, submision):
     leave_message = {
         'user_id': user_id,
         'user_timestamp': user_datetime.isoformat(),
-        'submision': submision,
+        'submission': submission,
     }
     # Insert the document into the collection
     collection.insert_one(leave_message)
@@ -358,12 +358,12 @@ def handle_text_message(event):
 ### save question submission
     elif text.lower().startswith('/submit'):
       if check_user(user_id)==True:
-         submision = text[len('/submit'):].strip()
+         submission = text[len('/submit'):].strip()
          if not is_only_submit(submission):
-          msg = TextSendMessage(text='Invalid submision format. Please use "/submit your answer to the question"')
+          msg = TextSendMessage(text='Invalid submission format. Please use "/submit your answer to the question"')
          else:
           msg = TextSendMessage(text='Submission received.')
-         save_question_submission_to_mongodb(user_id, user_timestamp, submision)
+         save_question_submission_to_mongodb(user_id, user_timestamp, submission)
       else:
          # The user is not registered, send a message indicating they should register first
          msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
