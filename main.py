@@ -384,7 +384,7 @@ def handle_text_message(event):
       last_message = find_last_message(user_id, last_10_documents_list)
       incorrect_response = f"(text={user_id}: {last_message})"
       if find_last_message(user_id, last_10_documents_list) is not None:
-        msg = TextSendMessage(text="Thank you for informing us. We will address the incorrect message later."_)
+        msg = TextSendMessage(text="Thank you for informing us. We will address the incorrect message later.")
         #msg = TextSendMessage(text=f"Last message sent by user {user_id}: {last_message}")
       else:
         msg = TextSendMessage(text=f"No previous messages found for user {user_id}")
