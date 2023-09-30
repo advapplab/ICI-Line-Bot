@@ -379,7 +379,6 @@ def handle_text_message(event):
          msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
     
     elif text.lower().startswith('/hi'):
-      user_id = event.source.user_id
       last_10_documents_list = get_last_10_documents()
       last_message = find_last_message(user_id, last_10_documents_list)
       if find_last_message(user_id, last_10_documents_list) is not None:
