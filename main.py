@@ -236,7 +236,7 @@ def save_question_submission_to_mongodb(user_id, user_timestamp, submision):
     leave_message = {
         'user_id': user_id,
         'user_timestamp': user_datetime.isoformat(),
-        'submmision': submision,
+        'submision': submision,
     }
     # Insert the document into the collection
     collection.insert_one(leave_message)
@@ -360,7 +360,7 @@ def handle_text_message(event):
       if check_user(user_id)==True:
          submision = text[len('/submit'):].strip()
          if not is_only_submit(submission):
-          msg = TextSendMessage(text='Invalid submmision format. Please use "/submit your answer to the question"')
+          msg = TextSendMessage(text='Invalid submision format. Please use "/submit your answer to the question"')
          else:
           msg = TextSendMessage(text='Submission received.')
          save_question_submission_to_mongodb(user_id, user_timestamp, submision)
