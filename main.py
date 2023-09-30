@@ -197,7 +197,7 @@ def get_last_10_documents():
 def find_last_message(user_id, last_10_documents_list):
     for document in last_10_documents_list:
         if document['user_id'] == user_id:
-            return document['message']
+            return document['_id']
     return None
 
 ### save leave message to MongoDB ###
