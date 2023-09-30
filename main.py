@@ -223,7 +223,7 @@ def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
 
 
 ### save question submission to MongoDB ###
-def save_question_submission_to_mongodb(user_id, user_timestamp, submmision):
+def save_question_submission_to_mongodb(user_id, user_timestamp, submision):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
@@ -236,7 +236,7 @@ def save_question_submission_to_mongodb(user_id, user_timestamp, submmision):
     leave_message = {
         'user_id': user_id,
         'user_timestamp': user_datetime.isoformat(),
-        'submmision': submmision,
+        'submmision': submision,
     }
     # Insert the document into the collection
     collection.insert_one(leave_message)
@@ -288,6 +288,13 @@ def bot_think_time():
     time.sleep(think_time)
     print("Bot has finished thinking and is responding.")
 
+### Function to avoid students send an empty submision ###
+def is_only_submit(submission):
+    # Check if the submision is empty
+    if len(submission) != 0: 
+        return False
+    return True
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
   user_id = event.source.user_id
@@ -321,7 +328,7 @@ def handle_text_message(event):
       if user_id in users_dict:
         msg = TextSendMessage(text='You already registered.')
       elif not is_valid_student_id(student_id):
-        msg = TextSendMessage(text='Invalid registration format. Please use "/register  your_student_id"\nEx: /register 123456789')
+        msg = TextSendMessage(text='Invalid registration format. Please use "/register your_student_id"\nEx: /register 123456789')
       else:
         # Save the registration message to the JSON file
         users_dict[user_id] = student_id
@@ -351,9 +358,12 @@ def handle_text_message(event):
 ### save question submission
     elif text.lower().startswith('/submit'):
       if check_user(user_id)==True:
-         submmision = text[len('/submit'):].strip()
-         save_question_submission_to_mongodb(user_id, user_timestamp, submmision)
-         msg = TextSendMessage(text='Submission received.')
+         submision = text[len('/submit'):].strip()
+         if not is_only_submit(submission):
+          msg = TextSendMessage(text='Invalid submmision format. Please use "/submit your answer to the question"')
+         else:
+          msg = TextSendMessage(text='Submission received.')
+         save_question_submission_to_mongodb(user_id, user_timestamp, submision)
       else:
          # The user is not registered, send a message indicating they should register first
          msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
