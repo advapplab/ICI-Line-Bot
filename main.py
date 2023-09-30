@@ -382,7 +382,7 @@ def handle_text_message(event):
       user_id = event.source.user_id
       last_10_documents_list = get_last_10_documents()
       last_message = find_last_message(user_id, last_10_documents_list)
-      if last_message == True:
+      if find_last_message == True:
         msg = TextSendMessage(text=f"Last message sent by user {user_id}: {last_message}")
       else:
         msg = TextSendMessage(text=f"No previous messages found for user {user_id}")
