@@ -359,7 +359,7 @@ def handle_text_message(event):
     elif text.lower().startswith('/submit'):
       if check_user(user_id)==True:
          submission = text[len('/submit'):].strip()
-         if not is_only_submit(submission):
+         if is_only_submit(submission)==True:
           msg = TextSendMessage(text='Invalid submission format. Please use "/submit your answer to the question"')
          else:
           msg = TextSendMessage(text='Submission received.')
