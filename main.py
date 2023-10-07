@@ -395,7 +395,7 @@ def handle_text_message(event):
         user_id = event.source.user_id  
         student_data = load_student_data("student_id.json")
         student_id = student_data[user_id]
-        student_id_to_query = student_id
+        student_id_to_query = student_id.upper()
         # Filter the DataFrame based on the given student_id
         # score.iloc[:, 0] selects all values from the first column of the DataFrame 'score'
         student_data = score[score.iloc[:, 0] == student_id_to_query]
