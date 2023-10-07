@@ -11,6 +11,8 @@ import uuid
 import requests
 import traceback
 
+import pandas as pd
+
 from src.memory import Memory
 from src.models import OpenAIModel
 from src.logger import logger
@@ -383,6 +385,35 @@ def handle_text_message(event):
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
   
+### grading result query function   
+    elif text.lower().startswith('/score'):
+      if check_user(user_id)==True:
+        # load the score csv file
+        score_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0jMp-tn4qK9OXXmfHpu4JV4l0P6sKtSdpLS3X4i-Wabilz1N_l9NEejQpHSvvZtl-Sx5qG1x2ZFCO/pub?gid=0&single=true&output=csv'
+        score = pd.read_csv(score_url)
+        # find the student id of user
+        user_id = event.source.user_id  
+        student_data = load_student_data("student_id.json")
+        student_id = student_data[user_id]
+        student_id_to_query = student_id
+        # Filter the DataFrame based on the given student_id
+        # score.iloc[:, 0] selects all values from the first column of the DataFrame 'score'
+        student_data = score[score.iloc[:, 0] == student_id_to_query]
+        # Check if the student ID exists in the dataset
+        if not student_data.empty:
+          # Extract scores for all existing homework columns
+          existing_homework_columns = score.columns[2:]  # Excluding 'student_id' and 'name'
+          student_scores = student_data[existing_homework_columns]
+          # Print all scores for the student
+          msg = TextSendMessage(text=f"Scores for Student ID {student_id_to_query}:\n{student_scores.to_string(index=False)}")
+          # Calculate and print the average score
+          average_score = student_scores.mean(axis=1)  # Axis=1 calculates the mean across columns
+          msg = TextSendMessage(text=f"\nAverage Score: {average_score.iloc[0]:.2f}")  # Assuming only one row for the student
+        else:
+          msg = TextSendMessage(text=f"Student ID {student_id_to_query} not found in the dataset.")
+      else:
+        # The user is not registered, send a message indicating they should register first
+        msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')  
 
     else:
       user_id = event.source.user_id
