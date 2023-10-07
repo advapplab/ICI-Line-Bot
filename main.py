@@ -340,7 +340,7 @@ def handle_text_message(event):
     elif text.lower().startswith('/help'):
          if check_user(user_id)==True:
             # The user is registered, so you can proceed with the "/Instruction explanation" logic
-            msg = TextSendMessage(text='Instructions: \n\n/register\n➡️ Please use "/register + your_student_id" to register. For example: /register 123456789\n\n/incorrect\n➡️ Please promptly report any incorrect responses to the development team by clicking this button as it captures only the most recent conversation.\n\n/leave\n➡️ A function for you to ask for leave.')
+            msg = TextSendMessage(text='Instructions: \n\n/register\n➡️ Please use "/register + your_student_id" to register. For example: /register 123456789\n\n/incorrect\n➡️ Please promptly report any incorrect responses to the TA team by clicking this button as it captures only the most recent conversation.\n\n/leave\n➡️ You can ask for leave with this prompt.\n\n/submit\n➡️This prompt enables you to submit your answers of multiple choice questions or colab link. For example: /submit A,C,D,C,B or /submit  colab link \n\n/score\n➡️This prompt enables you to see your own scores of your homework or exams.')
          else:
             # The user is not registered, send a message indicating they should register first
             msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
