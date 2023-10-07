@@ -409,9 +409,9 @@ def handle_text_message(event):
             print(f"{col} : {score}")
           # Calculate and print the average score
           average_score = student_scores.mean(axis=1)  # Axis=1 calculates the mean across columns
-          msg = TextSendMessage(text=f"Scores for Student ID {student_id_to_query}:\n" +
+          msg = TextSendMessage(text=f"Scores for Student ID {student_id_to_query}:\n\n" +
                            '\n'.join([f"{col} : {score}" for col, score in zip(student_scores.columns, student_scores.iloc[0])]) +
-                           f"\nAverage Score: {average_score.iloc[0]:.2f}")
+                           f"\n\nAverage Score: {average_score.iloc[0]:.2f}")
         else:
           msg = TextSendMessage(text=f"Student ID {student_id_to_query} not found in the dataset.")
       else:
