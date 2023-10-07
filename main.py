@@ -413,7 +413,7 @@ def handle_text_message(event):
                            '\n'.join([f"{col} : {score}" for col, score in zip(student_scores.columns, student_scores.iloc[0])]) +
                            f"\n\nAverage Score: {average_score.iloc[0]:.2f}")
         else:
-          msg = TextSendMessage(text=f"Student ID {student_id_to_query} not found in the dataset.")
+          msg = TextSendMessage(text=f"Student ID {student_id_to_query} not found in the score file.")
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')  
