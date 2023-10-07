@@ -406,7 +406,7 @@ def handle_text_message(event):
           student_scores = student_data[existing_homework_columns]
           # Seperate the columns
           for col, score in zip(student_scores.columns, student_scores.iloc[0]):
-            print(f"{col} : {score}")
+            #print(f"{col} : {score}")
           # Calculate and print the average score
           average_score = student_scores.mean(axis=1)  # Axis=1 calculates the mean across columns
           msg = TextSendMessage(text=f"Scores for Student ID {student_id_to_query}:\n\n" +
