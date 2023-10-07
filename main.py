@@ -404,9 +404,12 @@ def handle_text_message(event):
           # Extract scores for all existing homework columns
           existing_homework_columns = score.columns[2:]  # Excluding 'student_id' and 'name'
           student_scores = student_data[existing_homework_columns]
+          # Seperate the columns
+          for col, score in zip(student_scores.columns, student_scores.iloc[0]):
+            print(f"{col} : {score}")
           # Calculate and print the average score
           average_score = student_scores.mean(axis=1)  # Axis=1 calculates the mean across columns
-          msg = TextSendMessage(text=f"Scores for Student ID {student_id_to_query}:\n{student_scores.to_string(index=False)}:\nAverage Score: {average_score.iloc[0]:.2f}")
+          msg = TextSendMessage(text=f"Scores for Student ID {student_id_to_query}:\n{col} : {score}:\nAverage Score: {average_score.iloc[0]:.2f}")
         else:
           msg = TextSendMessage(text=f"Student ID {student_id_to_query} not found in the dataset.")
       else:
