@@ -141,7 +141,7 @@ def hf_sbert_query(payload):
 
  ###Bryan Language Detection### 
   API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection" 
- def detect_language(user_message):
+  def detect_language(user_message):
     headers = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
     payload = {"inputs": user_message}
     
