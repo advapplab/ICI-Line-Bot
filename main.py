@@ -137,9 +137,10 @@ def hf_sbert_query(payload):
       # print(f"Error3: {str('safe')}")
       break
   return response.json()
+
  ###Bryan Language Detection### 
-def hf_sbert_query(payload):
-  API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection" + hf_sbert_model
+def query(payload):
+  API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection" 
   headers =  {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
   # detect if HF API is loading, if loading, then wait 1 second.
   while True:
