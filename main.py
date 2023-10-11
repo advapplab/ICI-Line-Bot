@@ -140,15 +140,16 @@ def hf_sbert_query(payload):
   return response.json()
 
  ###Bryan Language Detection### 
-API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
-HUGGINGFACE_TOKEN = "HUGGINGFACE_TOKEN"  
+
+#HUGGINGFACE_TOKEN = "HUGGINGFACE_TOKEN"  
 
 def detect_language(user_message):
-    headers = {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
+    LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
+    headers = {"Authorization": f"Bearer" +hf_token}
     payload = {"inputs": user_message}
 
     while True:
-        response = requests.post(API_URL, headers=headers, json=payload)
+        response = requests.post(LG_API_URL, headers=headers, json=payload)
         if 'error' in response.json():
             print(f"HuggingFace API is loading: {str(response.json())}")
             time.sleep(1)  # Sleep for 1 second
