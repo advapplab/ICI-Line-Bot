@@ -144,21 +144,29 @@ def hf_sbert_query(payload):
 #HUGGINGFACE_TOKEN = "HUGGINGFACE_TOKEN"  
 
 def detect_language(user_message):
-    LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
-    headers = {"Authorization": "Bearer " + hf_token}
-    payload = {"inputs": user_message}
+  # iris # moved the URL into the function and assign it a different name to avoid misleading
+  LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
+  # iris # modify the headers according to the above format; a space  is required between "Bearer" and the actual API token
+  headers = {"Authorization": "Bearer " + hf_token}
+  payload = {"inputs": user_message}
 
-    while True:
-        response = requests.post(LG_API_URL, headers=headers, json=payload)
-        if 'error' in response.json():
-            print(f"HuggingFace API is loading: {str(response.json())}")
-            time.sleep(1)  # Sleep for 1 second
-        else:
-            break
+  while True:
+      response = requests.post(LG_API_URL, headers=headers, json=payload)
+      if 'error' in response.json():
+          print(f"HuggingFace API is loading: {str(response.json())}")
+          time.sleep(1)  # Sleep for 1 second
+      else:
+          break
+  # iris # some code steal from chat gpt
+  print("Response JSON:", response.json())  # Print the entire response for debugging
 
-    detected_language = response.json()['predictions'][0]['label']
+  try:
+      detected_language = response.json()['predictions'][0]['label']
+  except (KeyError, IndexError) as e:
+      print(f"Error accessing response data: {e}")
+      detected_language = None
 
-    return detected_language
+  return detected_language
 
 ### connect to mongodb FAQ
 def get_relevant_answer_from_faq(user_question, type):
