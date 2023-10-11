@@ -140,9 +140,6 @@ def hf_sbert_query(payload):
   return response.json()
 
  ###Bryan Language Detection### 
-
-#HUGGINGFACE_TOKEN = "HUGGINGFACE_TOKEN"  
-
 def detect_language(user_message):
   # iris # moved the URL into the function and assign it a different name to avoid misleading
   LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
@@ -157,7 +154,9 @@ def detect_language(user_message):
           time.sleep(1)  # Sleep for 1 second
       else:
           break
-  # iris # need explaination
+  # iris 
+  # response.json() : is the JSON response from the response object returned by the Hugging Face API,and its structure is like a list with another list inside then a dictionary inside 
+  # therefore we need  [0][0]['label'] to obtain the inner dictionary and extracting the 'label' value from it 
   detected_language = response.json()[0][0]['label']
 
   return detected_language
