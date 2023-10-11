@@ -137,6 +137,20 @@ def hf_sbert_query(payload):
       # print(f"Error3: {str('safe')}")
       break
   return response.json()
+ ###Bryan Language Detection### 
+def hf_sbert_query(payload):
+  API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection" + hf_sbert_model
+  headers =  {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
+  # detect if HF API is loading, if loading, then wait 1 second.
+  while True:
+    response = requests.post(API_URL, headers=headers, json=payload)
+    if 'error' in response.json():
+      print(f"HuggingFace API is loading: {str(response.json())}")
+      time.sleep(1)  # Sleep for 1 second
+    else:
+      # print(f"Error3: {str('safe')}")
+      break
+  return response.json()
 
 ### connect to mongodb FAQ
 def get_relevant_answer_from_faq(user_question, type):
