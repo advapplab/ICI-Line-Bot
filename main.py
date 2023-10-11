@@ -440,6 +440,8 @@ def handle_text_message(event):
       memory.append(user_id, 'user', text)
       relevant_answer = get_relevant_answer_from_faq(text, 'faq')
 
+      language_detection = pipeline("text-classification", model="papluca/xlm-roberta-base-language-detection")
+      detected_language = language_detection(user_message)[0]['label']
 
       ## set the role
       prompt = text.strip()
