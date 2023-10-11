@@ -140,10 +140,17 @@ def hf_sbert_query(payload):
   return response.json()
 
  ###Bryan Language Detection### 
-def query(payload):
   API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection" 
-  headers =  {"Authorization": f"Bearer {HUGGINGFACE_TOKEN}"}
+  def detect_language(text):
+    headers = {"Authorization": f"Bearer {HUGGINGFACE_TOKE}"}
+    payload = {"inputs": text}
+    
+    response = query(payload, headers)
+    detected_language = response[0]['label']
+
+  return detected_language
   # detect if HF API is loading, if loading, then wait 1 second.
+  def query(payload):
   while True:
     response = requests.post(API_URL, headers=headers, json=payload)
     if 'error' in response.json():
@@ -441,8 +448,7 @@ def handle_text_message(event):
       memory.append(user_id, 'user', text)
       relevant_answer = get_relevant_answer_from_faq(text, 'faq')
 
-      language_detection = pipeline("text-classification", model="papluca/xlm-roberta-base-language-detection")
-      detected_language = language_detection(user_message)[0]['label']
+      detected_language = detect_language(text = event.message.text.strip()) 
 
       ## set the role
       prompt = text.strip()
@@ -470,6 +476,7 @@ def handle_text_message(event):
           #if not is_successful:
           #  raise Exception(error_message)
           #bot_think_time()
+
           if detected_language == 'en':
             response = requests.post(
                 'https://api.openai.com/v1/chat/completions',
