@@ -157,14 +157,8 @@ def detect_language(user_message):
           time.sleep(1)  # Sleep for 1 second
       else:
           break
-  # iris # some code steal from chat gpt
-  print("Response JSON:", response.json())  # Print the entire response for debugging
-
-  try:
-      detected_language = response.json()['predictions'][0]['label']
-  except (KeyError, IndexError) as e:
-      print(f"Error accessing response data: {e}")
-      detected_language = None
+  # iris # need explaination
+  detected_language = response.json()[0][0]['label']
 
   return detected_language
 
