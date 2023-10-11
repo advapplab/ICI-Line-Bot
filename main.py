@@ -145,7 +145,7 @@ def hf_sbert_query(payload):
 
 def detect_language(user_message):
     LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
-    headers = {"Authorization": "Bearer" + hf_token}
+    headers = {"Authorization": "Bearer " + hf_token}
     payload = {"inputs": user_message}
 
     while True:
