@@ -9,6 +9,7 @@ import os
 import os.path
 import uuid
 import requests
+from transformers import pipeline
 import traceback
 
 import pandas as pd
