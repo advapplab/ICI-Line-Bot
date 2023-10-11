@@ -156,7 +156,7 @@ def detect_language(user_message):
         else:
             break
 
-    detected_language = response.json()[0]['label']
+    detected_language = response.json()['predictions'][0]['label']
 
     return detected_language
 
