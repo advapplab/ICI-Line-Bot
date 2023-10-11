@@ -151,7 +151,7 @@ def hf_sbert_query(payload):
   return detected_language
   # detect if HF API is loading, if loading, then wait 1 second.
   def query(payload):
-  while True:
+   while True:
     response = requests.post(API_URL, headers=headers, json=payload)
     if 'error' in response.json():
       print(f"HuggingFace API is loading: {str(response.json())}")
