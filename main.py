@@ -107,8 +107,8 @@ def store_history_message(user_id, student_id, text, user_timestamp, bot_reply, 
     response_time = (bot_datetime - user_datetime).total_seconds()
     result = collection.insert_one({
       'user_id': user_id,
-      'user_message': text,
       'student_id': student_id,
+      'user_message': text,
       'user_timestamp': user_datetime.isoformat(),
       'bot_reply': bot_reply_text,
       'bot_timestamp': bot_datetime.isoformat(),
