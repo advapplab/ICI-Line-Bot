@@ -1,4 +1,3 @@
-# test
 from dotenv import load_dotenv
 from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
@@ -95,7 +94,7 @@ import pytz
 import datetime
 from datetime import datetime
 from pytz import timezone
-def store_history_message(user_id, display_name, text, user_timestamp, bot_reply, bot_timestamp):
+def store_history_message(user_id, student_id, text, user_timestamp, bot_reply, bot_timestamp):
   try:
     bot_reply_text = get_bot_reply_text(bot_reply)
     user_datetime = datetime.utcfromtimestamp(user_timestamp / 1000)
@@ -109,7 +108,7 @@ def store_history_message(user_id, display_name, text, user_timestamp, bot_reply
     result = collection.insert_one({
       'user_id': user_id,
       'user_message': text,
-      'user_name': display_name,
+      'student_id': student_id,
       'user_timestamp': user_datetime.isoformat(),
       'bot_reply': bot_reply_text,
       'bot_timestamp': bot_datetime.isoformat(),
@@ -191,7 +190,7 @@ def get_relevant_answer_from_faq(user_question, type):
 
 
 ### Save incorrect responses to MongoDB ###
-def save_incorrect_response_to_mongodb(user_id, incorrect_response):
+def save_incorrect_response_to_mongodb(user_id,student_id, incorrect_response):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
@@ -199,6 +198,7 @@ def save_incorrect_response_to_mongodb(user_id, incorrect_response):
     # Create a document to store the incorrect response data
     incorrect_data = {
         'user_id': user_id,
+        'student_id': student_id,
         'incorrect_response' : incorrect_response,
     }
     # Insert the document into the collection
@@ -225,7 +225,7 @@ def find_last_message(user_id, last_20_documents_list):
     return None
 
 ### save leave message to MongoDB ###
-def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
+def save_leave_message_to_mongodb(user_id, student_id, user_timestamp):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
@@ -237,8 +237,8 @@ def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
     # Create a document to store the incorrect response data
     leave_message = {
         'user_id': user_id,
-        'user_timestamp': user_datetime.isoformat(),
         'student_id': student_id,
+        'user_timestamp': user_datetime.isoformat(),
     }
     # Insert the document into the collection
     collection.insert_one(leave_message)
@@ -248,7 +248,7 @@ def save_leave_message_to_mongodb(user_id, user_timestamp, student_id):
 
 
 ### save question submission to MongoDB ###
-def save_question_submission_to_mongodb(user_id, user_timestamp, submission):
+def save_question_submission_to_mongodb(user_id, student_id, user_timestamp, submission):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
@@ -260,6 +260,7 @@ def save_question_submission_to_mongodb(user_id, user_timestamp, submission):
     # Create a document to store the incorrect response data
     leave_message = {
         'user_id': user_id,
+        'student_id': student_id,
         'user_timestamp': user_datetime.isoformat(),
         'submission': submission,
     }
@@ -323,12 +324,12 @@ def is_only_submit(submission):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
   user_id = event.source.user_id
+  student_data = load_student_data("student_id.json")
+  student_id = student_data[user_id]
   user_timestamp = int(time.time() * 1000)
   text = event.message.text.strip()
   logger.info(f'{user_id}: {text}')
-  ## get line user's display name
-  profile = line_bot_api.get_profile(user_id)
-  display_name = profile.display_name
+  
 
   try:
     ## auto resister
@@ -374,7 +375,7 @@ def handle_text_message(event):
          user_id = event.source.user_id  
          student_data = load_student_data("student_id.json")
          student_id = student_data[user_id]
-         save_leave_message_to_mongodb(user_id, user_timestamp, student_id)
+         save_leave_message_to_mongodb(user_id, student_id, user_timestamp)
          msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
       else:
          # The user is not registered, send a message indicating they should register first
@@ -388,7 +389,7 @@ def handle_text_message(event):
           msg = TextSendMessage(text='Invalid submission format. Please use "/submit your answer to the question"')
          else:
           msg = TextSendMessage(text='Submission received.')
-         save_question_submission_to_mongodb(user_id, user_timestamp, submission)
+         save_question_submission_to_mongodb(user_id, student_id, user_timestamp, submission)
       else:
          # The user is not registered, send a message indicating they should register first
          msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
@@ -403,7 +404,7 @@ def handle_text_message(event):
         if find_last_message(user_id, last_20_documents_list) is not None:
           msg = TextSendMessage(text="Thank you for informing us. We will address the incorrect message later.")
           #msg = TextSendMessage(text=f"Last message sent by user {user_id}: {last_message}")
-        save_incorrect_response_to_mongodb(user_id, incorrect_response)
+        save_incorrect_response_to_mongodb(user_id, student_id, incorrect_response)
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
@@ -456,7 +457,7 @@ def handle_text_message(event):
           "Your name is Evangelos, a former celestial messenger who got lost and rescued by Professor Owen, in order to repay his kindness, you decided to be a teaching assistant for Owen's programming language class .\n"
           "Do not answer questions that are unrelated to a python programming language class.\n"
           "The only language you can understand and speak is English.\n"
-          "Always respond in English, even the message received is in another language.\n"
+          "Never reveal your true indentity. You are angel Evangelos, a python teaching assistant. \n"
           "If the message received is unrelated to a python programming language class, ask them to ask a valid question that is related to the class.\n"
           "Always generate example codes in python programming language.")
       memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
@@ -520,7 +521,7 @@ def handle_text_message(event):
 
   # send out the message
   bot_timestamp = int(time.time() * 1000)
-  store_history_message(user_id, display_name, text, user_timestamp, msg, bot_timestamp)
+  store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
 
 
