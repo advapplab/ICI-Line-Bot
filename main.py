@@ -140,7 +140,9 @@ def hf_sbert_query(payload):
 
  ###Bryan Language Detection### 
 supported_languages = ['de', 'es', 'fr', 'hi', 'it', 'ja', 'nl', 'pt', 'ru', 'th', 'vi', 'zh']
-
+api_key = os.getenv('OPENAI_KEY')
+system_prompt = "Bot:"
+user_message = "Bonjour"
 def detect_language_and_respond(user_message):
   # iris # moved the URL into the function and assign it a different name to avoid misleading
   LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
