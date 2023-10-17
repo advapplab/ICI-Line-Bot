@@ -139,7 +139,7 @@ def hf_sbert_query(payload):
   return response.json()
 
  ###Bryan Language Detection### 
-def detect_language(user_message):
+def detect_language(user_message, hf_token, api_key, system_prompt):
   # iris # moved the URL into the function and assign it a different name to avoid misleading
   LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
   # iris # modify the headers according to the above format; a space is required between "Bearer" and the actual API token
@@ -506,6 +506,7 @@ def handle_text_message(event):
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+  return msg
 
   except ValueError:
     msg = TextSendMessage(text='Token invalid, please re-register, the format should be: /Register sk-xxxxx')
