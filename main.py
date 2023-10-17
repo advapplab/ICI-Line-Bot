@@ -481,8 +481,8 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-        if detected_language == 'en':
-          response = requests.post(
+          if detected_language == 'en':
+            response = requests.post(
               'https://api.openai.com/v1/chat/completions',
                 headers = {
                     'Content-Type': 'application/json',
