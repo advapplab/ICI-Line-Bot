@@ -139,11 +139,7 @@ def hf_sbert_query(payload):
   return response.json()
 
  ###Bryan Language Detection### 
-supported_languages = ['de', 'es', 'fr', 'hi', 'it', 'ja', 'nl', 'pt', 'ru', 'th', 'vi', 'zh']
-api_key = os.getenv('OPENAI_KEY')
-system_prompt = "Bot:"
-user_message = "Bonjour"
-def detect_language_and_respond(user_message):
+def detect_language(user_message):
   # iris # moved the URL into the function and assign it a different name to avoid misleading
   LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
   # iris # modify the headers according to the above format; a space is required between "Bearer" and the actual API token
@@ -485,7 +481,7 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-          if detected_language == 'en' or detected_language in supported_languages:
+          if detected_language == 'en':
             response = requests.post(
               'https://api.openai.com/v1/chat/completions',
                 headers = {
@@ -494,14 +490,14 @@ def handle_text_message(event):
                 },
                 json = {
                     'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                    "messages": [{"role": "user", "content": f"{system_prompt}\n\n{user_message}"}],
+                    "messages": [{"role": "user", "content": f"{system_prompt}\n\n{text}"}],
                     'temperature': 0.4,
                     'max_tokens': 300
                 }
             )
-            json_response = response.json()
-            response_text = json_response['choices'][0]['message']['content']
-            msg = TextSendMessage(text=response_text)
+            json = response.json()
+            response = json_response['choices'][0]['message']['content']
+            msg = TextSendMessage(text=response)
             # role, response = get_role_and_content(response)
             # msg = TextSendMessage(text=response)
             # memory.append(user_id, role, response)
