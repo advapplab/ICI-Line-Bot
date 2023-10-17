@@ -450,7 +450,7 @@ def handle_text_message(event):
       user_model = model_management[user_id]
       memory.append(user_id, 'user', text)
       relevant_answer = get_relevant_answer_from_faq(text, 'faq')
-      
+      ###Bryan language detection###
       user_message = text = event.message.text.strip()
       detected_language = detect_language(user_message) 
 
@@ -480,24 +480,24 @@ def handle_text_message(event):
           #if not is_successful:
           #  raise Exception(error_message)
           #bot_think_time()
-
-          if detected_language == 'en':
-            response = requests.post(
-                'https://api.openai.com/v1/chat/completions',
+          # detect if the message is in English
+        if detected_language == 'en':
+          response = requests.post(
+              'https://api.openai.com/v1/chat/completions',
                 headers = {
                     'Content-Type': 'application/json',
                     'Authorization': f'Bearer {api_key}'
                 },
                 json = {
                     'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                    "messages": [{"role": "user", "content": f"{system_prompt}\n\n{text}"}],
+                    "messages": [{"role": "user", "content": f"{system_prompt}\n\n{user_message}"}],
                     'temperature': 0.4,
                     'max_tokens': 300
                 }
             )
-            json = response.json()
-            response = json['choices'][0]['message']['content']
-            msg = TextSendMessage(text=response)
+            json_response = response.json()
+            response_text = json_response['choices'][0]['message']['content']
+            msg = TextSendMessage(text=response_text)
             # role, response = get_role_and_content(response)
             # msg = TextSendMessage(text=response)
             # memory.append(user_id, role, response)
