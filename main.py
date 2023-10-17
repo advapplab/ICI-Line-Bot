@@ -139,7 +139,7 @@ def hf_sbert_query(payload):
   return response.json()
 
  ###Bryan Language Detection### 
-supported_languages = supported_languages = ['ar', 'de', 'el', 'en', 'es', 'fr', 'hi', 'it', 'ja', 'nl', 'pl', 'pt', 'ru', 'th', 'tr', 'vi', 'zh']
+supported_languages = ['de', 'en', 'es', 'fr', 'hi', 'it', 'ja', 'nl', 'pt', 'ru', 'th', 'vi', 'zh']
 
 def detect_language(user_message, hf_token, api_key, system_prompt, supported_languages):
   # iris # moved the URL into the function and assign it a different name to avoid misleading
