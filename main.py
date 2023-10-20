@@ -308,8 +308,8 @@ def check_user(user_id):
 ### think time ###
 import random
 def bot_think_time():
-    # Generate a random think time between 30 and 60 seconds
-    think_time = random.randint(30, 60)
+    # Generate a random think time between 30 and 300 seconds
+    think_time = random.randint(30, 300)
     print(f"Bot is thinking for {think_time} seconds...")
     time.sleep(think_time)
     print("Bot has finished thinking and is responding.")
