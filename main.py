@@ -528,6 +528,8 @@ def handle_text_message(event):
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   if msg is not None:
     line_bot_api.reply_message(event.reply_token, msg)
+  else:
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Fallback message'))
 
 
 
