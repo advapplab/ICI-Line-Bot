@@ -481,8 +481,8 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-          msg = TextSendMessage(text='')
-          if detected_language in ['zh', 'th', 'es']:
+          msg = None 
+          if detected_language == 'zh'
             msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
           elif detected_language == 'en':
             response = requests.post(
