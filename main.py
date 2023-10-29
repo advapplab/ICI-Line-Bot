@@ -139,8 +139,6 @@ def hf_sbert_query(payload):
   return response.json()
 
  ###Bryan Language Detection### 
-supported_languages = ['en', 'zh', 'th', 'es', 'ja']
-
 def detect_language(user_message):
   # iris # moved the URL into the function and assign it a different name to avoid misleading
   LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
@@ -482,6 +480,8 @@ def handle_text_message(event):
           #if not is_successful:
           #  raise Exception(error_message)
           #bot_think_time()
+          # define the languages supported by the model
+          supported_languages = ['en', 'zh', 'th', 'es', 'ja']
           # detect if the message is in English
           if detected_language == 'en' in supported_languages:
             response = requests.post(
