@@ -139,6 +139,8 @@ def hf_sbert_query(payload):
   return response.json()
 
  ###Bryan Language Detection### 
+supported_languages = ['en', 'zh', 'th', 'es', 'ja']
+
 def detect_language(user_message):
   # iris # moved the URL into the function and assign it a different name to avoid misleading
   LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
@@ -481,7 +483,7 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-          if detected_language == 'en':
+          if detected_language == 'en' in supported_languages:
             response = requests.post(
               'https://api.openai.com/v1/chat/completions',
                 headers = {
@@ -501,7 +503,7 @@ def handle_text_message(event):
             # role, response = get_role_and_content(response)
             # msg = TextSendMessage(text=response)
             # memory.append(user_id, role, response)
-          elif detected_language == 'zh':
+          elif detected_language in supported_languages:
             msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
         # The user is not registered, send a message indicating they should register first
