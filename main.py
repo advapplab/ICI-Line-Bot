@@ -483,28 +483,29 @@ def handle_text_message(event):
           # define the languages supported by the model
           supported_languages = ['en', 'zh', 'th', 'es', 'ja']
           # detect if the message is in English
-          if detected_language == 'en' in supported_languages:
-            response = requests.post(
-              'https://api.openai.com/v1/chat/completions',
-                headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': f'Bearer {api_key}'
-                },
-                json = {
-                    'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                    "messages": [{"role": "user", "content": f"{system_prompt}\n\n{text}"}],
-                    'temperature': 0.4,
-                    'max_tokens': 300
-                }
-            )
-            json = response.json()
-            response = json['choices'][0]['message']['content']
-            msg = TextSendMessage(text=response)
+          if detected_language in supported_languages:
+            if detected_language == 'en' in supported_languages:
+              response = requests.post(
+                'https://api.openai.com/v1/chat/completions',
+                  headers = {
+                      'Content-Type': 'application/json',
+                      'Authorization': f'Bearer {api_key}'
+                  },
+                  json = {
+                      'model': os.getenv('OPENAI_MODEL_ENGINE'),
+                      "messages": [{"role": "user", "content": f"{system_prompt}\n\n{text}"}],
+                      'temperature': 0.4,
+                      'max_tokens': 300
+                  }
+              )
+              json = response.json()
+              response = json['choices'][0]['message']['content']
+              msg = TextSendMessage(text=response)
             # role, response = get_role_and_content(response)
             # msg = TextSendMessage(text=response)
             # memory.append(user_id, role, response)
-          elif detected_language in supported_languages:
-            msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+            else:
+              msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
