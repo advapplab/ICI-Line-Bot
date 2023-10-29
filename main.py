@@ -481,10 +481,7 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-          msg = None 
-          if detected_language == 'zh':
-            msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
-          elif detected_language == 'en':
+          if detected_language == 'en':
             response = requests.post(
               'https://api.openai.com/v1/chat/completions',
                 headers = {
@@ -504,6 +501,8 @@ def handle_text_message(event):
             # role, response = get_role_and_content(response)
             # msg = TextSendMessage(text=response)
             # memory.append(user_id, role, response)
+            else detected_language == 'zh':
+             msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
@@ -526,10 +525,7 @@ def handle_text_message(event):
   # send out the message
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
-  if msg is not None:
-    line_bot_api.reply_message(event.reply_token, msg)
-  else:
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='Fallback message'))
+  line_bot_api.reply_message(event.reply_token, msg)
 
 
 
