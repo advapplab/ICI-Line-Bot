@@ -481,6 +481,7 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
+          msg = TextSendMessage(text='')
           if detected_language in ['zh', 'th', 'es']:
             msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
           elif detected_language == 'en':
@@ -524,7 +525,6 @@ def handle_text_message(event):
 
   # send out the message
   bot_timestamp = int(time.time() * 1000)
-  msg = TextSendMessage(text='No relevant answer found.')
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
 
