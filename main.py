@@ -481,7 +481,10 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-            if detected_language == 'en':
+          supported_languages = ['en', 'zh', 'th', 'es', 'ja']
+          def detect_language_and_respond(user_message, api_key, system_prompt):
+          detected_language = detect_language(user_message)
+          if detected_language == 'en':
               response = requests.post(
                 'https://api.openai.com/v1/chat/completions',
                   headers = {
@@ -501,7 +504,7 @@ def handle_text_message(event):
             # role, response = get_role_and_content(response)
             # msg = TextSendMessage(text=response)
             # memory.append(user_id, role, response)
-            else:
+            elif detected_language in supported_languages:
               msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
         # The user is not registered, send a message indicating they should register first
