@@ -482,7 +482,7 @@ def handle_text_message(event):
           #bot_think_time()
           # detect if the message is in English
           detected_language = detect_language(user_message)
-          if detected_language == 'en' in supported_languages:
+          if detected_language == 'en':
               response = requests.post(
                 'https://api.openai.com/v1/chat/completions',
                   headers = {
