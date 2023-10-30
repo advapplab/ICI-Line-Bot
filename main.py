@@ -502,7 +502,7 @@ def handle_text_message(event):
             # role, response = get_role_and_content(response)
             # msg = TextSendMessage(text=response)
             # memory.append(user_id, role, response)
-          else :
+          else:
               msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
         # The user is not registered, send a message indicating they should register first
