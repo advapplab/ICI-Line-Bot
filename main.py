@@ -140,6 +140,7 @@ def hf_sbert_query(payload):
 
  ###Bryan Language Detection### 
 def detect_language(user_message):
+  supported_languages = ['en', 'zh', 'th', 'es', 'ja']
   # iris # moved the URL into the function and assign it a different name to avoid misleading
   LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
   # iris # modify the headers according to the above format; a space is required between "Bearer" and the actual API token
@@ -481,10 +482,7 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-          supported_languages = ['en', 'zh', 'th', 'es', 'ja']
-
-          def detect_language_and_respond(user_message, api_key, system_prompt):
-            detected_language = detect_language(user_message)
+          if detected_language in supported_languages:
             if detected_language == 'en':
               response = requests.post(
                 'https://api.openai.com/v1/chat/completions',
