@@ -483,7 +483,7 @@ def handle_text_message(event):
           # detect if the message is in English
           supported_languages = ['en', 'zh', 'th', 'es', 'ja']
           
-           detected_language = detect_language(user_message)
+          detected_language = detect_language(user_message)
            
            if detected_language == 'en':
               response = requests.post(
