@@ -139,7 +139,7 @@ def hf_sbert_query(payload):
   return response.json()
 
  ###Bryan Language Detection### 
-  def detect_language(user_message):
+def detect_language(user_message):
   # iris # moved the URL into the function and assign it a different name to avoid misleading
   LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
   # iris # modify the headers according to the above format; a space is required between "Bearer" and the actual API token
