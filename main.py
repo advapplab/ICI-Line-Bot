@@ -484,7 +484,7 @@ def handle_text_message(event):
           supported_languages = ['en', 'zh', 'th', 'es', 'ja']
           def detect_language_and_respond(user_message, api_key, system_prompt):
             detected_language = detect_language(user_message)
-            if detected_language == 'en':
+            if detected_language == 'en' in supported_languages:
               response = requests.post(
                 'https://api.openai.com/v1/chat/completions',
                   headers = {
