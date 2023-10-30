@@ -481,9 +481,9 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-        supported_languages = ['en', 'zh', 'th', 'es', 'ja']
+          supported_languages = ['en', 'zh', 'th', 'es', 'ja']
         
-        def detect_language_and_respond(user_message, api_key, system_prompt):
+          def detect_language_and_respond(user_message, api_key, system_prompt):
           detected_language = detect_language(user_message)
             if detected_language == 'en':
               response = requests.post(
@@ -506,7 +506,7 @@ def handle_text_message(event):
             # msg = TextSendMessage(text=response)
             # memory.append(user_id, role, response)
             else :
-               msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+              msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
