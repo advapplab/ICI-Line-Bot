@@ -490,7 +490,8 @@ def handle_text_message(event):
                key=lambda x: x['confidence']
             )
 
-            if highest_confidence_language['language'] == 'en':
+            if highest_confidence_language['language'] in supported_languages:
+            elif highest_confidence_language['language'] == 'en':
                 response = requests.post(
                   'https://api.openai.com/v1/chat/completions',
                     headers = {
