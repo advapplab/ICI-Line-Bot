@@ -481,31 +481,28 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-          def detect_language_and_respond(user_message, api_key, system_prompt):
-            supported_languages = ['en', 'zh', 'th', 'es', 'ja']
-            if detected_language in supported_languages:
-              if detected_language == 'en':
-                response = requests.post(
-                  'https://api.openai.com/v1/chat/completions',
-                    headers = {
-                        'Content-Type': 'application/json',
-                        'Authorization': f'Bearer {api_key}'
-                    },
-                    json = {
-                        'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                        "messages": [{"role": "user", "content": f"{system_prompt}\n\n{text}"}],
-                        'temperature': 0.4,
-                        'max_tokens': 300
+          if detected_language == 'en':
+              response = requests.post(
+                'https://api.openai.com/v1/chat/completions',
+                  headers = {
+                      'Content-Type': 'application/json',
+                      'Authorization': f'Bearer {api_key}'
+                  },
+                  json = {
+                      'model': os.getenv('OPENAI_MODEL_ENGINE'),
+                      "messages": [{"role": "user", "content": f"{system_prompt}\n\n{text}"}],
+                      'temperature': 0.4,
+                      'max_tokens': 300
                     }
                 )
-                json = response.json()
-                response = json['choices'][0]['message']['content']
-                msg = TextSendMessage(text=response)
+              json = response.json()
+              response = json['choices'][0]['message']['content']
+              msg = TextSendMessage(text=response)
               # role, response = get_role_and_content(response)
               # msg = TextSendMessage(text=response)
               # memory.append(user_id, role, response)
-              else:
-                msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+          else:
+              msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
