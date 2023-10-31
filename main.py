@@ -481,16 +481,8 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-          def detect_language_and_respond(user_message, api_key, system_prompt):
-            detected_languages = detect_languages_with_confidence(user_message)  # Your language detection function
-            supported_languages = ['en', 'zh', 'th', 'es', 'ja']
-            
-            highest_confidence_language = max(
-              (lang for lang in detected_languages if lang['language'] in supported_languages),
-               key=lambda x: x['confidence']
-            )
-
-            if highest_confidence_language['language'] in supported_languages:
+          detected_language = detect_language(user_message)
+            if detected_language == 'en':
                 response = requests.post(
                   'https://api.openai.com/v1/chat/completions',
                     headers = {
