@@ -21,7 +21,7 @@ from src.utils import get_role_and_content
 from src.service.youtube import Youtube, YoutubeTranscriptReader
 from src.service.website import Website, WebsiteReader
 from src.mongodb import mongodb
-#
+
 load_dotenv('.env')
 
 app = Flask(__name__)
@@ -138,27 +138,27 @@ def hf_sbert_query(payload):
       break
   return response.json()
 
- ###Bryan Language Detection### 
-def detect_language(user_message):
-  # iris # moved the URL into the function and assign it a different name to avoid misleading
-  LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
-  # iris # modify the headers according to the above format; a space is required between "Bearer" and the actual API token
-  headers = {"Authorization": "Bearer " + hf_token}
-  payload = {"inputs": user_message}
+#  ###Bryan Language Detection### 
+# def detect_language(user_message):
+#   # iris # moved the URL into the function and assign it a different name to avoid misleading
+#   LG_API_URL = "https://api-inference.huggingface.co/models/papluca/xlm-roberta-base-language-detection"
+#   # iris # modify the headers according to the above format; a space is required between "Bearer" and the actual API token
+#   headers = {"Authorization": "Bearer " + hf_token}
+#   payload = {"inputs": user_message}
 
-  while True:
-      response = requests.post(LG_API_URL, headers=headers, json=payload)
-      if 'error' in response.json():
-          print(f"HuggingFace API is loading: {str(response.json())}")
-          time.sleep(1)  # Sleep for 1 second
-      else:
-          break
-  # iris 
-  # response.json() : is the JSON response from the response object returned by the Hugging Face API, and its structure is like a list with another list inside then a dictionary inside 
-  # therefore we need  [0][0]['label'] to obtain the inner dictionary and extracting the 'label' value from it 
-  detected_language = response.json()[0][0]['label']
+#   while True:
+#       response = requests.post(LG_API_URL, headers=headers, json=payload)
+#       if 'error' in response.json():
+#           print(f"HuggingFace API is loading: {str(response.json())}")
+#           time.sleep(1)  # Sleep for 1 second
+#       else:
+#           break
+#   # iris 
+#   # response.json() : is the JSON response from the response object returned by the Hugging Face API, and its structure is like a list with another list inside then a dictionary inside 
+#   # therefore we need  [0][0]['label'] to obtain the inner dictionary and extracting the 'label' value from it 
+#   detected_language = response.json()[0][0]['label']
 
-  return detected_language
+#   return detected_language
 
 ### connect to mongodb FAQ
 def get_relevant_answer_from_faq(user_question, type):
@@ -481,29 +481,29 @@ def handle_text_message(event):
           #  raise Exception(error_message)
           #bot_think_time()
           # detect if the message is in English
-          detected_language = detect_language(user_message)
-            if detected_language == 'en':
-                response = requests.post(
-                  'https://api.openai.com/v1/chat/completions',
-                    headers = {
-                        'Content-Type': 'application/json',
-                        'Authorization': f'Bearer {api_key}'
-                    },
-                    json = {
-                        'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                        "messages": [{"role": "user", "content": f"{system_prompt}\n\n{text}"}],
-                        'temperature': 0.4,
-                        'max_tokens': 300
-                      }
-                  )
-                json = response.json()
-                response = json['choices'][0]['message']['content']
-                msg = TextSendMessage(text=response)
-                # role, response = get_role_and_content(response)
-                # msg = TextSendMessage(text=response)
-                # memory.append(user_id, role, response)
-            else:
-               msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+          # detected_language = detect_language(user_message)
+          #   if detected_language == 'en':
+          response = requests.post(
+            'https://api.openai.com/v1/chat/completions',
+              headers = {
+                  'Content-Type': 'application/json',
+                  'Authorization': f'Bearer {api_key}'
+              },
+              json = {
+                  'model': os.getenv('OPENAI_MODEL_ENGINE'),
+                  "messages": [{"role": "user", "content": f"{system_prompt}\n\n{text}"}],
+                  'temperature': 0.4,
+                  'max_tokens': 300
+                }
+            )
+          json = response.json()
+          response = json['choices'][0]['message']['content']
+          msg = TextSendMessage(text=response)
+          # role, response = get_role_and_content(response)
+          # msg = TextSendMessage(text=response)
+          # memory.append(user_id, role, response)
+          # else:
+          #    msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
