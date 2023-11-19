@@ -450,9 +450,9 @@ def handle_text_message(event):
       user_model = model_management[user_id]
       memory.append(user_id, 'user', text)
       relevant_answer = get_relevant_answer_from_faq(text, 'faq')
-      ###Bryan language detection###
-      user_message = text = event.message.text.strip()
-      detected_language = detect_language(user_message) 
+      # ###Bryan language detection###
+      # user_message = text = event.message.text.strip()
+      # detected_language = detect_language(user_message) 
 
       ## set the role
       prompt = text.strip()
