@@ -169,7 +169,7 @@ def hf_sbert_query(payload):
         ]
     )
     response = gpt_language_detection['choices'][0]['message']['content'].strip().lower()
-    print(f"GPT Response for validation: {response}")  # Debugging line
+    print(f"GPT Response for validation: {response}")
     return response == 'true'
 
 
@@ -511,7 +511,7 @@ def handle_text_message(event):
               )
             json = response.json()
             return json_response['choices'][0]['message']['content']
-            
+
           def handle_new_user_message(user_message):
               if is_message_valid(user_message):
                   chat_response = get_chatgpt_response(user_message)
