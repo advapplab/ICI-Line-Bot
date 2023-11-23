@@ -493,21 +493,22 @@ def handle_text_message(event):
           # detect if the message is in English
           # detected_language = detect_language(user_message)
           #   if detected_language == 'en':
-          response = requests.post(
-            'https://api.openai.com/v1/chat/completions',
-              headers = {
-                  'Content-Type': 'application/json',
-                  'Authorization': f'Bearer {api_key}'
-              },
-              json = {
-                  'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                  "messages": [{"role": "user", "content": f"{system_prompt}\n\n{text}"}],
-                  'temperature': 0.4,
-                  'max_tokens': 300
-                }
-            )
-          json = response.json()
-          response = json['choices'][0]['message']['content']
+          def get_chatgpt_response(user_message):
+            response = requests.post(
+              'https://api.openai.com/v1/chat/completions',
+                headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {api_key}'
+                },
+                json = {
+                    'model': os.getenv('OPENAI_MODEL_ENGINE'),
+                    "messages": [{"role": "user", "content": user_message}],
+                    'temperature': 0.4,
+                    'max_tokens': 300
+                  }
+              )
+            json = response.json()
+            response = json['choices'][0]['message']['content']
           msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
