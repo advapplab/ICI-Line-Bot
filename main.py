@@ -164,7 +164,7 @@ def hf_sbert_query(payload):
         gpt_language_detection = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "Your task is to analyze user messages. Respond with 'true' only if the message is written in English and is about Python programming. Respond with 'false' for messages in any other language or about different topics. Always respond in English."},
+                {"role": "system", "content": "You are programmed to recognize and respond to messages that are in English or about Python programming. For any message not in English or not related to Python, respond with 'false'. Do not respond to messages in any other languages except English."},
                 {"role": "user", "content": user_message}
             ]
         )
