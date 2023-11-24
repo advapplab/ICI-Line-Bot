@@ -519,7 +519,6 @@ def handle_text_message(event):
                   msg = TextSendMessage(text=chat_response)
               else:
                   msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
-          return msg
           # msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
