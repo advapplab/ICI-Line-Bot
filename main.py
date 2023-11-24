@@ -511,8 +511,12 @@ def handle_text_message(event):
             )
             json = response.json()
             return json['choices'][0]['message']['content']
-
-          def handle_new_user_message(user_message):
+          
+          def handle_new_user_message(event):
+              user_message = event.message.text
+              user_id = event.source.user_id
+              
+            msg = None
               if is_message_valid(user_message):
                   chat_response = get_chatgpt_response(user_message)
                   msg = TextSendMessage(text=chat_response)
