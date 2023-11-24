@@ -161,17 +161,16 @@ def hf_sbert_query(payload):
 #   return detected_language
 ##bryan gpt language detection##
   def is_message_valid(user_message):
-        gpt_language_detection = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
+      gpt_language_detection = openai.ChatCompletion.create(
+          model="gpt-3.5-turbo",
+          messages=[
               {"role": "system", "content": "Respond with 'true' if the following message is in English and about Python programming, otherwise respond with 'false'."},
               {"role": "user", "content": user_message}
-            ]
-        )
-        response = gpt_language_detection['choices'][0]['message']['content'].strip().lower()
-        print(f"GPT Response for validation: {response}")
-        return response == 'true'  
-
+          ]
+      )
+      response = gpt_language_detection['choices'][0]['message']['content'].strip().lower()
+      print(f"GPT Response for validation: {response}")  # Debugging line
+      return response == 'true'
 
 ### connect to mongodb FAQ
 def get_relevant_answer_from_faq(user_question, type):
@@ -508,20 +507,17 @@ def handle_text_message(event):
                     'temperature': 0.4,
                     'max_tokens': 300
                   }
-            )
+              )
             json = response.json()
-            return json['choices'][0]['message']['content']
-          
-          def handle_new_user_message(event):
-              user_message = event.message.text
-              user_id = event.source.user_id
-              
-            msg = None
+            response = json['choices'][0]['message']['content']
+          def handle_new_user_message(user_message):
               if is_message_valid(user_message):
                   chat_response = get_chatgpt_response(user_message)
                   msg = TextSendMessage(text=chat_response)
               else:
                   msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+              return msg
+          msg = TextSendMessage(text=response)
           # msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
