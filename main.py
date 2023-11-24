@@ -547,7 +547,7 @@ def handle_text_message(event):
   # send out the message
   @handler.add(MessageEvent, message=TextMessage)
   def handle_text_message(event):
-  msg = "" 
+    msg = "" 
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
