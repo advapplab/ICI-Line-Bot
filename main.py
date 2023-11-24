@@ -161,16 +161,16 @@ def hf_sbert_query(payload):
 #   return detected_language
 ##bryan gpt language detection##
     def is_message_valid(user_message):
-    gpt_language_detection = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "Respond with 'true' if the following message is in English and about Python programming, otherwise respond with 'false'."},
-            {"role": "user", "content": user_message}
-        ]
-    )
-    response = gpt_language_detection['choices'][0]['message']['content'].strip().lower()
-    print(f"GPT Response for validation: {response}")
-    return response == 'true'
+        gpt_language_detection = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+              {"role": "system", "content": "Respond with 'true' if the following message is in English and about Python programming, otherwise respond with 'false'."},
+              {"role": "user", "content": user_message}
+            ]
+        )
+        response = gpt_language_detection['choices'][0]['message']['content'].strip().lower()
+        print(f"GPT Response for validation: {response}")
+        return response == 'true'
 
 
 ### connect to mongodb FAQ
