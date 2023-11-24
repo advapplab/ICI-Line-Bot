@@ -508,8 +508,8 @@ def handle_text_message(event):
                     'temperature': 0.4,
                     'max_tokens': 300
                   }
-              )
-            json = response.json()
+            )
+            json_response = response.json()
             return json_response['choices'][0]['message']['content']
 
           def handle_new_user_message(user_message):
@@ -545,10 +545,9 @@ def handle_text_message(event):
      msg = TextSendMessage(text=str(e)) 
 
   # send out the message
-  line_bot_api.reply_message(event.reply_token, msg)
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
-
+  line_bot_api.reply_message(event.reply_token, msg)
 
 ### store images ###
 import io
