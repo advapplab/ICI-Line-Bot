@@ -545,12 +545,12 @@ def handle_text_message(event):
      msg = TextSendMessage(text=str(e)) 
 
   # send out the message
+  @handler.add(MessageEvent, message=TextMessage)
+  def handle_text_message(event):
+  msg = "" 
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
-  def handle_text_message(event):
-  msg = ""  
-  user_id = event.source.user_id
 
 
 ### store images ###
