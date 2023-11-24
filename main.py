@@ -512,12 +512,13 @@ def handle_text_message(event):
             json = response.json()
             return json['choices'][0]['message']['content']
 
-          def handle_new_user_message(user_message, user_id, student_id, user_timestamp):
+          def handle_new_user_message(user_message):
               if is_message_valid(user_message):
                   chat_response = get_chatgpt_response(user_message)
                   msg = TextSendMessage(text=chat_response)
               else:
                   msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+          return msg
           # msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
