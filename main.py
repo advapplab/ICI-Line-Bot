@@ -509,8 +509,8 @@ def handle_text_message(event):
                     'max_tokens': 300
                   }
             )
-            json_response = response.json()
-            return json_response['choices'][0]['message']['content']
+            json = response.json()
+            return json['choices'][0]['message']['content']
 
           def handle_new_user_message(user_message):
               if is_message_valid(user_message):
@@ -519,7 +519,7 @@ def handle_text_message(event):
               else:
                   msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
               return msg
-          #msg = TextSendMessage(text=response)
+          msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
           # memory.append(user_id, role, response)
