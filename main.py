@@ -518,7 +518,6 @@ def handle_text_message(event):
                   print(f"Error while getting response from GPT: {e}")
               return response_content
           def handle_new_user_message(event, user_id, student_id, user_timestamp):
-              user_message = event.message.text
               if is_message_valid(user_message):
                   chat_response = get_chatgpt_response(user_message)
                   msg = TextSendMessage(text=chat_response)
@@ -552,7 +551,7 @@ def handle_text_message(event):
 
   # send out the message
   bot_timestamp = int(time.time() * 1000)
-  store_history_message(user_id, student_id, user_message, user_timestamp, msg, bot_timestamp)
+  store_history_message(user_id, student_id, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
 
 ### store images ###
