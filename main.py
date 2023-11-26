@@ -342,7 +342,6 @@ def handle_text_message(event):
   student_id = student_data[user_id]
   user_timestamp = int(time.time() * 1000)
   text = event.message.text.strip()
-  msg = TextSendMessage(text="An error occurred, please try again.")
   logger.info(f'{user_id}: {text}')
   
 
@@ -513,14 +512,17 @@ def handle_text_message(event):
                     )
                   json = response.json()
                   response_content = json['choices'][0]['message']['content']
-              if is_message_valid(user_message):
-                  try:
-                      chat_response = get_chatgpt_response(user_message)
-                      msg = TextSendMessage(text=chat_response)
-                  except Exception as e:
-                      print(f"Error in get_chatgpt_response: {e}")
-              else:
-                  msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+                  
+                  msg = TextSendMessage(text="An error occurred, please try again.")
+
+                  if is_message_valid(user_message):
+                        try:
+                            chat_response = get_chatgpt_response(user_message)
+                            msg = TextSendMessage(text=chat_response)
+                        except Exception as e:
+                            print(f"Error in get_chatgpt_response: {e}")
+                    else:
+                        msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
           # msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
