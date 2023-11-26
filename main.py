@@ -496,21 +496,25 @@ def handle_text_message(event):
           # detected_language = detect_language(user_message)
           #   if detected_language == 'en':
           def get_chatgpt_response(user_message):
-            response = requests.post(
-              'https://api.openai.com/v1/chat/completions',
-                headers = {
-                    'Content-Type': 'application/json',
-                    'Authorization': f'Bearer {api_key}'
-                },
-                json = {
-                    'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                    "messages": [{"role": "user", "content": user_message}],
-                    'temperature': 0.4,
-                    'max_tokens': 300
-                  }
-              )
-            json = response.json()
-            response = json['choices'][0]['message']['content']
+              try:
+                  response = requests.post(
+                    'https://api.openai.com/v1/chat/completions',
+                      headers = {
+                          'Content-Type': 'application/json',
+                          'Authorization': f'Bearer {api_key}'
+                      },
+                      json = {
+                          'model': os.getenv('OPENAI_MODEL_ENGINE'),
+                          "messages": [{"role": "user", "content": user_message}],
+                          'temperature': 0.4,
+                          'max_tokens': 300
+                        }
+                    )
+                  json = response.json()
+                  return response = json['choices'][0]['message']['content']
+              except Exception as e: 
+                  print(f"Error while getting response from GPT: {e}")
+                  raise
           def handle_new_user_message(event, user_id, student_id, user_timestamp):
               if is_message_valid(user_message):
                   chat_response = get_chatgpt_response(user_message)
