@@ -169,7 +169,7 @@ def hf_sbert_query(payload):
           ]
       )
       response = gpt_language_detection['choices'][0]['message']['content'].strip().lower()
-      print(f"GPT Response for validation: {response}")  # Debugging line
+      print(f"GPT Response for validation: {response}") 
       return response == 'true'
 
 ### connect to mongodb FAQ
