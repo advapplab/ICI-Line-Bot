@@ -162,17 +162,14 @@ def hf_sbert_query(payload):
 ##bryan gpt language detection##
 
   def is_message_valid(user_message):
-      gpt_language_detection = openai.ChatCompletion.create(
-          model= os.environ['OPENAI_MODEL_ENGINE'],
-          messages=[
-              {"role": "system", "content": "Respond with 'true' if the following message is in English and about Python programming, otherwise respond with 'false'."},
-              {"role": "user", "content": user_message}
-          ]
-      )
-      response = gpt_language_detection['choices'][0]['message']['content'].strip().lower()
-      print(f"GPT Response for validation: {response}") 
-      return response == 'true'
-
+    gpt_language_detection = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are programmed to recognize and respond to messages that are in English or about Python programming. For any message not in English or not related to Python, respond with 'false'. Do not respond to messages in any other languages except English."},
+            {"role": "user", "content": user_message}
+        ]
+    )
+    return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true'
 ### connect to mongodb FAQ
 def get_relevant_answer_from_faq(user_question, type):
   try:
@@ -337,7 +334,6 @@ def is_only_submit(submission):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
   user_id = event.source.user_id
-  msg = None
   user_message = event.message.text
   student_data = load_student_data("student_id.json")
   student_id = student_data[user_id]
@@ -498,32 +494,29 @@ def handle_text_message(event):
           # detected_language = detect_language(user_message)
           #   if detected_language == 'en':
           def get_chatgpt_response(user_message):
-                  response = requests.post(
-                    'https://api.openai.com/v1/chat/completions',
-                      headers = {
-                          'Content-Type': 'application/json',
-                          'Authorization': f'Bearer {api_key}'
-                      },
-                      json = {
-                          'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                          "messages": [{"role": "user", "content": user_message}],
-                          'temperature': 0.4,
-                          'max_tokens': 300
-                        }
-                    )
-                  json = response.json()
-                  response_content = json['choices'][0]['message']['content']
+              response = requests.post(
+                  'https://api.openai.com/v1/chat/completions',
+                  headers={
+                      'Content-Type': 'application/json',
+                      'Authorization': f'Bearer {api_key}'
+                  },
+                  json={
+                      'model': os.getenv('OPENAI_MODEL_ENGINE'),
+                      "messages": [{"role": "user", "content": user_message}],
+                      'temperature': 0.4,
+                      'max_tokens': 300
+                  }
+              )
+              json_response = response.json()
+              return json_response['choices'][0]['message']['content']
                   
-                  msg = TextSendMessage(text="An error occurred, please try again.")
-
-                  if is_message_valid(user_message):
-                        try:
-                            chat_response = get_chatgpt_response(user_message)
-                            msg = TextSendMessage(text=chat_response)
-                        except Exception as e:
-                            print(f"Error in get_chatgpt_response: {e}")
-                  else:
-                        msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+          def handle_new_user_message(user_message):
+              if is_message_valid(user_message):
+                  chat_response = get_chatgpt_response(user_message)
+                  msg = TextSendMessage(text=chat_response)
+              else:
+                  msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+              return msg
           # msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
