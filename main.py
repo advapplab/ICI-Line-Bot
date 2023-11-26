@@ -337,6 +337,7 @@ def is_only_submit(submission):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
   user_id = event.source.user_id
+  user_message = event.message.text
   student_data = load_student_data("student_id.json")
   student_id = student_data[user_id]
   user_timestamp = int(time.time() * 1000)
