@@ -521,7 +521,7 @@ def handle_text_message(event):
                             msg = TextSendMessage(text=chat_response)
                         except Exception as e:
                             print(f"Error in get_chatgpt_response: {e}")
-                    else:
+                  else:
                         msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
           # msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
