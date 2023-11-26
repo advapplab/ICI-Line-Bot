@@ -496,8 +496,6 @@ def handle_text_message(event):
           # detected_language = detect_language(user_message)
           #   if detected_language == 'en':
           def get_chatgpt_response(user_message):
-              response_content = "An error occurred."
-              try:
                   response = requests.post(
                     'https://api.openai.com/v1/chat/completions',
                       headers = {
@@ -511,16 +509,9 @@ def handle_text_message(event):
                           'max_tokens': 300
                         }
                     )
-                  response.raise_for_status()  
-                  json_response = response.json()
-                  response_content = json_response['choices'][0]['message']['content']
-              except Exception as e: 
-                  print(f"Error while getting response from GPT: {e}")
-              return response_content
+                  json = response.json()
+                  response_content = json['choices'][0]['message']['content']
           def handle_new_user_message(event):
-              user_id = event.source.user_id
-              user_message = event.message.text
-              msg = TextSendMessage(text="Default response")
               if is_message_valid(user_message):
                   chat_response = get_chatgpt_response(user_message)
                   msg = TextSendMessage(text=chat_response)
