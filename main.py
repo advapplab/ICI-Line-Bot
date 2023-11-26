@@ -163,7 +163,7 @@ def hf_sbert_query(payload):
 
   def is_message_valid(user_message):
       gpt_language_detection = openai.ChatCompletion.create(
-          model=my_secret,
+          model= os.environ['OPENAI_MODEL_ENGINE'],
           messages=[
               {"role": "system", "content": "Respond with 'true' if the following message is in English and about Python programming, otherwise respond with 'false'."},
               {"role": "user", "content": user_message}
