@@ -337,6 +337,7 @@ def is_only_submit(submission):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
   user_id = event.source.user_id
+  msg = None
   user_message = event.message.text
   student_data = load_student_data("student_id.json")
   student_id = student_data[user_id]
@@ -550,7 +551,6 @@ def handle_text_message(event):
 
   # send out the message
   bot_timestamp = int(time.time() * 1000)
-  msg = None
   store_history_message(user_id, student_id, user_message, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
 
