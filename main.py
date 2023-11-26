@@ -517,8 +517,7 @@ def handle_text_message(event):
               except Exception as e: 
                   print(f"Error while getting response from GPT: {e}")
               return response_content
-          def handle_new_user_message(event):
-              user_id = event.source.user_id
+          def handle_new_user_message(event, user_id, student_id, user_timestamp):
               user_message = event.message.text
               if is_message_valid(user_message):
                   chat_response = get_chatgpt_response(user_message)
@@ -526,7 +525,6 @@ def handle_text_message(event):
               else:
                   msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
               return msg
-          msg = TextSendMessage(text=response)
           # msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
