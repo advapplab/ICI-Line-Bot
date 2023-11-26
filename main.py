@@ -160,6 +160,7 @@ def hf_sbert_query(payload):
 
 #   return detected_language
 ##bryan gpt language detection##
+
   def is_message_valid(user_message):
       gpt_language_detection = openai.ChatCompletion.create(
           model="OPENAI_MODEL_ENGINE",
@@ -510,7 +511,7 @@ def handle_text_message(event):
               )
             json = response.json()
             response = json['choices'][0]['message']['content']
-          def handle_new_user_message(user_message):
+          def handle_new_user_message(event, user_id, student_id, user_timestamp):
               if is_message_valid(user_message):
                   chat_response = get_chatgpt_response(user_message)
                   msg = TextSendMessage(text=chat_response)
