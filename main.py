@@ -509,7 +509,6 @@ def handle_text_message(event):
           print(gpt_language_detection)
 
           if gpt_language_detection == True:
-            print("3")
             def get_chatgpt_response(user_message):
               response = requests.post(
                   'https://api.openai.com/v1/chat/completions',
@@ -528,7 +527,6 @@ def handle_text_message(event):
               return json_response['choices'][0]['message']['content']
               msg = TextSendMessage(text=response)
           else:
-            print("4")
             msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
 
           # def handle_new_user_message(user_message):
@@ -546,7 +544,6 @@ def handle_text_message(event):
           # else:
           #    msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
-        print("5")
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
@@ -566,7 +563,6 @@ def handle_text_message(event):
      msg = TextSendMessage(text=str(e))
 
   # send out the message
-  print("6")
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
