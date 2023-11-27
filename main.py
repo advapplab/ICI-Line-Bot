@@ -472,24 +472,20 @@ def handle_text_message(event):
           #bot_think_time()
           msg = TextSendMessage(text=relevant_answer)
           memory.append(user_id, 'assistant', relevant_answer)
-          print("1")
-          #####response = msg
-        # chat gpt     
+          response = msg
+        # if message received not in fagchat -> go to GPT     
         else:
-          print("2")
+          #bot_think_time()
+
           ## is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
           ## print("2",is_successful, response, error_message,memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'),user_id)
           ## if not is_successful:
           ##  raise Exception(error_message)
-          
-          #bot_think_time()
-
           # detect if the message is in English
           # detected_language = detect_language(user_message)
           #   if detected_language == 'en':
-
-        
-        ##bryan gpt language detection##
+          
+          ##bryan gpt language detection##
           def is_message_valid(user_message):
             gpt_language_detection = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
@@ -517,7 +513,8 @@ def handle_text_message(event):
               )
               json_response = response.json()
               return json_response['choices'][0]['message']['content']
-                  
+              msg = TextSendMessage(text=response)
+
           def handle_new_user_message(user_message):
               if is_message_valid(user_message):
                   chat_response = get_chatgpt_response(user_message)
@@ -525,7 +522,6 @@ def handle_text_message(event):
               else:
                   msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
               return msg
-              print("3")
           # msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
@@ -533,7 +529,6 @@ def handle_text_message(event):
           # else:
           #    msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
-        print("4")
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
@@ -551,8 +546,7 @@ def handle_text_message(event):
       msg = TextSendMessage(text='The model is currently overloaded, please try again later')
     else:
      msg = TextSendMessage(text=str(e))
-      
-  print("5")
+
   # send out the message
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
