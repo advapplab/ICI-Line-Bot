@@ -159,17 +159,7 @@ def hf_sbert_query(payload):
 #   detected_language = response.json()[0][0]['label']
 
 #   return detected_language
-##bryan gpt language detection##
 
-  def is_message_valid(user_message):
-    gpt_language_detection = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are programmed to recognize and respond to messages that are in English or about Python programming. For any message not in English or not related to Python, respond with 'false'. Do not respond to messages in any other languages except English."},
-            {"role": "user", "content": user_message}
-        ]
-    )
-    return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true'
 ### connect to mongodb FAQ
 def get_relevant_answer_from_faq(user_question, type):
   try:
@@ -485,14 +475,31 @@ def handle_text_message(event):
           response = msg
         # chat gpt     
         else:
-          #is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
-          #print("2",is_successful, response, error_message,memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'),user_id)
-          #if not is_successful:
-          #  raise Exception(error_message)
+          ## is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
+          ## print("2",is_successful, response, error_message,memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'),user_id)
+          ## if not is_successful:
+          ##  raise Exception(error_message)
+          
           #bot_think_time()
+
           # detect if the message is in English
           # detected_language = detect_language(user_message)
           #   if detected_language == 'en':
+
+        
+        ##bryan gpt language detection##
+
+        def is_message_valid(user_message):
+          gpt_language_detection = openai.ChatCompletion.create(
+              model="gpt-3.5-turbo",
+              messages=[
+                  {"role": "system", "content": "Determine whether the contect is in English or Python programming language form:"+ user_message},
+                  {"role": "user", "content": "Return the result in True or Flase"}
+              ]
+          )
+          #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true'
+          print(gpt_language_detection)
+
           def get_chatgpt_response(user_message):
               response = requests.post(
                   'https://api.openai.com/v1/chat/completions',
