@@ -467,7 +467,6 @@ def handle_text_message(event):
 
       ### check if the user have register ###
       if check_user(user_id)==True:
-        print("1")
         ### faq ###
         if relevant_answer is not None:
           #bot_think_time()
@@ -476,7 +475,6 @@ def handle_text_message(event):
           response = msg
         # if message received not in fagchat -> go to GPT     
         else:
-          print("2")
           #bot_think_time()
 
           ## is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
@@ -488,18 +486,26 @@ def handle_text_message(event):
           #   if detected_language == 'en':
           
           ##bryan gpt language detection##
-          def is_message_valid(user_message):
-              gpt_language_detection = openai.ChatCompletion.create(
-                  model="gpt-3.5-turbo",
-                  messages=[
-                      {"role": "system", "content": "Is the following text in English or contains Python code? " + user_message},
-                      {"role": "user", "content": "Return 'True' if it is in English or contains Python code, otherwise 'False'."}
-                  ]
-              )
-
-              print(gpt_language_detection)
-
+          # def is_message_valid(user_message):
+          #     gpt_language_detection = openai.ChatCompletion.create(
+          #         model="gpt-3.5-turbo",
+          #         messages=[
+          #             {"role": "system", "content": "Is the following text in English or contains Python code? " + user_message},
+          #             {"role": "user", "content": "Return 'True' if it is in English or contains Python code, otherwise 'False'."}
+          #         ]
+          #     )
+          #     print(gpt_language_detection)
               #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true'
+
+          user_message = event.message.text
+          gpt_language_detection = openai.ChatCompletion.create(
+              model="gpt-3.5-turbo",
+              messages=[
+                  {"role": "system", "content": "Is the following text in English or contains Python code? " + user_message},
+                  {"role": "user", "content": "Return 'True' if it is in English or contains Python code, otherwise 'False'."}
+              ]
+          )
+          print(gpt_language_detection)
 
           if gpt_language_detection == True:
             print("3")
