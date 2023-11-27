@@ -496,7 +496,7 @@ def handle_text_message(event):
           #     )
           #     print(gpt_language_detection)
               #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true')
-
+          openai.api_key = os.getenv('OPENAI_KEY')
           user_message = event.message.text
           gpt_language_detection = openai.ChatCompletion.create(
               model="gpt-3.5-turbo",
