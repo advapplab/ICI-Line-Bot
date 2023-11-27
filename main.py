@@ -467,6 +467,7 @@ def handle_text_message(event):
 
       ### check if the user have register ###
       if check_user(user_id)==True:
+        print("1")
         ### faq ###
         if relevant_answer is not None:
           #bot_think_time()
@@ -475,6 +476,7 @@ def handle_text_message(event):
           response = msg
         # if message received not in fagchat -> go to GPT     
         else:
+          print("2")
           #bot_think_time()
 
           ## is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
@@ -487,23 +489,21 @@ def handle_text_message(event):
           
           ##bryan gpt language detection##
           def is_message_valid(user_message):
-            try:
               gpt_language_detection = openai.ChatCompletion.create(
                   model="gpt-3.5-turbo",
                   messages=[
                       {"role": "system", "content": "Is the following text in English or contains Python code? " + user_message},
-                      {"role": "user", "content": "Return 'true' if it is in English or contains Python code, otherwise 'false'."}
+                      {"role": "user", "content": "Return 'True' if it is in English or contains Python code, otherwise 'False'."}
                   ]
               )
-              
+
               print(gpt_language_detection)
 
-              return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true'
-            except Exception as e:
-                print(f"Error in is_message_valid: {e}")
-                return False
+              #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true'
 
-          def get_chatgpt_response(user_message):
+          if gpt_language_detection == True:
+            print("3")
+            def get_chatgpt_response(user_message):
               response = requests.post(
                   'https://api.openai.com/v1/chat/completions',
                   headers={
@@ -520,14 +520,18 @@ def handle_text_message(event):
               json_response = response.json()
               return json_response['choices'][0]['message']['content']
               msg = TextSendMessage(text=response)
+          else:
+            print("4")
+            msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
 
-          def handle_new_user_message(user_message):
-              if is_message_valid(user_message):
-                  chat_response = get_chatgpt_response(user_message)
-                  msg = TextSendMessage(text=chat_response)
-              else:
-                  msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
-              return msg
+          # def handle_new_user_message(user_message):
+          #     if is_message_valid(user_message):
+          #         chat_response = get_chatgpt_response(user_message)
+          #         msg = TextSendMessage(text=chat_response)
+          #     else:
+          #         msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+          #     return msg
+
           # msg = TextSendMessage(text=response)
           # role, response = get_role_and_content(response)
           # msg = TextSendMessage(text=response)
@@ -535,6 +539,7 @@ def handle_text_message(event):
           # else:
           #    msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
+        print("5")
         # The user is not registered, send a message indicating they should register first
         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
@@ -554,6 +559,7 @@ def handle_text_message(event):
      msg = TextSendMessage(text=str(e))
 
   # send out the message
+  print("6")
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
