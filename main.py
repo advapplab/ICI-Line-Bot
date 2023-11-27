@@ -10,6 +10,7 @@ import uuid
 import requests
 from transformers import pipeline
 import traceback
+import openai
 
 import pandas as pd
 
