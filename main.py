@@ -11,7 +11,7 @@ import uuid
 import requests
 from transformers import pipeline
 import traceback
-import openai
+from openai import OpenAI
 
 import pandas as pd
 
@@ -39,8 +39,10 @@ memory = Memory(system_message=os.getenv('SYSTEM_MESSAGE'),
 model_management = {}
 api_keys = {}
 
-my_secret = os.environ['OPENAI_MODEL_ENGINE']
-
+#my_secret = os.environ['OPENAI_MODEL_ENGINE']
+my_secret = OpenAI(
+  api_key=os.environ['OPENAI_MODEL_ENGINE'],  
+)
 
 
 @app.route("/callback", methods=['POST'])
