@@ -569,7 +569,11 @@ def handle_text_message(event):
   # send out the message
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
-  messaging_api.reply_message(event.reply_token, msg)
+  try:
+      messaging_api.reply_message(event.reply_token, messages=msg)
+  except Exception as e:
+      print(f"Error in sending reply: {e}")
+  #messaging_api.reply_message(event.reply_token, msg)
 
 ### store images ###
 import io
