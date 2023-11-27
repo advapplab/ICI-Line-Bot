@@ -11,7 +11,7 @@ import uuid
 import requests
 from transformers import pipeline
 import traceback
-from OpenAI import OpenAI
+from openai import OpenAI
 
 import pandas as pd
 
