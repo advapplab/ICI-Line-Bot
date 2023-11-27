@@ -564,7 +564,7 @@ def handle_text_message(event):
   # send out the message
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
-  messaging_api.reply_message(event.reply_token, msg)
+  line_bot_api.reply_message(event.reply_token, msg)
 
 ### store images ###
 import io
