@@ -487,15 +487,21 @@ def handle_text_message(event):
           
           ##bryan gpt language detection##
           def is_message_valid(user_message):
-            gpt_language_detection = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "Determine whether the contect is in English or Python programming language from:"+ user_message},
-                    {"role": "user", "content": "Return the result in True or Flase"}
-                ]
-            )
-            return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true'
-            print(gpt_language_detection)
+            try:
+              gpt_language_detection = openai.ChatCompletion.create(
+                  model="gpt-3.5-turbo",
+                  messages=[
+                      {"role": "system", "content": "Is the following text in English or contains Python code? " + user_message},
+                      {"role": "user", "content": "Return 'true' if it is in English or contains Python code, otherwise 'false'."}
+                  ]
+              )
+              
+              print(gpt_language_detection)
+
+              return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true'
+            except Exception as e:
+                print(f"Error in is_message_valid: {e}")
+                return False
 
           def get_chatgpt_response(user_message):
               response = requests.post(
