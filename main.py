@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
-from linebot.v3.messaging import MessagingApi
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage,
                             ImageSendMessage, AudioMessage, ImageMessage)
@@ -28,7 +27,6 @@ load_dotenv('.env')
 
 app = Flask(__name__)
 line_bot_api = LineBotApi(os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
-messaging_api = MessagingApi(line_bot_api)
 handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
 storage = None
 youtube = Youtube(step=4)
@@ -39,10 +37,7 @@ memory = Memory(system_message=os.getenv('SYSTEM_MESSAGE'),
 model_management = {}
 api_keys = {}
 
-#my_secret = os.environ['OPENAI_MODEL_ENGINE']
-my_secret = OpenAI(
-  api_key=os.environ['OPENAI_MODEL_ENGINE'],  
-)
+my_secret = os.environ['OPENAI_MODEL_ENGINE']
 
 
 @app.route("/callback", methods=['POST'])
@@ -501,7 +496,7 @@ def handle_text_message(event):
           #     )
           #     print(gpt_language_detection)
               #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true')
-          openai.api_key = os.getenv("OPENAI_KEY")
+
           user_message = event.message.text
           gpt_language_detection = openai.ChatCompletion.create(
               model="gpt-3.5-turbo",
