@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from flask import Flask, request, abort
 from linebot import (LineBotApi, WebhookHandler)
-from linebot.v3.messaging import MessagingApi
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (MessageEvent, TextMessage, TextSendMessage,
                             ImageSendMessage, AudioMessage, ImageMessage)
@@ -28,7 +27,6 @@ load_dotenv('.env')
 
 app = Flask(__name__)
 line_bot_api = LineBotApi(os.getenv('LINE_CHANNEL_ACCESS_TOKEN'))
-messaging_api = MessagingApi(line_bot_api)
 handler = WebhookHandler(os.getenv('LINE_CHANNEL_SECRET'))
 storage = None
 youtube = Youtube(step=4)
@@ -566,8 +564,7 @@ def handle_text_message(event):
   # send out the message
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
-  #line_bot_api.reply_message(event.reply_token, msg)
-  messaging_api.reply_message(event.reply_token, messages=[msg])
+  line_bot_api.reply_message(event.reply_token, msg)
 
 ### store images ###
 import io
