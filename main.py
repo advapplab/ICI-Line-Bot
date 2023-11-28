@@ -503,7 +503,6 @@ def handle_text_message(event):
               messages=[
                   {"role": "system", "content": "Is the following text in English or contains Python code? " + user_message},
                   {"role": "user", "content": "Return 'True' if it is in English or contains Python code, otherwise 'False'."},
-              gpt_language_detection = True
               ]
           )
           print(gpt_language_detection)
