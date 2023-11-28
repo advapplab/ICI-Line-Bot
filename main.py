@@ -498,12 +498,12 @@ def handle_text_message(event):
               #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true')
           openai.api_key = os.getenv('OPENAI_KEY')
           user_message = event.message.text
-          gpt_language_detection = openai.ChatCompletion.create(
+          gpt_language_detection = openai.chat.completion.create(
               model="gpt-3.5-turbo",
               messages=[
                   {"role": "system", "content": "Is the following text in English or contains Python code? " + user_message},
                   {"role": "user", "content": "Return 'True' if it is in English or contains Python code, otherwise 'False'."},
-              gpt_language_detection = True,
+              gpt_language_detection = True
               ]
           )
           print(gpt_language_detection)
