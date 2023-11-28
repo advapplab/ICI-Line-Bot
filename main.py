@@ -498,7 +498,6 @@ def handle_text_message(event):
           #     )
           #     print(gpt_language_detection)
               #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true')
-          openai.api_key = os.getenv('OPENAI_KEY')
           user_message = event.message.text
           gpt_language_detection = openai.chat.completion.create(
               model="gpt-3.5-turbo",
@@ -567,7 +566,7 @@ def handle_text_message(event):
   bot_timestamp = int(time.time() * 1000)
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   #line_bot_api.reply_message(event.reply_token, msg)
-  messaging_api.reply_message(event.reply_token, messages=[msg])
+  messaging_api.reply_message(event.reply_token, msg)
 
 ### store images ###
 import io
