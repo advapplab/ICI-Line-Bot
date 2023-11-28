@@ -502,7 +502,7 @@ def handle_text_message(event):
               model="gpt-3.5-turbo",
               messages=[
                   {"role": "system", "content": "Is the following text in English or contains Python code? " + user_message},
-                  {"role": "user", "content": "Return 'True' if it is in English or contains Python code, otherwise 'False'."}
+                  {"role": "user", "content": "Return 'True' if it is in English or contains Python code, otherwise 'False'."},
               gpt_language_detection = True
               ]
           )
