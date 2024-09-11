@@ -328,101 +328,137 @@ def handle_text_message(event):
   user_id = event.source.user_id
   user_message = event.message.text
   student_data = load_student_data("student_id.json")
-  student_id = student_data[user_id]
+  # student_data.get(user_id)
   user_timestamp = int(time.time() * 1000)
   text = event.message.text.strip()
   logger.info(f'{user_id}: {text}')
-  
 
   try:
     ## auto resister
     api_key = os.getenv('OPENAI_KEY')
-    model = OpenAIModel(api_key = api_key)
+    model = OpenAIModel(api_key=api_key)
     is_successful, _, _ = model.check_token_valid()
     if not is_successful:
       raise ValueError('Invalid API token')
     model_management[user_id] = model
     ### make the below line a comment so that user id and their api key won't be save to the db.json file
     #storage.save({user_id: api_key})
+    if user_id not in student_data:
+      print(f"User {user_id} is not registered.")
+      if text.lower().startswith('/register'):
+        print("Register command received")
+        student_id = text[len('/register'):].strip()
+        print(f"Extracted student ID: {student_id}")
+        #Initialize the FileStorage with a JSON file name
+        file_storage = FileStorage("student_id.json")
+        # Create a Storage wrapper
+        storage_wrapper = Storage(file_storage)
+        # Load existing data from the JSON file
+        users_dict = storage_wrapper.load()
 
-    if text.lower().startswith('/register'):
-      student_id = text[len('/register'):].strip()
-      # Initialize the FileStorage with a JSON file name
-      file_storage = FileStorage("student_id.json")
-      # Create a Storage wrapper
-      storage_wrapper = Storage(file_storage)  
-      # Load existing data from the JSON file
-      users_dict = storage_wrapper.load()
+        student_data = load_student_data("student_id.json")
+        # student_id = student_data[user_id]
 
-      student_data = load_student_data("student_id.json")
-      student_id = student_data[user_id]
+        users_dict[user_id] = student_id
+        storage_wrapper.save(users_dict)
+        msg = TextSendMessage(
+            text=f'Registration successful for student ID: {student_id}')
 
-      if user_id in users_dict:
-        msg = TextSendMessage(text='You already registered.')
-      elif not is_valid_student_id(student_id):
-        msg = TextSendMessage(text='Invalid registration format. Please use "/register your_student_id"\nEx: /register 123456789')
+        if user_id in users_dict:
+          msg = TextSendMessage(text='You already registered.')
+        elif not is_valid_student_id(student_id):
+          msg = TextSendMessage(
+              text=
+              'Invalid registration format. Please use "/register your_student_id"\nEx: /register 123456789'
+          )
       else:
         # Save the registration message to the JSON file
         users_dict[user_id] = student_id
         storage_wrapper.save(users_dict)
-        msg = TextSendMessage(text=f'Registration successful for student ID: {student_id}')
-    
+        msg = TextSendMessage(
+            text=f'Registration successful for student ID: {student_id}')
+
     elif text.lower().startswith('/help'):
-         if check_user(user_id)==True:
-            # The user is registered, so you can proceed with the "/Instruction explanation" logic
-            msg = TextSendMessage(text='Instructions: \n\n/register\n➡️ Please use "/register + your_student_id" to register. For example: /register 123456789\n\n/incorrect\n➡️ Please promptly report any incorrect responses to the TA team by clicking this button as it captures only the most recent conversation.\n\n/leave\n➡️ You can ask for leave with this prompt.\n\n/submit\n➡️This prompt enables you to submit your answers of multiple choice questions or colab link. For example: /submit A,C,D,C,B or /submit  colab link \n\n/score\n➡️This prompt enables you to see your own scores of your homework or exams.')
-         else:
-            # The user is not registered, send a message indicating they should register first
-            msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+      if check_user(user_id) == True:
+        # The user is registered, so you can proceed with the "/Instruction explanation" logic
+        msg = TextSendMessage(
+            text=
+            'Instructions: \n\n/register\n➡️ Please use "/register + your_student_id" to register. For example: /register 123456789\n\n/incorrect\n➡️ Please promptly report any incorrect responses to the TA team by clicking this button as it captures only the most recent conversation.\n\n/leave\n➡️ You can ask for leave with this prompt.\n\n/submit\n➡️This prompt enables you to submit your answers of multiple choice questions or colab link. For example: /submit A,C,D,C,B or /submit  colab link \n\n/score\n➡️This prompt enables you to see your own scores of your homework or exams.'
+        )
+      else:
+        # The user is not registered, send a message indicating they should register first
+        msg = TextSendMessage(
+            text=
+            'You are not registered. Please register using "/register <student_id>"'
+        )
 
 ### save ask for leave messgae responses
     elif text.lower().startswith('/leave'):
-      if check_user(user_id)==True:
-         user_id = event.source.user_id  
-         student_data = load_student_data("student_id.json")
-         student_id = student_data[user_id]
-         save_leave_message_to_mongodb(user_id, student_id, user_timestamp)
-         msg = TextSendMessage(text=f'Ask for leave message received for student ID: {student_id}')
+      if check_user(user_id) == True:
+        user_id = event.source.user_id
+        student_data = load_student_data("student_id.json")
+        student_id = student_data[user_id]
+        save_leave_message_to_mongodb(user_id, student_id, user_timestamp)
+        msg = TextSendMessage(
+            text=f'Ask for leave message received for student ID: {student_id}'
+        )
       else:
-         # The user is not registered, send a message indicating they should register first
-         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+        # The user is not registered, send a message indicating they should register first
+        msg = TextSendMessage(
+            text=
+            'You are not registered. Please register using "/register <student_id>"'
+        )
 
 ### save question submission
     elif text.lower().startswith('/submit'):
-      if check_user(user_id)==True:
-         submission = text[len('/submit'):].strip()
-         if is_only_submit(submission)==True:
-          msg = TextSendMessage(text='Invalid submission format. Please use "/submit your answer to the question"')
-         else:
+      if check_user(user_id) == True:
+        submission = text[len('/submit'):].strip()
+        if is_only_submit(submission) == True:
+          msg = TextSendMessage(
+              text=
+              'Invalid submission format. Please use "/submit your answer to the question"'
+          )
+        else:
           msg = TextSendMessage(text='Submission received.')
-         save_question_submission_to_mongodb(user_id, student_id, user_timestamp, submission)
+        save_question_submission_to_mongodb(user_id, student_id,
+                                            user_timestamp, submission)
       else:
-         # The user is not registered, send a message indicating they should register first
-         msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+        # The user is not registered, send a message indicating they should register first
+        msg = TextSendMessage(
+            text=
+            'You are not registered. Please register using "/register <student_id>"'
+        )
 
-### save incorrect responses   
+### save incorrect responses
     elif text.lower().startswith('/incorrect'):
-      if check_user(user_id)==True:
+      if check_user(user_id) == True:
         last_20_documents_list = get_last_20_documents()
         # last_message = the _id of the last message user sent
         last_message = find_last_message(user_id, last_20_documents_list)
         incorrect_response = f"{{_id:ObjectId('{last_message}')}}"
         if find_last_message(user_id, last_20_documents_list) is not None:
-          msg = TextSendMessage(text="Thank you for informing us. We will address the incorrect message later.")
+          msg = TextSendMessage(
+              text=
+              "Thank you for informing us. We will address the incorrect message later."
+          )
           #msg = TextSendMessage(text=f"Last message sent by user {user_id}: {last_message}")
-        save_incorrect_response_to_mongodb(user_id, student_id, incorrect_response)
+        save_incorrect_response_to_mongodb(user_id, student_id,
+                                           incorrect_response)
       else:
         # The user is not registered, send a message indicating they should register first
-        msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
-  
-### grading result query function   
+        msg = TextSendMessage(
+            text=
+            'You are not registered. Please register using "/register <student_id>"'
+        )
+
+### grading result query function
     elif text.lower().startswith('/score'):
-      if check_user(user_id)==True:
+      if check_user(user_id) == True:
         # load the score csv file
         score_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0jMp-tn4qK9OXXmfHpu4JV4l0P6sKtSdpLS3X4i-Wabilz1N_l9NEejQpHSvvZtl-Sx5qG1x2ZFCO/pub?gid=0&single=true&output=csv'
         score = pd.read_csv(score_url)
         # find the student id of user
-        user_id = event.source.user_id  
+        user_id = event.source.user_id
         student_data = load_student_data("student_id.json")
         student_id = student_data[user_id]
         student_id_to_query = student_id.upper()
@@ -432,21 +468,32 @@ def handle_text_message(event):
         # Check if the student ID exists in the dataset
         if not student_data.empty:
           # Extract scores for all existing homework columns
-          existing_homework_columns = score.columns[2:]  # Excluding 'student_id' and 'name'
+          existing_homework_columns = score.columns[
+              2:]  # Excluding 'student_id' and 'name'
           student_scores = student_data[existing_homework_columns]
           # Seperate the columns
-          for col, score in zip(student_scores.columns, student_scores.iloc[0]):
+          for col, score in zip(student_scores.columns,
+                                student_scores.iloc[0]):
             print(f"{col} : {score}")
           # Calculate and print the average score
           #average_score = student_scores.mean(axis=1)  # Axis=1 calculates the mean across columns
-          msg = TextSendMessage(text=f"Scores for Student ID {student_id_to_query}\n\n" +
-                           '\n'.join([f"{col} : {score}" for col, score in zip(student_scores.columns, student_scores.iloc[0])]) ) #+
-                           #f"\n\nAverage Score: {average_score.iloc[0]:.2f}")
+          msg = TextSendMessage(
+              text=f"Scores for Student ID {student_id_to_query}\n\n" +
+              '\n'.join([
+                  f"{col} : {score}" for col, score in zip(
+                      student_scores.columns, student_scores.iloc[0])
+              ]))  #+
+          #f"\n\nAverage Score: {average_score.iloc[0]:.2f}")
         else:
-          msg = TextSendMessage(text=f"Student ID {student_id_to_query} not found in the score file.")
+          msg = TextSendMessage(
+              text=
+              f"Student ID {student_id_to_query} not found in the score file.")
       else:
         # The user is not registered, send a message indicating they should register first
-        msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')  
+        msg = TextSendMessage(
+            text=
+            'You are not registered. Please register using "/register <student_id>"'
+        )
 
     else:
       user_id = event.source.user_id
@@ -455,7 +502,7 @@ def handle_text_message(event):
       relevant_answer = get_relevant_answer_from_faq(text, 'faq')
       # ###Bryan language detection###
       # user_message = text = event.message.text.strip()
-      # detected_language = detect_language(user_message) 
+      # detected_language = detect_language(user_message)
 
       ## set the role
       prompt = text.strip()
@@ -467,15 +514,17 @@ def handle_text_message(event):
           "Always generate example codes in python programming language.")
       memory.change_system_message(user_id, f"{system_prompt}\n\n{prompt}")
 
+      print(user_id)
+
       ### check if the user have register ###
-      if check_user(user_id)==True:
+      if check_user(user_id) == True:
         ### faq ###
         if relevant_answer is not None:
           #bot_think_time()
           msg = TextSendMessage(text=relevant_answer)
           memory.append(user_id, 'assistant', relevant_answer)
           response = msg
-        # if message received not in fagchat -> go to GPT     
+        # if message received not in fagchat -> go to GPT
         else:
           #bot_think_time()
 
@@ -486,7 +535,7 @@ def handle_text_message(event):
           # detect if the message is in English
           # detected_language = detect_language(user_message)
           #   if detected_language == 'en':
-          
+
           ##bryan gpt language detection##
           # def is_message_valid(user_message):
           #     gpt_language_detection = openai.ChatCompletion.create(
@@ -497,19 +546,30 @@ def handle_text_message(event):
           #         ]
           #     )
           #     print(gpt_language_detection)
-              #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true')
+          #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true')
           openai.api_key = os.getenv("OPENAI_KEY")
           user_message = event.message.text
           gpt_language_detection = openai.Completion.create(
-              model="gpt-3.5-turbo",
+              model="gpt-4o",
               messages=[
-                  {"role": "system", "content": "Is the following text in English or contains Python code? " + user_message},
-                  {"role": "user", "content": "Return 'True' if it is in English or contains Python code, otherwise 'False'."},
-              ]
-          )
+                  {
+                      "role":
+                      "system",
+                      "content":
+                      "Is the following text in English or contains Python code? "
+                      + user_message
+                  },
+                  {
+                      "role":
+                      "user",
+                      "content":
+                      "Return 'True' if it is in English or contains Python code, otherwise 'False'."
+                  },
+              ])
           print(gpt_language_detection)
 
           if gpt_language_detection == True:
+
             def get_chatgpt_response(user_message):
               response = requests.post(
                   'https://api.openai.com/v1/chat/completions',
@@ -519,16 +579,21 @@ def handle_text_message(event):
                   },
                   json={
                       'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                      "messages": [{"role": "user", "content": user_message}],
+                      "messages": [{
+                          "role": "user",
+                          "content": user_message
+                      }],
                       'temperature': 0.4,
                       'max_tokens': 300
-                  }
-              )
+                  })
               json_response = response.json()
               return json_response['choices'][0]['message']['content']
               msg = TextSendMessage(text=response)
           else:
-            msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+            msg = TextSendMessage(
+                text=
+                'Please use English to communicate with me or say it again in a complete sentence.'
+            )
 
           # def handle_new_user_message(user_message):
           #     if is_message_valid(user_message):
@@ -546,26 +611,35 @@ def handle_text_message(event):
           #    msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
         # The user is not registered, send a message indicating they should register first
-        msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+        msg = TextSendMessage(
+            text=
+            'You are not registered. Please register using "/register <student_id>"'
+        )
 
   except ValueError:
-    msg = TextSendMessage(text='Token invalid, please re-register, the format should be: /Register sk-xxxxx')
+    msg = TextSendMessage(
+        text=
+        'Token invalid, please re-register, the format should be: /Register sk-xxxxx'
+    )
   except KeyError:
-    msg = TextSendMessage(text='Please register for a Token first, the format is: /Register sk-xxxxx')
+    msg = TextSendMessage(text='KeyError')
   except Exception as e:
     memory.remove(user_id)
-    
+
     if str(e).startswith('Incorrect API key provided'):
-      msg = TextSendMessage(text='OpenAI API Token is invalid, please re-register')
+      msg = TextSendMessage(
+          text='OpenAI API Token is invalid, please re-register')
     elif str(e).startswith(
         'That model is currently overloaded with other requests.'):
-      msg = TextSendMessage(text='The model is currently overloaded, please try again later')
+      msg = TextSendMessage(
+          text='The model is currently overloaded, please try again later')
     else:
-     msg = TextSendMessage(text=str(e))
+      msg = TextSendMessage(text=str(e))
 
   # send out the message
   bot_timestamp = int(time.time() * 1000)
-  store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
+  store_history_message(user_id, student_id, text, user_timestamp, msg,
+                        bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
   #messaging_api.reply_message(event.reply_token, msg)
 
