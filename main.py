@@ -343,9 +343,11 @@ def handle_text_message(event):
     model_management[user_id] = model
     ### make the below line a comment so that user id and their api key won't be save to the db.json file
     #storage.save({user_id: api_key})
+
     if user_id in student_data:
+      if text.lower().startswith('/register'):
       msg = TextSendMessage(text='You already registered.')
-    if user_id not in student_data:
+    else:
       print(f"User {user_id} is not registered.")
       if text.lower().startswith('/register'):
         print("Register command received")
