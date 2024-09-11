@@ -394,7 +394,7 @@ def handle_text_message(event):
         msg = TextSendMessage(
             text=
             'You are not registered. Please register using "/register <student_id>"'
-    
+        )
       store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
       line_bot_api.reply_message(event.reply_token, msg)    )
 
