@@ -346,7 +346,7 @@ def handle_text_message(event):
 
     if user_id in student_data:
       if text.lower().startswith('/register'):
-      msg = TextSendMessage(text='You already registered.')
+        msg = TextSendMessage(text='You already registered.')
     else:
       print(f"User {user_id} is not registered.")
       if text.lower().startswith('/register'):
