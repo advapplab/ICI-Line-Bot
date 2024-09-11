@@ -420,6 +420,9 @@ def handle_text_message(event):
           )
         else:
           msg = TextSendMessage(text='Submission received.')
+        user_id = event.source.user_id
+        student_data = load_student_data("student_id.json")
+        student_id = student_data[user_id]
         save_question_submission_to_mongodb(user_id, student_id,
                                             user_timestamp, submission)
       else:
@@ -442,6 +445,9 @@ def handle_text_message(event):
               "Thank you for informing us. We will address the incorrect message later."
           )
           #msg = TextSendMessage(text=f"Last message sent by user {user_id}: {last_message}")
+        user_id = event.source.user_id
+        student_data = load_student_data("student_id.json")
+        student_id = student_data[user_id]
         save_incorrect_response_to_mongodb(user_id, student_id,
                                            incorrect_response)
       else:
@@ -638,6 +644,9 @@ def handle_text_message(event):
 
   # send out the message
   bot_timestamp = int(time.time() * 1000)
+  user_id = event.source.user_id
+  student_data = load_student_data("student_id.json")
+  student_id = student_data[user_id]
   store_history_message(user_id, student_id, text, user_timestamp, msg,
                         bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
