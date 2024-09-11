@@ -626,6 +626,11 @@ def handle_text_message(event):
             'You are not registered. Please register using "/register <student_id>"'
         )
 
+      # Store the history and reply with the message
+      bot_timestamp = int(time.time() * 1000)
+      store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
+      line_bot_api.reply_message(event.reply_token, msg)
+
   except ValueError:
     msg = TextSendMessage(
         text=
@@ -651,8 +656,7 @@ def handle_text_message(event):
   user_id = event.source.user_id
   student_data = load_student_data("student_id.json")
   student_id = student_data[user_id]
-  store_history_message(user_id, student_id, text, user_timestamp, msg,
-                        bot_timestamp)
+  store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
   #messaging_api.reply_message(event.reply_token, msg) 
 
