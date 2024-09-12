@@ -255,7 +255,7 @@ def save_question_submission_to_mongodb(user_id, student_id, user_timestamp, sub
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
-    collection = db['question_submission']
+    collection = db['2_question_submission']
     utc_tz = timezone('UTC')
     cst_tz = timezone('Asia/Shanghai')
     user_datetime = datetime.utcfromtimestamp(user_timestamp / 1000)
