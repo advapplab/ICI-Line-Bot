@@ -328,7 +328,6 @@ def handle_text_message(event):
   user_id = event.source.user_id
   user_message = event.message.text
   student_data = load_student_data("student_id.json")
-  student_id = student_data[user_id]
   user_timestamp = int(time.time() * 1000)
   text = event.message.text.strip()
   logger.info(f'{user_id}: {text}')
@@ -581,6 +580,7 @@ def handle_text_message(event):
 
   # send out the message
   bot_timestamp = int(time.time() * 1000)
+  student_id = student_data[user_id]
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
   #messaging_api.reply_message(event.reply_token, msg)
