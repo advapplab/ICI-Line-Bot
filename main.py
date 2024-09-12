@@ -746,8 +746,8 @@ def handle_image_message(event):
 import atexit
 @atexit.register
 def close_mongo_client():
-    mongo_client.close()
-#
+    client.close()
+#mongo_
 
 @app.route("/", methods=['GET'])
 def home():
