@@ -559,7 +559,7 @@ def handle_text_message(event):
             print("yes, it's english")
             def get_chatgpt_response(user_message):
               response = requests.post(
-                'https://api.openai.com/v1/completions',
+                'https://api.openai.com/v1/chat/completions',
                 headers={
                     'Content-Type': 'application/json',
                     'Authorization': f'Bearer {api_key}'
@@ -568,7 +568,7 @@ def handle_text_message(event):
                     'model': 'gpt-3.5-turbo',  # Replace with your desired model
                     'messages': [
                         {
-                            'role': 'user',
+                            'role': 'system',
                             'content': user_message  # The message from the user
                         }
                     ],
