@@ -392,13 +392,13 @@ def handle_text_message(event):
       if check_user(user_id)==True:
           submission = text[len('/submit'):].strip()
           if is_only_submit(submission)==True:
-          msg = TextSendMessage(text='Invalid submission format. Please use "/submit your answer to the question"')
+            msg = TextSendMessage(text='Invalid submission format. Please use "/submit your answer to the question"')
           else:
-          msg = TextSendMessage(text='Submission received.')
-          save_question_submission_to_mongodb(user_id, student_id, user_timestamp, submission)
+            msg = TextSendMessage(text='Submission received.')
+            save_question_submission_to_mongodb(user_id, student_id, user_timestamp, submission)
       else:
-          # The user is not registered, send a message indicating they should register first
-          msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+        # The user is not registered, send a message indicating they should register first
+        msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
 
 ### save incorrect responses   
     elif text.lower().startswith('/incorrect'):
