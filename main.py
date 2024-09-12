@@ -576,7 +576,7 @@ def handle_text_message(event):
           #    msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
       else:
         # The user is not registered, send a message indicating they should register first
-        msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>"')
+        msg = TextSendMessage(text='You are not registered. Please register using "/register <student_id>!!!"')
 
   except ValueError:
     msg = TextSendMessage(text='Token invalid, please re-register, the format should be: /Register sk-xxxxx')
@@ -595,6 +595,9 @@ def handle_text_message(event):
 
   # send out the message
   bot_timestamp = int(time.time() * 1000)
+  user_id = event.source.user_id  
+  student_data = load_student_data("student_id.json")
+  student_id = student_data[user_id]
   store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
   line_bot_api.reply_message(event.reply_token, msg)
   #messaging_api.reply_message(event.reply_token, msg)
