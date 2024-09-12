@@ -412,6 +412,9 @@ def handle_text_message(event):
     elif text.lower().startswith('/submit'):
       if check_user(user_id)==True:
           submission = text[len('/submit'):].strip()
+          user_id = event.source.user_id  
+          student_data = load_student_data("student_id.json")
+          student_id = student_data[user_id]
           if is_only_submit(submission)==True:
             msg = TextSendMessage(text='Invalid submission format. Please use "/submit your answer to the question"')
           else:
@@ -424,6 +427,9 @@ def handle_text_message(event):
 ### save incorrect responses   
     elif text.lower().startswith('/incorrect'):
       if check_user(user_id)==True:
+        user_id = event.source.user_id  
+        student_data = load_student_data("student_id.json")
+        student_id = student_data[user_id]
         last_20_documents_list = get_last_20_documents()
         # last_message = the _id of the last message user sent
         last_message = find_last_message(user_id, last_20_documents_list)
