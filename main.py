@@ -354,6 +354,7 @@ def handle_text_message(event):
         student_id = text[len('/register'):].strip()
         print(f"Extracted student ID: {student_id}")
         if not is_valid_student_id(student_id):
+          print("invalid student id")
           msg = TextSendMessage(
               text=
               'Invalid registration format. Please use "/register your_student_id"\nEx: /register 123456789'
