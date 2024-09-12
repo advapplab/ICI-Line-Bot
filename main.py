@@ -353,34 +353,34 @@ def handle_text_message(event):
         print("Register command received")
         student_id = text[len('/register'):].strip()
         print(f"Extracted student ID: {student_id}")
-        #Initialize the FileStorage with a JSON file name
-        file_storage = FileStorage("student_id.json")
-        # Create a Storage wrapper
-        storage_wrapper = Storage(file_storage)
-        # Load existing data from the JSON file
-        users_dict = storage_wrapper.load()
-        student_data = load_student_data("student_id.json")
-        # student_id = student_data[user_id]
-        users_dict[user_id] = student_id
-        storage_wrapper.save(users_dict)
-        msg = TextSendMessage(
-            text=f'Registration successful for student ID: {student_id}')
-
-        # if user_id in users_dict:
-        #   msg = TextSendMessage(text='You already registered!')
-        elif not is_valid_student_id(student_id):
+        if not is_valid_student_id(student_id):
           msg = TextSendMessage(
               text=
               'Invalid registration format. Please use "/register your_student_id"\nEx: /register 123456789'
           )
-      else:
-        # Save the registration message to the JSON file
-        users_dict[user_id] = student_id
-        storage_wrapper.save(users_dict)
-        msg = TextSendMessage(
-            text=f'Registration successful for student ID: {student_id}')
+        else:
+          #Initialize the FileStorage with a JSON file name
+          file_storage = FileStorage("student_id.json")
+          # Create a Storage wrapper
+          storage_wrapper = Storage(file_storage)
+          # Load existing data from the JSON file
+          users_dict = storage_wrapper.load()
+          student_data = load_student_data("student_id.json")
+          # student_id = student_data[user_id]
+          users_dict[user_id] = student_id
+          storage_wrapper.save(users_dict)
+          msg = TextSendMessage(
+              text=f'Registration successful for student ID: {student_id}')
 
-    elif text.lower().startswith('/help'):
+          # if user_id in users_dict:
+          #   msg = TextSendMessage(text='You already registered!')  
+      # else:
+      #   # Save the registration message to the JSON file
+      #   users_dict[user_id] = student_id
+      #   storage_wrapper.save(users_dict)
+      #   msg = TextSendMessage(
+      #       text=f'Registration successful for student ID: {student_id}')
+    if text.lower().startswith('/help'):
           if check_user(user_id)==True:
             # The user is registered, so you can proceed with the "/Instruction explanation" logic
             msg = TextSendMessage(text='Instructions: \n\n/register\n➡️ Please use "/register + your_student_id" to register. For example: /register 123456789\n\n/incorrect\n➡️ Please promptly report any incorrect responses to the TA team by clicking this button as it captures only the most recent conversation.\n\n/leave\n➡️ You can ask for leave with this prompt.\n\n/submit\n➡️This prompt enables you to submit your answers of multiple choice questions or colab link. For example: /submit A,C,D,C,B or /submit  colab link \n\n/score\n➡️This prompt enables you to see your own scores of your homework or exams.')
