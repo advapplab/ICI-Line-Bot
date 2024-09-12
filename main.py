@@ -359,17 +359,15 @@ def handle_text_message(event):
         storage_wrapper = Storage(file_storage)
         # Load existing data from the JSON file
         users_dict = storage_wrapper.load()
-
         student_data = load_student_data("student_id.json")
         # student_id = student_data[user_id]
-
         users_dict[user_id] = student_id
         storage_wrapper.save(users_dict)
         msg = TextSendMessage(
             text=f'Registration successful for student ID: {student_id}')
 
-        if user_id in users_dict:
-          msg = TextSendMessage(text='You already registered.')
+        # if user_id in users_dict:
+        #   msg = TextSendMessage(text='You already registered!')
         elif not is_valid_student_id(student_id):
           msg = TextSendMessage(
               text=
