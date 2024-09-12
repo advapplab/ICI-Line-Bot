@@ -556,24 +556,39 @@ def handle_text_message(event):
           print(gpt_language_detection)
 
           if gpt_language_detection == True:
+            print("yes, it's english")
             def get_chatgpt_response(user_message):
               response = requests.post(
-                  'https://api.openai.com/v1/chat/completions',
-                  headers={
-                      'Content-Type': 'application/json',
-                      'Authorization': f'Bearer {api_key}'
-                  },
-                  json={
-                      'model': os.getenv('OPENAI_MODEL_ENGINE'),
-                      "messages": [{"role": "user", "content": user_message}],
-                      'temperature': 0.4,
-                      'max_tokens': 300
-                  }
-              )
-              json_response = response.json()
-              return json_response['choices'][0]['message']['content']
-              msg = TextSendMessage(text=response)
+                'https://api.openai.com/v1/chat/completions',
+                headers={
+                    'Content-Type': 'application/json',
+                    'Authorization': f'Bearer {api_key}'
+                },
+                json={
+                    'model': 'gpt-3.5-turbo',  # Replace with your desired model
+                    'messages': [
+                        {
+                            'role': 'user',
+                            'content': user_message  # The message from the user
+                        }
+                    ],
+                    'temperature': 0.7,  # Adjust as needed
+                    'max_tokens': 300    # Adjust as needed
+                }
+            )
+
+            # Parse the response
+            json_response = response.json()
+
+            # Check if 'choices' field exists in the response
+            if 'choices' in json_response and len(json_response['choices']) > 0:
+                return json_response['choices'][0]['message']['content']
+                msg = TextSendMessage(text=response)
+            else:
+                return "I'm sorry, I couldn't process that request."
+                  # msg = TextSendMessage(text=response)
           else:
+            print("no, it's not english")
             msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
 
           # def handle_new_user_message(user_message):
