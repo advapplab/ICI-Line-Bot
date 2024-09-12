@@ -568,13 +568,15 @@ def handle_text_message(event):
                     'model': 'gpt-3.5-turbo',  # Replace with your desired model
                     'messages': [
                         {
-                            'role': 'system',
-                            'content': user_message  # The message from the user
-                        }
+                            'role': 'user',
+                            'content': system_prompt,  # The message from the user
+                        },
+                        {
+                            'role': 'user',
+                            'content': user_message,
+                        },
                     ],
-                    'temperature': 0.7,  # Adjust as needed
-                    'max_tokens': 300    # Adjust as needed
-                }
+                },
             )
 
             # Parse the response
