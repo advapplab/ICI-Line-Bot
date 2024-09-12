@@ -385,7 +385,6 @@ def handle_text_message(event):
               'Invalid registration format. Please use "/register your_student_id"\nEx: /register 123456789'
           )
         line_bot_api.reply_message(event.reply_token, [msg])
-        store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
       #   # Save the registration message to the JSON file
       #   users_dict[user_id] = student_id
       #   storage_wrapper.save(users_dict)
