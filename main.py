@@ -329,6 +329,7 @@ def handle_text_message(event):
   user_message = event.message.text
   student_data = load_student_data("student_id.json")
   user_timestamp = int(time.time() * 1000)
+  bot_timestamp = int(time.time() * 1000)
   text = event.message.text.strip()
   logger.info(f'{user_id}: {text}')
 
@@ -347,6 +348,7 @@ def handle_text_message(event):
     if user_id in student_data:
       if text.lower().startswith('/register'):
         msg = TextSendMessage(text='You already registered.')
+        store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
     elif user_id not in student_data:
       print(f"User {user_id} is not registered.")
       if text.lower().startswith('/register'):
@@ -373,7 +375,7 @@ def handle_text_message(event):
           storage_wrapper.save(users_dict)
           msg = TextSendMessage(
               text=f'Registration successful for student ID: {student_id}')
-
+      bot_timestamp = int(time.time() * 1000)
           # if user_id in users_dict:
           #   msg = TextSendMessage(text='You already registered!')  
       else:
