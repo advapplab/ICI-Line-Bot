@@ -347,6 +347,7 @@ def handle_text_message(event):
 
     if user_id in student_data:
       if text.lower().startswith('/register'):
+        student_id = student_data[user_id]
         msg = TextSendMessage(text='You already registered.')
         store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
     elif user_id not in student_data:
