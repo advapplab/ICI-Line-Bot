@@ -66,7 +66,7 @@ mdb_host = os.getenv('MONGODB_HOST')
 mdb_dbs = os.getenv('MONGODB_DATABASE')
 client = MongoClient('mongodb+srv://'+mdb_user+':'+mdb_pass+'@'+mdb_host)
 db = client[mdb_dbs]
-collection = db['history']
+collection = db['2_history']
 
 ## fix message format problem
 def extract_message_info(message):
@@ -197,7 +197,7 @@ def save_incorrect_response_to_mongodb(user_id,student_id, incorrect_response):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
-    collection = db['incorrect_responses']
+    collection = db['2_incorrect_responses']
     # Create a document to store the incorrect response data
     incorrect_data = {
         'user_id': user_id,
@@ -213,7 +213,7 @@ def save_incorrect_response_to_mongodb(user_id,student_id, incorrect_response):
 def get_last_20_documents():
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
-    collection = db['history']
+    collection = db['2_history']
 
     # Find the last 20 documents in the collection and sort them by time in descending order
     last_20_documents = collection.find().sort([("user_timestamp", pymongo.DESCENDING)]).limit(20)
@@ -232,7 +232,7 @@ def save_leave_message_to_mongodb(user_id, student_id, user_timestamp):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
-    collection = db['leave']
+    collection = db['2_leave']
     utc_tz = timezone('UTC')
     cst_tz = timezone('Asia/Shanghai')
     user_datetime = datetime.utcfromtimestamp(user_timestamp / 1000)
@@ -656,7 +656,7 @@ def store_image(user_id, display_name, user_timestamp, img_base64):
   try:
     client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
     db = client[mdb_dbs]
-    collection = db['images']
+    collection = db['2_images']
     # Create a document to store the incorrect response data
     image_data = {
         'user_id': user_id,
