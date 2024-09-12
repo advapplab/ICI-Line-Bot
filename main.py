@@ -375,7 +375,12 @@ def handle_text_message(event):
 
           # if user_id in users_dict:
           #   msg = TextSendMessage(text='You already registered!')  
-      # else:
+      else:
+        print(f"User {user_id} is not registered.")
+        msg = TextSendMessage(
+              text=
+              'Invalid registration format. Please use "/register your_student_id"\nEx: /register 123456789'
+          )
       #   # Save the registration message to the JSON file
       #   users_dict[user_id] = student_id
       #   storage_wrapper.save(users_dict)
@@ -383,7 +388,6 @@ def handle_text_message(event):
       #       text=f'Registration successful for student ID: {student_id}')
     if text.lower().startswith('/help'):
           if check_user(user_id)==True:
-            print("userid true~~")
             # The user is registered, so you can proceed with the "/Instruction explanation" logic
             msg = TextSendMessage(text='Instructions: \n\n/register\n➡️ Please use "/register + your_student_id" to register. For example: /register 123456789\n\n/incorrect\n➡️ Please promptly report any incorrect responses to the TA team by clicking this button as it captures only the most recent conversation.\n\n/leave\n➡️ You can ask for leave with this prompt.\n\n/submit\n➡️This prompt enables you to submit your answers of multiple choice questions or colab link. For example: /submit A,C,D,C,B or /submit  colab link \n\n/score\n➡️This prompt enables you to see your own scores of your homework or exams.')
           else:
