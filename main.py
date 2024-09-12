@@ -584,6 +584,7 @@ def is_only_submit(submission):
     store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
     line_bot_api.reply_message(event.reply_token, msg)
     #messaging_api.reply_message(event.reply_token, msg)
+    
 ### store images ###
 import io
 import base64
