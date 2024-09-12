@@ -559,7 +559,7 @@ def handle_text_message(event):
             print("yes, it's english")
             def get_chatgpt_response(user_message):
               response = requests.post(
-                'https://api.openai.com/v1/chat/completions',
+                'https://api.openai.com/v1/completions',
                 headers={
                     'Content-Type': 'application/json',
                     'Authorization': f'Bearer {api_key}'
