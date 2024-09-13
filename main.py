@@ -571,6 +571,7 @@ def handle_text_message(event):
             return completion.choices[0].message['content']
             response = gpt_query(user_message)
             msg = TextSendMessage(text=response)
+            line_bot_api.reply_message(event.reply_token, msg)
             # else:
             #     return "I'm sorry, I couldn't process that request."
             #       # msg = TextSendMessage(text=response)
