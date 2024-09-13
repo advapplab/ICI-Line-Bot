@@ -550,33 +550,33 @@ def handle_text_message(event):
               #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true')
           openai.api_key = os.getenv("OPENAI_KEY")
           user_message = event.message.text
-          user_message_r = user_message.translate(str.maketrans('', '', string.punctuation))
-          def gpt_language_detection(message):
-              completion = openai.Completion.create(
-                  model="gpt-4o",
-                  messages=[{"role": "user", "content": "you are an language detection expert and only response either True or False.Return 'True' the message is in English or contains Python code, otherwise 'False'."+message}]
-              )
-              return completion.choices[0].message['content']
-          language_detection_response = gpt_language_detection(user_message_r)
-          print(language_detection_response)
+          # user_message_r = user_message.translate(str.maketrans('', '', string.punctuation))
+          # def gpt_language_detection(message):
+          #     completion = openai.Completion.create(
+          #         model="gpt-4o",
+          #         messages=[{"role": "user", "content": "you are an language detection expert and only response either True or False.Return 'True' the message is in English or contains Python code, otherwise 'False'."+message}]
+          #     )
+          #     return completion.choices[0].message['content']
+          # language_detection_response = gpt_language_detection(user_message_r)
+          # print(language_detection_response)
 
-          if language_detection_response == "True":
-            print("yes, it's english")
-            def get_chatgpt_response(message):
-              completion = openai.ChatCompletion.create(
-                  model='gpt-4o',
-                  messages=[
-                      {"role": "system", "content": system_prompt},  # System prompt to define behavior
-                      {"role": "user", "content": message}  # User prompt
-                  ]
-              )
-              return completion.choices[0].message['content']
-              response = gpt_query(user_message)
-              print(response)
-              msg = TextSendMessage(text=response)
-          else:
-            print("no, it's not english")
-            msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
+          # if language_detection_response == "True":
+          #   print("yes, it's english")
+          def get_chatgpt_response(message):
+            completion = openai.ChatCompletion.create(
+                model='gpt-4o',
+                messages=[
+                    {"role": "system", "content": system_prompt},  # System prompt to define behavior
+                    {"role": "user", "content": message}  # User prompt
+                ]
+            )
+            return completion.choices[0].message['content']
+          response = gpt_query(user_message)
+          print(response)
+          msg = TextSendMessage(text=response)
+          # else:
+          #   print("no, it's not english")
+          #   msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
 
           # def handle_new_user_message(user_message):
           #     if is_message_valid(user_message):
