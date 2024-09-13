@@ -560,7 +560,7 @@ def handle_text_message(event):
           if language_detection_response == True:
             print("yes, it's english")
             def get_chatgpt_response(user_message):
-              response = = openai.ChatCompletion.create(
+              response = openai.ChatCompletion.create(
                   model='gpt-4o',
                   messages=[
                       {"role": "system", "content": system_prompt},  # System prompt to define behavior
