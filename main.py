@@ -550,15 +550,13 @@ def handle_text_message(event):
               #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true')
           openai.api_key = os.getenv("OPENAI_KEY")
           user_message = event.message.text
-          user_message_r = user_message.translate(str.maketrans('', '', string.punctuation))
-          print(user_message_r)
           def gpt_language_detection(message):
             completion = openai.Completion.create(
                 model="gpt-4o",
                 messages=[{"role": "user", "content": "you are an language detection expert and only response either True or False.Return 'True' if the message in English or contains Python code, otherwise 'False'."+message}]
             )
             return completion.choices[0].message['content']
-          language_detection_response = gpt_language_detection(user_message_r)
+          language_detection_response = gpt_language_detection(user_message)
           print(language_detection_response)
 
           if language_detection_response == "True":
