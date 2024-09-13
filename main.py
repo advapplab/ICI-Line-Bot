@@ -527,20 +527,6 @@ def handle_text_message(event):
         # if message received not in fagchat -> go to GPT     
         else:
           print("it's not FAQ")
-          openai.api_key = os.getenv("OPENAI_KEY")
-          user_message = event.message.text
-          def get_chatgpt_response(message):
-              completion = openai.ChatCompletion.create(
-                  model='gpt-4o',
-                  messages=[
-                      {"role": "system", "content": system_prompt},  # System prompt to define behavior
-                      {"role": "user", "content": message}  # User prompt
-                  ]
-              )
-              return completion.choices[0].message['content']
-          response = get_chatgpt_respons(user_message)
-          print(response)
-          msg = TextSendMessage(text=response)
           #bot_think_time()
 
           ## is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
@@ -585,6 +571,7 @@ def handle_text_message(event):
                 ]
             )
             return completion.choices[0].message['content']
+          user_message = event.message.text
           response = get_chatgpt_respons(user_message)
           print(response)
           msg = TextSendMessage(text=response)
