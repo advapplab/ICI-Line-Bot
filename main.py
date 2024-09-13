@@ -560,17 +560,17 @@ def handle_text_message(event):
 
           if language_detection_response == True:
             print("yes, it's english")
-              def get_chatgpt_response(message):
-                completion = openai.ChatCompletion.create(
-                    model='gpt-4o',
-                    messages=[
-                        {"role": "system", "content": system_prompt},  # System prompt to define behavior
-                        {"role": "user", "content": _message}  # User prompt
-                    ]
-                )
-                return completion.choices[0].message['content']
-                response = gpt_query(user_message)
-                msg = TextSendMessage(text=response)
+            def get_chatgpt_response(message):
+              completion = openai.ChatCompletion.create(
+                  model='gpt-4o',
+                  messages=[
+                      {"role": "system", "content": system_prompt},  # System prompt to define behavior
+                      {"role": "user", "content": _message}  # User prompt
+                  ]
+              )
+              return completion.choices[0].message['content']
+              response = gpt_query(user_message)
+              msg = TextSendMessage(text=response)
           else:
             print("no, it's not english")
             msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
