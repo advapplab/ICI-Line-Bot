@@ -348,9 +348,11 @@ def handle_text_message(event):
     #storage.save({user_id: api_key})
 
     if user_id in student_data:
+      print("user_id in student_data")
       if text.lower().startswith('/register'):
         student_id = student_data[user_id]
         msg = TextSendMessage(text='You already registered.')
+        line_bot_api.reply_message(event.reply_token, [msg])
         store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
     elif user_id not in student_data:
       print(f"User {user_id} is not registered.")
