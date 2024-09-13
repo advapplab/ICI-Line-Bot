@@ -572,7 +572,7 @@ def handle_text_message(event):
             )
             return completion.choices[0].message['content']
           user_message = event.message.text
-          response = get_chatgpt_respons(user_message)
+          response = get_chatgpt_response(user_message)
           print(response)
           msg = TextSendMessage(text=response)
           # else:
