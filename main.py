@@ -525,6 +525,7 @@ def handle_text_message(event):
           response = msg
         # if message received not in fagchat -> go to GPT     
         else:
+          print("it's not FAQ")
           #bot_think_time()
 
           ## is_successful, response, error_message = user_model.chat_completions(memory.get(user_id), os.getenv('OPENAI_MODEL_ENGINE'))
