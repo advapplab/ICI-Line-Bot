@@ -548,49 +548,31 @@ def handle_text_message(event):
               #return gpt_language_detection['choices'][0]['message']['content'].strip().lower() == 'true')
           openai.api_key = os.getenv("OPENAI_KEY")
           user_message = event.message.text
-          gpt_language_detection = openai.Completion.create(
-              model="gpt-4o",
-              messages=[
-                  {"role": "system", "content": "Is the following text in English or contains Python code? " + user_message},
-                  {"role": "user", "content": "Return 'True' if it is in English or contains Python code, otherwise 'False'."},
-              ]
-          )
-          print(gpt_language_detection)
+          def gpt_language_detection(user_message):
+              gpt_language_detection = openai.Completion.create(
+                  model="gpt-4o",
+                  messages=[{"role": "user", "content": "you are an language detection expert and only response either True or False.Return 'True' if it is in English or contains Python code, otherwise 'False'."+user_message}]
+              )
+              return completion.choices[0].message['content']
+          language_detection_response = gpt_language_detection(user_message)
+          print(language_detection_response)
 
-          if gpt_language_detection == True:
+          if language_detection_response == True:
             print("yes, it's english")
             def get_chatgpt_response(user_message):
-              response = requests.post(
-                'https://api.openai.com/v1/caht/completions',
-                headers={
-                    'Content-Type': 'application/json',
-                    'Authorization': f'Bearer {api_key}'
-                },
-                json={
-                    'model': 'gpt-3.5-turbo',  # Replace with your desired model
-                    'messages': [
-                        {
-                            'role': 'user',
-                            'content': system_prompt,  # The message from the user
-                        },
-                        {
-                            'role': 'user',
-                            'content': user_message,
-                        },
-                    ],
-                },
-            )
-
-            # Parse the response
-            json_response = response.json()
-
-            # Check if 'choices' field exists in the response
-            if 'choices' in json_response and len(json_response['choices']) > 0:
-                return json_response['choices'][0]['message']['content']
-                msg = TextSendMessage(text=response)
-            else:
-                return "I'm sorry, I couldn't process that request."
-                  # msg = TextSendMessage(text=response)
+              response = = openai.ChatCompletion.create(
+                  model='gpt-4o',
+                  messages=[
+                      {"role": "system", "content": system_prompt},  # System prompt to define behavior
+                      {"role": "user", "content": user_message}  # User prompt
+                  ]
+              )
+              return completion.choices[0].message['content']
+              response = gpt_query(user_message)
+              msg = TextSendMessage(text=response)
+            # else:
+            #     return "I'm sorry, I couldn't process that request."
+            #       # msg = TextSendMessage(text=response)
           else:
             print("no, it's not english")
             msg = TextSendMessage(text='Please use English to communicate with me or say it again in a complete sentence.')
