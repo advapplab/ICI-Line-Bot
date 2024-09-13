@@ -551,6 +551,7 @@ def handle_text_message(event):
           openai.api_key = os.getenv("OPENAI_KEY")
           user_message = event.message.text
           user_message_r = user_message.translate(str.maketrans('', '', string.punctuation))
+          print(user_message_r)
           def gpt_language_detection(message):
             completion = openai.Completion.create(
                 model="gpt-4o",
