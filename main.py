@@ -250,6 +250,23 @@ def save_leave_message_to_mongodb(user_id, student_id, user_timestamp):
   except Exception as e:
     print(f"Error while saving incorrect response data: {str(e)}")
 
+### save mappingtable to MongoDB ###
+def save_mappingtable_to_mongodb(user_id, student_id):
+  try:
+    client = MongoClient('mongodb+srv://' + mdb_user + ':' + mdb_pass + '@' + mdb_host)
+    db = client[mdb_dbs]
+    collection = db['2_mappingtable']
+    # Create a document to store the incorrect response data
+    register_message = {
+        'user_id': user_id,
+        'student_id': student_id
+    }
+    # Insert the document into the collection
+    collection.insert_one(register_message)
+    client.close()
+  except Exception as e:
+    print(f"Error while saving incorrect response data: {str(e)}")
+
 
 ### save question submission to MongoDB ###
 def save_question_submission_to_mongodb(user_id, student_id, user_timestamp, submission):
@@ -350,10 +367,12 @@ def handle_text_message(event):
     if user_id in student_data:
       print("user_id in student_data")
       if text.lower().startswith('/register'):
+        user_id = event.source.user_id  
+        student_data = load_student_data("student_id.json")
         student_id = student_data[user_id]
-        msg = TextSendMessage(text='You already registered.')
+        save_mappingtable_to_mongodb(user_id, student_id)
+        msg = TextSendMessage(text='You already registered!')
         line_bot_api.reply_message(event.reply_token, [msg])
-        store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
     elif user_id not in student_data:
       print(f"User {user_id} is not registered.")
       if text.lower().startswith('/register'):
@@ -380,7 +399,8 @@ def handle_text_message(event):
           storage_wrapper.save(users_dict)
           msg = TextSendMessage(
               text=f'Registration successful for student ID: {student_id}')
-          store_history_message(user_id, student_id, text, user_timestamp, msg, bot_timestamp)
+          line_bot_api.reply_message(event.reply_token, [msg])
+          save_mappingtable_to_mongodb(user_id, student_id)
           # if user_id in users_dict:
           #   msg = TextSendMessage(text='You already registered!')  
       else:
