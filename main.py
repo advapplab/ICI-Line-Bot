@@ -576,7 +576,7 @@ def handle_text_message(event):
           def gpt_language_detection(message):
               completion = openai.ChatCompletion.create(
                   model="gpt-4o",  # Use the proper chat model name like gpt-4 or gpt-3.5-turbo
-                  messages=[{"role": "user", "content": "Language detection. Only response True or Flase. 'False' for message is NOT in English, otherwise 'True'. If unsure, return 'True'"+message}]
+                  messages=[{"role": "user", "content": "Language detection ONLY. Only response 'True' or 'Flase'. 'False' for message that is OBVIOUSLY NOT in English, otherwise return 'True'. If unsure or incorrect gammer, also return 'True'"+message}]
               )
               return completion.choices[0].message['content']
 
